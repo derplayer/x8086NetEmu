@@ -246,20 +246,22 @@ ModelManifest.xml
 .fake
 
 # ROMS, disks & compiled resources
-!**/Release/
+!**/BuildFolder/
 
-**/Release/*.dll
-**/Release/*.xml
-**/Release/*.exe
-**/Release/*.config
-**/Release/*.manifest
-**/Release/states/
+**/BuildFolder/*.dll
+**/BuildFolder/*.xml
+**/BuildFolder/*.exe
+**/BuildFolder/*.config
+**/BuildFolder/*.manifest
+**/BuildFolder/states/
 
-**/Release/disks/*
-!**/Release/disks/hd0-dist.img
+**/BuildFolder/disks/*
+!**/BuildFolder/disks/hd0-dist.img
 
-**/Release/roms/*
-!**/Release/roms/BASICC11.BIN
-!**/Release/roms/pcxtbios.rom
+**/BuildFolder/roms/*
+!**/BuildFolder/roms/BASICC11.BIN
+!**/BuildFolder/roms/pcxtbios.rom
+
+!**/PCXTBios/
 
 **/settings.dat
