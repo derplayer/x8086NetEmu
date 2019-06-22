@@ -283,19 +283,19 @@ namespace x8086SharpEmu
             SetAddressing();
             if (addrMode.IsDirect)
             {
-                mRegisters.set_Val(addrMode.Dst, Eval(System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Dst)), System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Src)), Operation.Add, addrMode.Size));
+                mRegisters.set_Val(addrMode.Dst, Eval((uint)(mRegisters.get_Val(addrMode.Dst)), (uint)(mRegisters.get_Val(addrMode.Src)), Operation.Add, addrMode.Size));
                 clkCyc += 3;
             }
             else
             {
                 if (addrMode.Direction == 0)
                 {
-                    set_RAMn(false, Eval(System.Convert.ToUInt32(addrMode.IndMem), System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Src)), Operation.Add, addrMode.Size));
+                    set_RAMn(false, Eval((uint)(addrMode.IndMem), (uint)(mRegisters.get_Val(addrMode.Src)), Operation.Add, addrMode.Size));
                     clkCyc += 16;
                 }
                 else
                 {
-                    mRegisters.set_Val(addrMode.Dst, Eval(System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Dst)), System.Convert.ToUInt32(addrMode.IndMem), Operation.Add, addrMode.Size));
+                    mRegisters.set_Val(addrMode.Dst, Eval((uint)(mRegisters.get_Val(addrMode.Dst)), (uint)(addrMode.IndMem), Operation.Add, addrMode.Size));
                     clkCyc += 9;
                 }
             }
@@ -303,13 +303,13 @@ namespace x8086SharpEmu
 
         private void _04() // ADD AL Ib
         {
-            mRegisters.AL = (byte)Eval(System.Convert.ToUInt32(mRegisters.AL), System.Convert.ToUInt32(Param(index: ParamIndex.First, size: DataSize.Byte)), Operation.Add, DataSize.Byte);
+            mRegisters.AL = (byte)Eval((uint)(mRegisters.AL), (uint)(Param(index: ParamIndex.First, size: DataSize.Byte)), Operation.Add, DataSize.Byte);
             clkCyc += 4;
         }
 
         private void _05() // ADD AX Iv
         {
-            mRegisters.AX = Eval(System.Convert.ToUInt32(mRegisters.AX), System.Convert.ToUInt32(Param(index: ParamIndex.First, size: DataSize.Word)), Operation.Add, DataSize.Word);
+            mRegisters.AX = Eval((uint)(mRegisters.AX), (uint)(Param(index: ParamIndex.First, size: DataSize.Word)), Operation.Add, DataSize.Word);
             clkCyc += 4;
         }
 
@@ -331,19 +331,19 @@ namespace x8086SharpEmu
             SetAddressing();
             if (addrMode.IsDirect)
             {
-                mRegisters.set_Val(addrMode.Dst, Eval(System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Dst)), System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Src)), Operation.LogicOr, addrMode.Size));
+                mRegisters.set_Val(addrMode.Dst, Eval((uint)(mRegisters.get_Val(addrMode.Dst)), (uint)(mRegisters.get_Val(addrMode.Src)), Operation.LogicOr, addrMode.Size));
                 clkCyc += 3;
             }
             else
             {
                 if (addrMode.Direction == 0)
                 {
-                    set_RAMn(false, Eval(System.Convert.ToUInt32(addrMode.IndMem), System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Src)), Operation.LogicOr, addrMode.Size));
+                    set_RAMn(false, Eval((uint)(addrMode.IndMem), (uint)(mRegisters.get_Val(addrMode.Src)), Operation.LogicOr, addrMode.Size));
                     clkCyc += 16;
                 }
                 else
                 {
-                    mRegisters.set_Val(addrMode.Dst, Eval(System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Dst)), System.Convert.ToUInt32(addrMode.IndMem), Operation.LogicOr, addrMode.Size));
+                    mRegisters.set_Val(addrMode.Dst, Eval((uint)(mRegisters.get_Val(addrMode.Dst)), (uint)(addrMode.IndMem), Operation.LogicOr, addrMode.Size));
                     clkCyc += 9;
                 }
             }
@@ -351,13 +351,13 @@ namespace x8086SharpEmu
 
         private void _0C() // OR AL Ib
         {
-            mRegisters.AL = (byte)Eval(System.Convert.ToUInt32(mRegisters.AL), System.Convert.ToUInt32(Param(index: ParamIndex.First, size: DataSize.Byte)), Operation.LogicOr, DataSize.Byte);
+            mRegisters.AL = (byte)Eval((uint)(mRegisters.AL), (uint)(Param(index: ParamIndex.First, size: DataSize.Byte)), Operation.LogicOr, DataSize.Byte);
             clkCyc += 4;
         }
 
         private void _0D() // OR AX Iv
         {
-            mRegisters.AX = Eval(System.Convert.ToUInt32(mRegisters.AX), System.Convert.ToUInt32(Param(index: ParamIndex.First, size: DataSize.Word)), Operation.LogicOr, DataSize.Word);
+            mRegisters.AX = Eval((uint)(mRegisters.AX), (uint)(Param(index: ParamIndex.First, size: DataSize.Word)), Operation.LogicOr, DataSize.Word);
             clkCyc += 4;
         }
 
@@ -382,19 +382,19 @@ namespace x8086SharpEmu
             SetAddressing();
             if (addrMode.IsDirect)
             {
-                mRegisters.set_Val(addrMode.Dst, Eval(System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Dst)), System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Src)), Operation.AddWithCarry, addrMode.Size));
+                mRegisters.set_Val(addrMode.Dst, Eval((uint)(mRegisters.get_Val(addrMode.Dst)), (uint)(mRegisters.get_Val(addrMode.Src)), Operation.AddWithCarry, addrMode.Size));
                 clkCyc += 3;
             }
             else
             {
                 if (addrMode.Direction == 0)
                 {
-                    set_RAMn(false, Eval(System.Convert.ToUInt32(addrMode.IndMem), System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Src)), Operation.AddWithCarry, addrMode.Size));
+                    set_RAMn(false, Eval((uint)(addrMode.IndMem), (uint)(mRegisters.get_Val(addrMode.Src)), Operation.AddWithCarry, addrMode.Size));
                     clkCyc += 16;
                 }
                 else
                 {
-                    mRegisters.set_Val(addrMode.Dst, Eval(System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Dst)), System.Convert.ToUInt32(addrMode.IndMem), Operation.AddWithCarry, addrMode.Size));
+                    mRegisters.set_Val(addrMode.Dst, Eval((uint)(mRegisters.get_Val(addrMode.Dst)), (uint)(addrMode.IndMem), Operation.AddWithCarry, addrMode.Size));
                     clkCyc += 9;
                 }
             }
@@ -402,13 +402,13 @@ namespace x8086SharpEmu
 
         private void _14() // ADC AL Ib
         {
-            mRegisters.AL = (byte)Eval(System.Convert.ToUInt32(mRegisters.AL), System.Convert.ToUInt32(Param(index: ParamIndex.First, size: DataSize.Byte)), Operation.AddWithCarry, DataSize.Byte);
+            mRegisters.AL = (byte)Eval((uint)(mRegisters.AL), (uint)(Param(index: ParamIndex.First, size: DataSize.Byte)), Operation.AddWithCarry, DataSize.Byte);
             clkCyc += 3;
         }
 
         private void _15() // ADC AX Iv
         {
-            mRegisters.AX = Eval(System.Convert.ToUInt32(mRegisters.AX), System.Convert.ToUInt32(Param(index: ParamIndex.First, size: DataSize.Word)), Operation.AddWithCarry, DataSize.Word);
+            mRegisters.AX = Eval((uint)(mRegisters.AX), (uint)(Param(index: ParamIndex.First, size: DataSize.Word)), Operation.AddWithCarry, DataSize.Word);
             clkCyc += 3;
         }
 
@@ -433,19 +433,19 @@ namespace x8086SharpEmu
             SetAddressing();
             if (addrMode.IsDirect)
             {
-                mRegisters.set_Val(addrMode.Dst, Eval(System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Dst)), System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Src)), Operation.SubstractWithCarry, addrMode.Size));
+                mRegisters.set_Val(addrMode.Dst, Eval((uint)(mRegisters.get_Val(addrMode.Dst)), (uint)(mRegisters.get_Val(addrMode.Src)), Operation.SubstractWithCarry, addrMode.Size));
                 clkCyc += 3;
             }
             else
             {
                 if (addrMode.Direction == 0)
                 {
-                    set_RAMn(false, Eval(System.Convert.ToUInt32(addrMode.IndMem), System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Src)), Operation.SubstractWithCarry, addrMode.Size));
+                    set_RAMn(false, Eval((uint)(addrMode.IndMem), (uint)(mRegisters.get_Val(addrMode.Src)), Operation.SubstractWithCarry, addrMode.Size));
                     clkCyc += 16;
                 }
                 else
                 {
-                    mRegisters.set_Val(addrMode.Dst, Eval(System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Dst)), System.Convert.ToUInt32(addrMode.IndMem), Operation.SubstractWithCarry, addrMode.Size));
+                    mRegisters.set_Val(addrMode.Dst, Eval((uint)(mRegisters.get_Val(addrMode.Dst)), (uint)(addrMode.IndMem), Operation.SubstractWithCarry, addrMode.Size));
                     clkCyc += 9;
                 }
             }
@@ -453,13 +453,13 @@ namespace x8086SharpEmu
 
         private void _1C() // SBB AL Ib
         {
-            mRegisters.AL = (byte)Eval(System.Convert.ToUInt32(mRegisters.AL), System.Convert.ToUInt32(Param(index: ParamIndex.First, size: DataSize.Byte)), Operation.SubstractWithCarry, DataSize.Byte);
+            mRegisters.AL = (byte)Eval((uint)(mRegisters.AL), (uint)(Param(index: ParamIndex.First, size: DataSize.Byte)), Operation.SubstractWithCarry, DataSize.Byte);
             clkCyc += 4;
         }
 
         private void _1D() // SBB AX Iv
         {
-            mRegisters.AX = Eval(System.Convert.ToUInt32(mRegisters.AX), System.Convert.ToUInt32(Param(index: ParamIndex.First, size: DataSize.Word)), Operation.SubstractWithCarry, DataSize.Word);
+            mRegisters.AX = Eval((uint)(mRegisters.AX), (uint)(Param(index: ParamIndex.First, size: DataSize.Word)), Operation.SubstractWithCarry, DataSize.Word);
             clkCyc += 4;
         }
 
@@ -481,19 +481,19 @@ namespace x8086SharpEmu
             SetAddressing();
             if (addrMode.IsDirect)
             {
-                mRegisters.set_Val(addrMode.Dst, Eval(System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Dst)), System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Src)), Operation.LogicAnd, addrMode.Size));
+                mRegisters.set_Val(addrMode.Dst, Eval((uint)(mRegisters.get_Val(addrMode.Dst)), (uint)(mRegisters.get_Val(addrMode.Src)), Operation.LogicAnd, addrMode.Size));
                 clkCyc += 3;
             }
             else
             {
                 if (addrMode.Direction == 0)
                 {
-                    set_RAMn(false, Eval(System.Convert.ToUInt32(addrMode.IndMem), System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Src)), Operation.LogicAnd, addrMode.Size));
+                    set_RAMn(false, Eval((uint)(addrMode.IndMem), (uint)(mRegisters.get_Val(addrMode.Src)), Operation.LogicAnd, addrMode.Size));
                     clkCyc += 16;
                 }
                 else
                 {
-                    mRegisters.set_Val(addrMode.Dst, Eval(System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Dst)), System.Convert.ToUInt32(addrMode.IndMem), Operation.LogicAnd, addrMode.Size));
+                    mRegisters.set_Val(addrMode.Dst, Eval((uint)(mRegisters.get_Val(addrMode.Dst)), (uint)(addrMode.IndMem), Operation.LogicAnd, addrMode.Size));
                     clkCyc += 9;
                 }
             }
@@ -501,13 +501,13 @@ namespace x8086SharpEmu
 
         private void _24() // AND AL Ib
         {
-            mRegisters.AL = (byte)Eval(System.Convert.ToUInt32(mRegisters.AL), System.Convert.ToUInt32(Param(index: ParamIndex.First, size: DataSize.Byte)), Operation.LogicAnd, DataSize.Byte);
+            mRegisters.AL = (byte)Eval((uint)(mRegisters.AL), (uint)(Param(index: ParamIndex.First, size: DataSize.Byte)), Operation.LogicAnd, DataSize.Byte);
             clkCyc += 4;
         }
 
         private void _25() // AND AX Iv
         {
-            mRegisters.AX = Eval(System.Convert.ToUInt32(mRegisters.AX), System.Convert.ToUInt32(Param(index: ParamIndex.First, size: DataSize.Word)), Operation.LogicAnd, DataSize.Word);
+            mRegisters.AX = Eval((uint)(mRegisters.AX), (uint)(Param(index: ParamIndex.First, size: DataSize.Word)), Operation.LogicAnd, DataSize.Word);
             clkCyc += 4;
         }
 
@@ -523,7 +523,7 @@ namespace x8086SharpEmu
         {
             if (mRegisters.AL.LowNib() > 9 || mFlags.AF == 1)
             {
-                tmpUVal = System.Convert.ToUInt32((mRegisters.AL) + 6);
+                tmpUVal = (uint)((mRegisters.AL) + 6);
                 mRegisters.AL += (byte)6;
                 mFlags.AF = (byte)1;
                 mFlags.CF = (byte)(mFlags.CF | (((tmpUVal & 0xFF00) != 0) ? 1 : 0));
@@ -534,7 +534,7 @@ namespace x8086SharpEmu
             }
             if ((mRegisters.AL & 0xF0) > 0x90 || mFlags.CF == 1)
             {
-                tmpUVal = System.Convert.ToUInt32((mRegisters.AL) + 0x60);
+                tmpUVal = (uint)((mRegisters.AL) + 0x60);
                 mRegisters.AL += (byte)(0x60);
                 mFlags.CF = (byte)1;
             }
@@ -551,19 +551,19 @@ namespace x8086SharpEmu
             SetAddressing();
             if (addrMode.IsDirect)
             {
-                mRegisters.set_Val(addrMode.Dst, Eval(System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Dst)), System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Src)), Operation.Substract, addrMode.Size));
+                mRegisters.set_Val(addrMode.Dst, Eval((uint)(mRegisters.get_Val(addrMode.Dst)), (uint)(mRegisters.get_Val(addrMode.Src)), Operation.Substract, addrMode.Size));
                 clkCyc += 3;
             }
             else
             {
                 if (addrMode.Direction == 0)
                 {
-                    set_RAMn(false, Eval(System.Convert.ToUInt32(addrMode.IndMem), System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Src)), Operation.Substract, addrMode.Size));
+                    set_RAMn(false, Eval((uint)(addrMode.IndMem), (uint)(mRegisters.get_Val(addrMode.Src)), Operation.Substract, addrMode.Size));
                     clkCyc += 16;
                 }
                 else
                 {
-                    mRegisters.set_Val(addrMode.Dst, Eval(System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Dst)), System.Convert.ToUInt32(addrMode.IndMem), Operation.Substract, addrMode.Size));
+                    mRegisters.set_Val(addrMode.Dst, Eval((uint)(mRegisters.get_Val(addrMode.Dst)), (uint)(addrMode.IndMem), Operation.Substract, addrMode.Size));
                     clkCyc += 9;
                 }
             }
@@ -571,13 +571,13 @@ namespace x8086SharpEmu
 
         private void _2C() // SUB AL Ib
         {
-            mRegisters.AL = (byte)Eval(System.Convert.ToUInt32(mRegisters.AL), System.Convert.ToUInt32(Param(index: ParamIndex.First, size: DataSize.Byte)), Operation.Substract, DataSize.Byte);
+            mRegisters.AL = (byte)Eval((uint)(mRegisters.AL), (uint)(Param(index: ParamIndex.First, size: DataSize.Byte)), Operation.Substract, DataSize.Byte);
             clkCyc += 4;
         }
 
         private void _2D() // SUB AX, Iv
         {
-            mRegisters.AX = Eval(System.Convert.ToUInt32(mRegisters.AX), System.Convert.ToUInt32(Param(index: ParamIndex.First, size: DataSize.Word)), Operation.Substract, DataSize.Word);
+            mRegisters.AX = Eval((uint)(mRegisters.AX), (uint)(Param(index: ParamIndex.First, size: DataSize.Word)), Operation.Substract, DataSize.Word);
             clkCyc += 4;
         }
 
@@ -614,19 +614,19 @@ namespace x8086SharpEmu
             SetAddressing();
             if (addrMode.IsDirect)
             {
-                mRegisters.set_Val(addrMode.Dst, Eval(System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Dst)), System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Src)), Operation.LogicXor, addrMode.Size));
+                mRegisters.set_Val(addrMode.Dst, Eval((uint)(mRegisters.get_Val(addrMode.Dst)), (uint)(mRegisters.get_Val(addrMode.Src)), Operation.LogicXor, addrMode.Size));
                 clkCyc += 3;
             }
             else
             {
                 if (addrMode.Direction == 0)
                 {
-                    set_RAMn(false, Eval(System.Convert.ToUInt32(addrMode.IndMem), System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Src)), Operation.LogicXor, addrMode.Size));
+                    set_RAMn(false, Eval((uint)(addrMode.IndMem), (uint)(mRegisters.get_Val(addrMode.Src)), Operation.LogicXor, addrMode.Size));
                     clkCyc += 16;
                 }
                 else
                 {
-                    mRegisters.set_Val(addrMode.Dst, Eval(System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Dst)), System.Convert.ToUInt32(addrMode.IndMem), Operation.LogicXor, addrMode.Size));
+                    mRegisters.set_Val(addrMode.Dst, Eval((uint)(mRegisters.get_Val(addrMode.Dst)), (uint)(addrMode.IndMem), Operation.LogicXor, addrMode.Size));
                     clkCyc += 9;
                 }
             }
@@ -634,13 +634,13 @@ namespace x8086SharpEmu
 
         private void _34() // XOR AL Ib
         {
-            mRegisters.AL = (byte)Eval(System.Convert.ToUInt32(mRegisters.AL), System.Convert.ToUInt32(Param(index: ParamIndex.First, size: DataSize.Byte)), Operation.LogicXor, DataSize.Byte);
+            mRegisters.AL = (byte)Eval((uint)(mRegisters.AL), (uint)(Param(index: ParamIndex.First, size: DataSize.Byte)), Operation.LogicXor, DataSize.Byte);
             clkCyc += 4;
         }
 
         private void _35() // XOR AX Iv
         {
-            mRegisters.AX = Eval(System.Convert.ToUInt32(mRegisters.AX), System.Convert.ToUInt32(Param(index: ParamIndex.First, size: DataSize.Word)), Operation.LogicXor, DataSize.Word);
+            mRegisters.AX = Eval((uint)(mRegisters.AX), (uint)(Param(index: ParamIndex.First, size: DataSize.Word)), Operation.LogicXor, DataSize.Word);
             clkCyc += 4;
         }
 
@@ -657,7 +657,7 @@ namespace x8086SharpEmu
                 mFlags.AF = (byte)0;
                 mFlags.CF = (byte)0;
             }
-            mRegisters.AL = System.Convert.ToByte(mRegisters.AL.LowNib());
+            mRegisters.AL = (byte)(mRegisters.AL.LowNib());
             clkCyc += 8;
         }
 
@@ -666,18 +666,18 @@ namespace x8086SharpEmu
             SetAddressing();
             if (addrMode.IsDirect)
             {
-                Eval(System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Dst)), System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Src)), Operation.Compare, addrMode.Size);
+                Eval((uint)(mRegisters.get_Val(addrMode.Dst)), (uint)(mRegisters.get_Val(addrMode.Src)), Operation.Compare, addrMode.Size);
                 clkCyc += 3;
             }
             else
             {
                 if (addrMode.Direction == 0)
                 {
-                    Eval(System.Convert.ToUInt32(addrMode.IndMem), System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Src)), Operation.Compare, addrMode.Size);
+                    Eval((uint)(addrMode.IndMem), (uint)(mRegisters.get_Val(addrMode.Src)), Operation.Compare, addrMode.Size);
                 }
                 else
                 {
-                    Eval(System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Dst)), System.Convert.ToUInt32(addrMode.IndMem), Operation.Compare, addrMode.Size);
+                    Eval((uint)(mRegisters.get_Val(addrMode.Dst)), (uint)(addrMode.IndMem), Operation.Compare, addrMode.Size);
                 }
                 clkCyc += 9;
             }
@@ -685,13 +685,13 @@ namespace x8086SharpEmu
 
         private void _3C() // CMP AL Ib
         {
-            Eval(System.Convert.ToUInt32(mRegisters.AL), System.Convert.ToUInt32(Param(index: ParamIndex.First, size: DataSize.Byte)), Operation.Compare, DataSize.Byte);
+            Eval((uint)(mRegisters.AL), (uint)(Param(index: ParamIndex.First, size: DataSize.Byte)), Operation.Compare, DataSize.Byte);
             clkCyc += 4;
         }
 
         private void _3D() // CMP AX Iv
         {
-            Eval(System.Convert.ToUInt32(mRegisters.AX), System.Convert.ToUInt32(Param(index: ParamIndex.First, size: DataSize.Word)), Operation.Compare, DataSize.Word);
+            Eval((uint)(mRegisters.AX), (uint)(Param(index: ParamIndex.First, size: DataSize.Word)), Operation.Compare, DataSize.Word);
             clkCyc += 4;
         }
 
@@ -708,21 +708,21 @@ namespace x8086SharpEmu
                 mFlags.AF = (byte)0;
                 mFlags.CF = (byte)0;
             }
-            mRegisters.AL = System.Convert.ToByte(mRegisters.AL.LowNib());
+            mRegisters.AL = (byte)(mRegisters.AL.LowNib());
             clkCyc += 8;
         }
 
         private void _40_47() // INC DI
         {
             SetRegister1Alt(opCode);
-            mRegisters.set_Val(addrMode.Register1, Eval(System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Register1)), (uint)1, Operation.Increment, DataSize.Word));
+            mRegisters.set_Val(addrMode.Register1, Eval((uint)(mRegisters.get_Val(addrMode.Register1)), (uint)1, Operation.Increment, DataSize.Word));
             clkCyc += 3;
         }
 
         private void _48_4F() // DEC DI
         {
             SetRegister1Alt(opCode);
-            mRegisters.set_Val(addrMode.Register1, Eval(System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Register1)), (uint)1, Operation.Decrement, DataSize.Word));
+            mRegisters.set_Val(addrMode.Register1, Eval((uint)(mRegisters.get_Val(addrMode.Register1)), (uint)1, Operation.Decrement, DataSize.Word));
             clkCyc += 3;
         }
 
@@ -753,12 +753,12 @@ namespace x8086SharpEmu
         {
             if (mVic20)
             {
-                tmpUVal = System.Convert.ToUInt32(mRegisters.SP);
+                tmpUVal = (uint)(mRegisters.SP);
                 PushIntoStack(mRegisters.AX);
                 PushIntoStack(mRegisters.CX);
                 PushIntoStack(mRegisters.DX);
                 PushIntoStack(mRegisters.BX);
-                PushIntoStack(System.Convert.ToUInt16(tmpUVal));
+                PushIntoStack((ushort)(tmpUVal));
                 PushIntoStack(mRegisters.BP);
                 PushIntoStack(mRegisters.SI);
                 PushIntoStack(mRegisters.DI);
@@ -836,8 +836,8 @@ namespace x8086SharpEmu
             {
                 // PRE ALPHA CODE - UNTESTED
                 SetAddressing();
-                uint tmp1 = System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Register1));
-                uint tmp2 = System.Convert.ToUInt32(Param(index: ParamIndex.First, size: DataSize.Word));
+                uint tmp1 = (uint)(mRegisters.get_Val(addrMode.Register1));
+                uint tmp2 = (uint)(Param(index: ParamIndex.First, size: DataSize.Word));
                 if ((tmp1 & 0x8000) == 0x8000)
                 {
                     tmp1 = tmp1 | 0xFFFF_0000;
@@ -886,8 +886,8 @@ namespace x8086SharpEmu
             {
                 // PRE ALPHA CODE - UNTESTED
                 SetAddressing();
-                uint tmp1 = System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Register1));
-                uint tmp2 = System.Convert.ToUInt32(To16bitsWithSign(Param(index: ParamIndex.First, size: DataSize.Byte)));
+                uint tmp1 = (uint)(mRegisters.get_Val(addrMode.Register1));
+                uint tmp2 = (uint)(To16bitsWithSign(Param(index: ParamIndex.First, size: DataSize.Byte)));
                 if ((tmp1 & 0x8000) == 0x8000)
                 {
                     tmp1 = tmp1 | 0xFFFF_0000;
@@ -1156,12 +1156,12 @@ namespace x8086SharpEmu
             SetAddressing();
             if (addrMode.IsDirect)
             {
-                Eval(System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Dst)), System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Src)), Operation.Test, addrMode.Size);
+                Eval((uint)(mRegisters.get_Val(addrMode.Dst)), (uint)(mRegisters.get_Val(addrMode.Src)), Operation.Test, addrMode.Size);
                 clkCyc += 3;
             }
             else
             {
-                Eval(System.Convert.ToUInt32(addrMode.IndMem), System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Dst)), Operation.Test, addrMode.Size);
+                Eval((uint)(addrMode.IndMem), (uint)(mRegisters.get_Val(addrMode.Dst)), Operation.Test, addrMode.Size);
                 clkCyc += 9;
             }
         }
@@ -1171,7 +1171,7 @@ namespace x8086SharpEmu
             SetAddressing();
             if (addrMode.IsDirect)
             {
-                tmpUVal = System.Convert.ToUInt32(mRegisters.get_Val(addrMode.Dst));
+                tmpUVal = (uint)(mRegisters.get_Val(addrMode.Dst));
                 mRegisters.set_Val(addrMode.Dst, mRegisters.get_Val(addrMode.Src));
                 mRegisters.set_Val(addrMode.Src, (ushort)tmpUVal);
                 clkCyc += 4;
@@ -1275,79 +1275,79 @@ namespace x8086SharpEmu
 
         private void _91() // XCHG CX AX
         {
-            tmpUVal = System.Convert.ToUInt32(mRegisters.AX);
+            tmpUVal = (uint)(mRegisters.AX);
             mRegisters.AX = mRegisters.CX;
-            mRegisters.CX = System.Convert.ToUInt16(tmpUVal);
+            mRegisters.CX = (ushort)(tmpUVal);
             clkCyc += 3;
         }
 
         private void _92() // XCHG DX AX
         {
-            tmpUVal = System.Convert.ToUInt32(mRegisters.AX);
+            tmpUVal = (uint)(mRegisters.AX);
             mRegisters.AX = mRegisters.DX;
-            mRegisters.DX = System.Convert.ToUInt16(tmpUVal);
+            mRegisters.DX = (ushort)(tmpUVal);
             clkCyc += 3;
         }
 
         private void _93() // XCHG BX AX
         {
-            tmpUVal = System.Convert.ToUInt32(mRegisters.AX);
+            tmpUVal = (uint)(mRegisters.AX);
             mRegisters.AX = mRegisters.BX;
-            mRegisters.BX = System.Convert.ToUInt16(tmpUVal);
+            mRegisters.BX = (ushort)(tmpUVal);
             clkCyc += 3;
         }
 
         private void _94() // XCHG SP AX
         {
-            tmpUVal = System.Convert.ToUInt32(mRegisters.AX);
+            tmpUVal = (uint)(mRegisters.AX);
             mRegisters.AX = mRegisters.SP;
-            mRegisters.SP = System.Convert.ToUInt16(tmpUVal);
+            mRegisters.SP = (ushort)(tmpUVal);
             clkCyc += 3;
         }
 
         private void _95() // XCHG BP AX
         {
-            tmpUVal = System.Convert.ToUInt32(mRegisters.AX);
+            tmpUVal = (uint)(mRegisters.AX);
             mRegisters.AX = mRegisters.BP;
-            mRegisters.BP = System.Convert.ToUInt16(tmpUVal);
+            mRegisters.BP = (ushort)(tmpUVal);
             clkCyc += 3;
         }
 
         private void _96() // XCHG SI AX
         {
-            tmpUVal = System.Convert.ToUInt32(mRegisters.AX);
+            tmpUVal = (uint)(mRegisters.AX);
             mRegisters.AX = mRegisters.SI;
-            mRegisters.SI = System.Convert.ToUInt16(tmpUVal);
+            mRegisters.SI = (ushort)(tmpUVal);
             clkCyc += 3;
         }
 
         private void _97() // XCHG DI AX
         {
-            tmpUVal = System.Convert.ToUInt32(mRegisters.AX);
+            tmpUVal = (uint)(mRegisters.AX);
             mRegisters.AX = mRegisters.DI;
-            mRegisters.DI = System.Convert.ToUInt16(tmpUVal);
+            mRegisters.DI = (ushort)(tmpUVal);
             clkCyc += 3;
         }
 
         private void _98() // CBW
         {
-            mRegisters.AX = To16bitsWithSign(System.Convert.ToUInt16(mRegisters.AL));
+            mRegisters.AX = To16bitsWithSign((ushort)(mRegisters.AL));
             clkCyc += 2;
         }
 
         private void _99() // CWD
         {
-            mRegisters.DX = System.Convert.ToUInt16(((mRegisters.AH & 0x80) != 0) ? 0xFFFF : 0x0);
+            mRegisters.DX = (ushort)(((mRegisters.AH & 0x80) != 0) ? 0xFFFF : 0x0);
             clkCyc += 5;
         }
 
         private void _9A() // CALL Ap
         {
             IPAddrOffet = Param(index: ParamIndex.First, size: DataSize.Word);
-            tmpUVal = System.Convert.ToUInt32(Param(index: ParamIndex.Second, size: DataSize.Word));
+            tmpUVal = (uint)(Param(index: ParamIndex.Second, size: DataSize.Word));
             PushIntoStack(mRegisters.CS);
             PushIntoStack((ushort)(mRegisters.IP + opCodeSize));
-            mRegisters.CS = System.Convert.ToUInt16(tmpUVal);
+            mRegisters.CS = (ushort)(tmpUVal);
             clkCyc += 28;
         }
 
@@ -1358,7 +1358,7 @@ namespace x8086SharpEmu
 
         private void _9C() // PUSHF
         {
-            PushIntoStack(System.Convert.ToUInt16((mModel == Models.IBMPC_5150 ? 0xFFF : 0xFFFF) & mFlags.EFlags));
+            PushIntoStack((ushort)((mModel == Models.IBMPC_5150 ? 0xFFF : 0xFFFF) & mFlags.EFlags));
             clkCyc += 10;
         }
 
@@ -1376,31 +1376,31 @@ namespace x8086SharpEmu
 
         private void _9F() // LAHF
         {
-            mRegisters.AH = System.Convert.ToByte(mFlags.EFlags);
+            mRegisters.AH = (byte)(mFlags.EFlags);
             clkCyc += 4;
         }
 
         private void _A0() // MOV AL Ob
         {
-            mRegisters.AL = get_RAM8(System.Convert.ToUInt16(mRegisters.ActiveSegmentValue), Param(index: ParamIndex.First, size: DataSize.Word), (byte)0, false); //
+            mRegisters.AL = get_RAM8((ushort)(mRegisters.ActiveSegmentValue), Param(index: ParamIndex.First, size: DataSize.Word), (byte)0, false); //
             clkCyc += 10;
         }
 
         private void _A1() // MOV AX Ov
         {
-            mRegisters.AX = get_RAM16(System.Convert.ToUInt16(mRegisters.ActiveSegmentValue), Param(index: ParamIndex.First, size: DataSize.Word), (byte)0, false); //
+            mRegisters.AX = get_RAM16((ushort)(mRegisters.ActiveSegmentValue), Param(index: ParamIndex.First, size: DataSize.Word), (byte)0, false); //
             clkCyc += 10;
         }
 
         private void _A2() // MOV Ob AL
         {
-            set_RAM8(System.Convert.ToUInt16(mRegisters.ActiveSegmentValue), Param(index: ParamIndex.First, size: DataSize.Word), (byte)0, false, mRegisters.AL); //
+            set_RAM8((ushort)(mRegisters.ActiveSegmentValue), Param(index: ParamIndex.First, size: DataSize.Word), (byte)0, false, mRegisters.AL); //
             clkCyc += 10;
         }
 
         private void _A3() // MOV Ov AX
         {
-            set_RAM16(System.Convert.ToUInt16(mRegisters.ActiveSegmentValue), Param(index: ParamIndex.First, size: DataSize.Word), (byte)0, false, mRegisters.AX); //
+            set_RAM16((ushort)(mRegisters.ActiveSegmentValue), Param(index: ParamIndex.First, size: DataSize.Word), (byte)0, false, mRegisters.AX); //
             clkCyc += 10;
         }
 
@@ -1416,13 +1416,13 @@ namespace x8086SharpEmu
 
         private void _A8() // TEST AL Ib
         {
-            Eval(System.Convert.ToUInt32(mRegisters.AL), System.Convert.ToUInt32(Param(index: ParamIndex.First, size: DataSize.Byte)), Operation.Test, DataSize.Byte);
+            Eval((uint)(mRegisters.AL), (uint)(Param(index: ParamIndex.First, size: DataSize.Byte)), Operation.Test, DataSize.Byte);
             clkCyc += 4;
         }
 
         private void _A9() // TEST AX Iv
         {
-            Eval(System.Convert.ToUInt32(mRegisters.AX), System.Convert.ToUInt32(Param(index: ParamIndex.First, size: DataSize.Word)), Operation.Test, DataSize.Word);
+            Eval((uint)(mRegisters.AX), (uint)(Param(index: ParamIndex.First, size: DataSize.Word)), Operation.Test, DataSize.Word);
             clkCyc += 4;
         }
 
@@ -1557,7 +1557,7 @@ namespace x8086SharpEmu
             }
             //mRegisters.set_Val((int) (addrMode.Register1) | shl3, addrMode.IndMem);
             mRegisters.set_Val((addrMode.Register1) | GPRegisters.RegistersTypes.AX, addrMode.IndMem);
-            mRegisters.set_Val(opCode == 0xC4 ? GPRegisters.RegistersTypes.ES : GPRegisters.RegistersTypes.DS, get_RAM16(System.Convert.ToUInt16(mRegisters.ActiveSegmentValue), addrMode.IndAdr, (byte)2, false));
+            mRegisters.set_Val(opCode == 0xC4 ? GPRegisters.RegistersTypes.ES : GPRegisters.RegistersTypes.DS, get_RAM16((ushort)(mRegisters.ActiveSegmentValue), addrMode.IndAdr, (byte)2, false));
             ignoreINTs = true;
             clkCyc += 16;
         }
@@ -1567,11 +1567,11 @@ namespace x8086SharpEmu
             SetAddressing();
             if (addrMode.IsDirect)
             {
-                mRegisters.set_Val(addrMode.Src, Param(ParamIndex.First, System.Convert.ToUInt16(opCodeSize)));
+                mRegisters.set_Val(addrMode.Src, Param(ParamIndex.First, (ushort)(opCodeSize)));
             }
             else
             {
-                set_RAMn(false, Param(ParamIndex.First, System.Convert.ToUInt16(opCodeSize)));
+                set_RAMn(false, Param(ParamIndex.First, (ushort)(opCodeSize)));
             }
             clkCyc += 10;
         }
@@ -1582,7 +1582,7 @@ namespace x8086SharpEmu
             {
                 // PRE ALPHA CODE - UNTESTED
                 ushort stackSize = Param(index: ParamIndex.First, size: DataSize.Word);
-                ushort nestLevel = System.Convert.ToUInt16(Param(index: ParamIndex.Second, size: DataSize.Byte) & 0x1F);
+                ushort nestLevel = (ushort)(Param(index: ParamIndex.Second, size: DataSize.Byte) & 0x1F);
                 PushIntoStack(mRegisters.BP);
                 var frameTemp = mRegisters.SP;
                 if (nestLevel > 0)
@@ -1633,10 +1633,10 @@ namespace x8086SharpEmu
 
         private void _CA() // RETF Iw
         {
-            tmpUVal = System.Convert.ToUInt32(Param(index: ParamIndex.First, size: DataSize.Word));
+            tmpUVal = (uint)(Param(index: ParamIndex.First, size: DataSize.Word));
             IPAddrOffet = PopFromStack();
             mRegisters.CS = PopFromStack();
-            mRegisters.SP += System.Convert.ToUInt16(tmpUVal);
+            mRegisters.SP += (ushort)(tmpUVal);
             clkCyc += 17;
         }
 
@@ -1687,7 +1687,7 @@ namespace x8086SharpEmu
 
         private void _D4() // AAM I0
         {
-            tmpUVal = System.Convert.ToUInt32(Param(index: ParamIndex.First, size: DataSize.Byte));
+            tmpUVal = (uint)(Param(index: ParamIndex.First, size: DataSize.Byte));
             if (tmpUVal == 0)
             {
                 HandleInterrupt((byte)0, true);
@@ -1695,13 +1695,13 @@ namespace x8086SharpEmu
             }
             mRegisters.AH = (byte)(mRegisters.AL / tmpUVal);
             mRegisters.AL = (byte)(mRegisters.AL % tmpUVal);
-            SetSZPFlags(System.Convert.ToUInt32(mRegisters.AX), DataSize.Word);
+            SetSZPFlags((uint)(mRegisters.AX), DataSize.Word);
             clkCyc += 83;
         }
 
         private void _D5() // AAD I0
         {
-            tmpUVal = System.Convert.ToUInt32(Param(index: ParamIndex.First, size: DataSize.Byte));
+            tmpUVal = (uint)(Param(index: ParamIndex.First, size: DataSize.Byte));
             tmpUVal = tmpUVal * mRegisters.AH + mRegisters.AL;
             mRegisters.AL = (byte)(tmpUVal);
             mRegisters.AH = (byte)0;
@@ -1714,7 +1714,7 @@ namespace x8086SharpEmu
         {
             if (mVic20)
             {
-                mRegisters.AL = get_RAM8(System.Convert.ToUInt16(mRegisters.ActiveSegmentValue), (ushort)(mRegisters.BX + mRegisters.AL), (byte)0, false);
+                mRegisters.AL = get_RAM8((ushort)(mRegisters.ActiveSegmentValue), (ushort)(mRegisters.BX + mRegisters.AL), (byte)0, false);
             }
             else
             {
@@ -1725,7 +1725,7 @@ namespace x8086SharpEmu
 
         private void _D7() // XLATB
         {
-            mRegisters.AL = get_RAM8(System.Convert.ToUInt16(mRegisters.ActiveSegmentValue), (ushort)(mRegisters.BX + mRegisters.AL), (byte)0, false);
+            mRegisters.AL = get_RAM8((ushort)(mRegisters.ActiveSegmentValue), (ushort)(mRegisters.BX + mRegisters.AL), (byte)0, false);
             clkCyc += 11;
         }
 
@@ -1803,25 +1803,25 @@ namespace x8086SharpEmu
 
         private void _E4() // IN AL Ib
         {
-            mRegisters.AL = (byte)(ReceiveFromPort(System.Convert.ToUInt32(Param(index: ParamIndex.First, size: DataSize.Byte))));
+            mRegisters.AL = (byte)(ReceiveFromPort((uint)(Param(index: ParamIndex.First, size: DataSize.Byte))));
             clkCyc += 10;
         }
 
         private void _E5() // IN AX Ib
         {
-            mRegisters.AX = System.Convert.ToUInt16(ReceiveFromPort(System.Convert.ToUInt32(Param(index: ParamIndex.First, size: DataSize.Byte))));
+            mRegisters.AX = (ushort)(ReceiveFromPort((uint)(Param(index: ParamIndex.First, size: DataSize.Byte))));
             clkCyc += 10;
         }
 
         private void _E6() // OUT Ib AL
         {
-            SendToPort(System.Convert.ToUInt32(Param(index: ParamIndex.First, size: DataSize.Byte)), System.Convert.ToUInt32(mRegisters.AL));
+            SendToPort((uint)(Param(index: ParamIndex.First, size: DataSize.Byte)), (uint)(mRegisters.AL));
             clkCyc += 10;
         }
 
         private void _E7() // OUT Ib AX
         {
-            SendToPort(System.Convert.ToUInt32(Param(index: ParamIndex.First, size: DataSize.Byte)), System.Convert.ToUInt32(mRegisters.AX));
+            SendToPort((uint)(Param(index: ParamIndex.First, size: DataSize.Byte)), (uint)(mRegisters.AX));
             clkCyc += 10;
         }
 
@@ -1853,25 +1853,25 @@ namespace x8086SharpEmu
 
         private void _EC() // IN AL DX
         {
-            mRegisters.AL = (byte)(ReceiveFromPort(System.Convert.ToUInt32(mRegisters.DX)));
+            mRegisters.AL = (byte)(ReceiveFromPort((uint)(mRegisters.DX)));
             clkCyc += 8;
         }
 
         private void _ED() // IN AX DX
         {
-            mRegisters.AX = System.Convert.ToUInt16(ReceiveFromPort(System.Convert.ToUInt32(mRegisters.DX)));
+            mRegisters.AX = (ushort)(ReceiveFromPort((uint)(mRegisters.DX)));
             clkCyc += 8;
         }
 
         private void _EE() // OUT DX AL
         {
-            SendToPort(System.Convert.ToUInt32(mRegisters.DX), System.Convert.ToUInt32(mRegisters.AL));
+            SendToPort((uint)(mRegisters.DX), (uint)(mRegisters.AL));
             clkCyc += 8;
         }
 
         private void _EF() // OUT DX AX
         {
-            SendToPort(System.Convert.ToUInt32(mRegisters.DX), System.Convert.ToUInt32(mRegisters.AX));
+            SendToPort((uint)(mRegisters.DX), (uint)(mRegisters.AX));
             clkCyc += 8;
         }
 
