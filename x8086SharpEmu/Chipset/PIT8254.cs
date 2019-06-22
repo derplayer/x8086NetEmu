@@ -118,7 +118,7 @@ namespace x8086SharpEmu
                     // bit4-5 = rwMode
                     // bit1-3 = countMode
                     // bit0   = bcdMode
-                    //statusLatch = System.Convert.ToInt32((outputValue ? 0x80 : 0x0) || (nullCount ? 0x40 : 0x0) |
+                    //statusLatch = (int)((outputValue ? 0x80 : 0x0) || (nullCount ? 0x40 : 0x0) |
                     //	(rwMode << 4) |
                     //	(countMode << 1) || (bcdMode ? 0x1 : 0x0));
                     statusLatch = ((outputValue ? 0x80 : 0) | (nullCount ? 0x40 : 0) | (rwMode << 4) | (countMode << 1) | (bcdMode ? 0x1 : 0x0));
@@ -189,19 +189,19 @@ namespace x8086SharpEmu
                         ChangeCount();
                         break;
                     case 2: // MSB only
-                        countRegister = System.Convert.ToInt32((v << 8) & 0xFF00);
+                        countRegister = (int)((v << 8) & 0xFF00);
                         ChangeCount();
                         break;
                     case 3: // LSB followed by MSB
                         if (countRegisterMsb)
                         {
-                            countRegister = System.Convert.ToInt32((countRegister & 0xFF) | ((v << 8) & 0xFF00));
+                            countRegister = (int)((countRegister & 0xFF) | ((v << 8) & 0xFF00));
                             countRegisterMsb = false;
                             ChangeCount();
                         }
                         else
                         {
-                            countRegister = System.Convert.ToInt32((countRegister & 0xFF00) | (v & 0xFF));
+                            countRegister = (int)((countRegister & 0xFF00) | (v & 0xFF));
                             countRegisterMsb = true;
                         }
                         break;
@@ -261,14 +261,14 @@ namespace x8086SharpEmu
                         // output goes high on terminal count
                         if (active && mGgate && (!outputValue))
                         {
-                            clocks = System.Convert.ToInt32(FromCounter(counterValue) + (nullCount ? 1 : 0));
+                            clocks = (int)(FromCounter(counterValue) + (nullCount ? 1 : 0));
                         }
                         break;
                     case 1:
                         // output goes high on terminal count
                         if (!outputValue)
                         {
-                            clocks = System.Convert.ToInt32(FromCounter(counterValue) + (trigger ? 1 : 0));
+                            clocks = (int)(FromCounter(counterValue) + (trigger ? 1 : 0));
                         }
                         // output goes low on next clock after trigger
                         if (outputValue && trigger)
@@ -280,7 +280,7 @@ namespace x8086SharpEmu
                         // output goes high on reaching one
                         if (active && mGgate && outputValue)
                         {
-                            clocks = System.Convert.ToInt32(FromCounter(counterValue) + (trigger ? 0 : -1));
+                            clocks = (int)(FromCounter(counterValue) + (trigger ? 0 : -1));
                         }
                         // strobe ends on next clock
                         if (!outputValue)
@@ -297,19 +297,19 @@ namespace x8086SharpEmu
                         // output goes low on reaching zero
                         if (active && mGgate && outputValue)
                         {
-                            clocks = System.Convert.ToInt32((double)FromCounter(counterValue) / 2 + (trigger ? 1 : 0) + (countRegister & 1));
+                            clocks = (int)((double)FromCounter(counterValue) / 2 + (trigger ? 1 : 0) + (countRegister & 1));
                         }
                         // output goes high on reaching zero
                         if (active && mGgate && (!outputValue) && (!trigger))
                         {
-                            clocks = System.Convert.ToInt32((double)FromCounter(counterValue) / 2);
+                            clocks = (int)((double)FromCounter(counterValue) / 2);
                         }
                         break;
                     case 4:
                         // strobe starts on terminal count
                         if (active && mGgate && outputValue)
                         {
-                            clocks = System.Convert.ToInt32(FromCounter(counterValue) + (nullCount ? 1 : 0));
+                            clocks = (int)(FromCounter(counterValue) + (nullCount ? 1 : 0));
                         }
                         // strobe ends on next clock
                         if (!outputValue)
@@ -337,7 +337,7 @@ namespace x8086SharpEmu
                 }
                 else
                 {
-                    return owner.ClocksToTime(System.Convert.ToInt64(owner.TimeToClocks(owner.currentTime) + clocks));
+                    return owner.ClocksToTime((long)(owner.TimeToClocks(owner.currentTime) + clocks));
                 }
             }
 
@@ -410,13 +410,13 @@ namespace x8086SharpEmu
                 bool zero = false;
                 if (bcdMode)
                 {
-                    int v = System.Convert.ToInt32(((counterValue >> 12) & 0xF) * 1000 +
+                    int v = (int)(((counterValue >> 12) & 0xF) * 1000 +
                         ((counterValue >> 8) & 0xF) * 100 +
                         ((counterValue >> 4) & 0xF) * 10 +
                         (counterValue & 0xF));
                     zero = c >= 10000 || (v != 0 && c >= v);
-                    v += System.Convert.ToInt32(10000 - (c % 10000));
-                    counterValue = System.Convert.ToInt32(((v / 1000) % 10) << 12 |
+                    v += (int)(10000 - (c % 10000));
+                    counterValue = (int)(((v / 1000) % 10) << 12 |
                         ((v / 100) % 10) << 8 |
                         ((v / 10) % 10) << 4 |
                         (v % 10));
@@ -424,7 +424,7 @@ namespace x8086SharpEmu
                 else
                 {
                     zero = c > 0xFFFF || (counterValue != 0 && c >= counterValue);
-                    counterValue = System.Convert.ToInt32((counterValue - c) & 0xFFFF);
+                    counterValue = (int)((counterValue - c) & 0xFFFF);
                 }
 
                 return zero;
@@ -435,7 +435,7 @@ namespace x8086SharpEmu
             private void Update()
             {
                 // compute elapsed clock pulses since last update
-                long clocks = System.Convert.ToInt64(owner.TimeToClocks(owner.currentTime) - owner.TimeToClocks(timeStamp));
+                long clocks = (long)(owner.TimeToClocks(owner.currentTime) - owner.TimeToClocks(timeStamp));
 
                 // call mode-dependent update function
                 switch (countMode)
@@ -585,9 +585,9 @@ namespace x8086SharpEmu
                     {
                         v = 0;
                     }
-                    if (System.Convert.ToInt32(2 * clocks) < v)
+                    if ((int)(2 * clocks) < v)
                     {
-                        v -= System.Convert.ToInt32(2 * clocks);
+                        v -= (int)(2 * clocks);
                     }
                     else
                     {
@@ -609,7 +609,7 @@ namespace x8086SharpEmu
                                 counterValue = ToCounter(v);
                                 return;
                             }
-                            c -= System.Convert.ToInt32((double)v / 2);
+                            c -= (int)((double)v / 2);
                         }
                         //  zero reached in high phase
                         if ((countRegister & 1) != 0)
@@ -628,7 +628,7 @@ namespace x8086SharpEmu
                         if (2 * c >= v)
                         {
                             //  zero reached again
-                            c -= System.Convert.ToInt32((double)v / 2);
+                            c -= (int)((double)v / 2);
                             //  switch to high phase
                             outputValue = true;
                         }
@@ -830,7 +830,7 @@ namespace x8086SharpEmu
             {
                 //  write Control Word
                 int s = 0;
-                c = System.Convert.ToInt32((value >> 6) & 3);
+                c = (int)((value >> 6) & 3);
                 if (c == 3)
                 {
                     //  Read Back command
@@ -858,12 +858,12 @@ namespace x8086SharpEmu
                     else
                     {
                         //  reprogram counter mode
-                        int countm = System.Convert.ToInt32((value >> 1) & 7);
+                        int countm = (int)((value >> 1) & 7);
                         if (countm > 5)
                         {
                             countm = countm & 3;
                         }
-                        int rwm = System.Convert.ToInt32((value >> 4) & 3);
+                        int rwm = (int)((value >> 4) & 3);
                         bool bcdm = (value & 1) != 0;
                         mChannels[c].SetMode(countm, rwm, bcdm);
                         switch (c)
@@ -918,7 +918,7 @@ namespace x8086SharpEmu
             // Notify the DMA controller of the new frequency
             if (cpu.DMA != null)
             {
-                cpu.DMA.SetCh0Period(System.Convert.ToInt64(mChannels[1].GetPeriod()));
+                cpu.DMA.SetCh0Period((long)(mChannels[1].GetPeriod()));
             }
         }
 
@@ -939,7 +939,7 @@ namespace x8086SharpEmu
 #if Win32_dbg
 			if (mSpeaker != null)
 			{
-				long period = System.Convert.ToInt64(mChannels[2].GetSquareWavePeriod());
+				long period = (long)(mChannels[2].GetSquareWavePeriod());
 				if (period == 0)
 				{
 					mSpeaker.Frequency = 0;
@@ -1006,7 +1006,7 @@ namespace x8086SharpEmu
             }
 
             // reschedule task for next output change
-            long t = System.Convert.ToInt64(mChannels[0].NextOutputChangeTime());
+            long t = (long)(mChannels[0].NextOutputChangeTime());
             if (t > 0)
             {
                 cpu.Sched.RunTaskAt(task, t);

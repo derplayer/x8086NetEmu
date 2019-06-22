@@ -112,7 +112,7 @@ namespace x8086SharpEmu
 				waveLength = 0;
 			}
 			
-			halfWaveLength = System.Convert.ToInt32((double) waveLength / 2);
+			halfWaveLength = (int)((double) waveLength / 2);
 		}
 		
 		private void FillAudioBuffer(byte[] buffer)

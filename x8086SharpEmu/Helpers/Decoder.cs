@@ -1034,7 +1034,7 @@ namespace x8086SharpEmu
             else if (opCode >= 0xC6 && opCode <= 0xC7)
             {
                 SetDecoderAddressing();
-                opCodeASM = "MOV " + indASM + ", " + DecoderParam(ParamIndex.First, System.Convert.ToUInt16(opCodeSize)).ToHex(decoderAddrMode.Size);
+                opCodeASM = "MOV " + indASM + ", " + DecoderParam(ParamIndex.First, (ushort)(opCodeSize)).ToHex(decoderAddrMode.Size);
                 decoderClkCyc += (byte)10;
             } // enter
             else if (opCode == ((byte)(0xC8)))
@@ -1362,50 +1362,50 @@ namespace x8086SharpEmu
             if (decoderAddrMode.Reg == ((byte)0)) // 000    --   add imm to reg/mem
             {
                 opCodeASM = "ADD";
-                decoderClkCyc += System.Convert.ToByte(decoderAddrMode.IsDirect ? 4 : 17);
+                decoderClkCyc += (byte)(decoderAddrMode.IsDirect ? 4 : 17);
             } // 001    --  or imm to reg/mem
             else if (decoderAddrMode.Reg == ((byte)1))
             {
                 opCodeASM = "OR";
-                decoderClkCyc += System.Convert.ToByte(decoderAddrMode.IsDirect ? 4 : 17);
+                decoderClkCyc += (byte)(decoderAddrMode.IsDirect ? 4 : 17);
             } // 010    --  adc imm to reg/mem
             else if (decoderAddrMode.Reg == ((byte)2))
             {
                 opCodeASM = "ADC";
-                decoderClkCyc += System.Convert.ToByte(decoderAddrMode.IsDirect ? 4 : 17);
+                decoderClkCyc += (byte)(decoderAddrMode.IsDirect ? 4 : 17);
             } // 011    --  sbb imm from reg/mem
             else if (decoderAddrMode.Reg == ((byte)3))
             {
                 opCodeASM = "SBB";
-                decoderClkCyc += System.Convert.ToByte(decoderAddrMode.IsDirect ? 4 : 17);
+                decoderClkCyc += (byte)(decoderAddrMode.IsDirect ? 4 : 17);
             } // 100    --  and imm to reg/mem
             else if (decoderAddrMode.Reg == ((byte)4))
             {
                 opCodeASM = "AND";
-                decoderClkCyc += System.Convert.ToByte(decoderAddrMode.IsDirect ? 4 : 17);
+                decoderClkCyc += (byte)(decoderAddrMode.IsDirect ? 4 : 17);
             } // 101    --  sub imm from reg/mem
             else if (decoderAddrMode.Reg == ((byte)5))
             {
                 opCodeASM = "SUB";
-                decoderClkCyc += System.Convert.ToByte(decoderAddrMode.IsDirect ? 4 : 17);
+                decoderClkCyc += (byte)(decoderAddrMode.IsDirect ? 4 : 17);
             } // 110    --  xor imm to reg/mem
             else if (decoderAddrMode.Reg == ((byte)6))
             {
                 opCodeASM = "XOR";
-                decoderClkCyc += System.Convert.ToByte(decoderAddrMode.IsDirect ? 4 : 17);
+                decoderClkCyc += (byte)(decoderAddrMode.IsDirect ? 4 : 17);
             } // 111    --  cmp imm with reg/mem
             else if (decoderAddrMode.Reg == ((byte)7))
             {
                 opCodeASM = "CMP";
-                decoderClkCyc += System.Convert.ToByte(decoderAddrMode.IsDirect ? 4 : 10);
+                decoderClkCyc += (byte)(decoderAddrMode.IsDirect ? 4 : 10);
             }
             if (decoderAddrMode.IsDirect)
             {
-                opCodeASM += " " + decoderAddrMode.Register2.ToString() + ", " + DecoderParam(ParamIndex.First, System.Convert.ToUInt16(opCodeSize), paramSize).ToHex(paramSize);
+                opCodeASM += " " + decoderAddrMode.Register2.ToString() + ", " + DecoderParam(ParamIndex.First, (ushort)(opCodeSize), paramSize).ToHex(paramSize);
             }
             else
             {
-                opCodeASM += " " + indASM + ", " + DecoderParam(ParamIndex.First, System.Convert.ToUInt16(opCodeSize), paramSize).ToHex(paramSize);
+                opCodeASM += " " + indASM + ", " + DecoderParam(ParamIndex.First, (ushort)(opCodeSize), paramSize).ToHex(paramSize);
             }
         }
 
@@ -1478,12 +1478,12 @@ namespace x8086SharpEmu
             {
                 if (decoderAddrMode.IsDirect)
                 {
-                    opCodeASM = "TEST " + decoderAddrMode.Register2.ToString() + ", " + DecoderParam(ParamIndex.First, System.Convert.ToUInt16(opCodeSize)).ToHex(decoderAddrMode.Size);
+                    opCodeASM = "TEST " + decoderAddrMode.Register2.ToString() + ", " + DecoderParam(ParamIndex.First, (ushort)(opCodeSize)).ToHex(decoderAddrMode.Size);
                     decoderClkCyc += (byte)5;
                 }
                 else
                 {
-                    opCodeASM = "TEST " + indASM + ", " + DecoderParam(ParamIndex.First, System.Convert.ToUInt16(opCodeSize)).ToHex(decoderAddrMode.Size);
+                    opCodeASM = "TEST " + indASM + ", " + DecoderParam(ParamIndex.First, (ushort)(opCodeSize)).ToHex(decoderAddrMode.Size);
                     decoderClkCyc += (byte)11;
                 }
             } // 010    --  not
@@ -1913,7 +1913,7 @@ namespace x8086SharpEmu
             // This is too CPU expensive, with few benefits, if any... not worth it
             //If (mRegisters.IP Mod 2) <> 0 Then clkCyc += 4
 
-            return System.Convert.ToUInt16((size == DataSize.Byte || (size == DataSize.UseAddressingMode && decoderAddrMode.Size == DataSize.Byte)) ? (
+            return (ushort)((size == DataSize.Byte || (size == DataSize.UseAddressingMode && decoderAddrMode.Size == DataSize.Byte)) ? (
                 get_RAM8(mRegisters.CS, mRegisters.IP, (byte)(ipOffset + index), true)) : (
                 get_RAM16(mRegisters.CS, mRegisters.IP, (byte)(ipOffset + (int)index * 2), true)));
         }

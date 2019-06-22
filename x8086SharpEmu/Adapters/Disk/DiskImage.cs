@@ -200,7 +200,7 @@ namespace x8086SharpEmu
                 mHeads = (ushort)(0);
                 mSectors = (ushort)(0);
 
-                for (int i = 0; i <= System.Convert.ToInt32((double)geometryTable.Length / 4 - 1); i++)
+                for (int i = 0; i <= (int)((double)geometryTable.Length / 4 - 1); i++)
                 {
                     if (mFileLength == (ulong)geometryTable[i, 3])
                     {
@@ -212,7 +212,7 @@ namespace x8086SharpEmu
                 }
 
                 // Cheap trick to handle images with garbage at the end of the image file (such as the copyright crap inserted by DiskImage)
-                for (int i = 0; i <= System.Convert.ToInt32((double)geometryTable.Length / 4 - 1); i++)
+                for (int i = 0; i <= (int)((double)geometryTable.Length / 4 - 1); i++)
                 {
                     if (Math.Abs((int)mFileLength - geometryTable[i, 3]) <= 512)
                     {
@@ -300,18 +300,18 @@ namespace x8086SharpEmu
                 }
 
                 // Partition Start
-                tc1 = System.Convert.ToInt32(b[p + 3] | ((b[p + 2] & 0xC0) << 2));
+                tc1 = (int)(b[p + 3] | ((b[p + 2] & 0xC0) << 2));
                 th1 = b[p + 1];
-                ts1 = System.Convert.ToInt32(b[p + 2] & 0x3F);
-                h = System.Convert.ToInt32(th1 > h ? th1 : h);
-                s = System.Convert.ToInt32(ts1 > s ? ts1 : s);
+                ts1 = (int)(b[p + 2] & 0x3F);
+                h = (int)(th1 > h ? th1 : h);
+                s = (int)(ts1 > s ? ts1 : s);
 
                 // Partition End
-                tc2 = System.Convert.ToInt32(b[p + 7] | ((b[p + 6] & 0xC0) << 2));
+                tc2 = (int)(b[p + 7] | ((b[p + 6] & 0xC0) << 2));
                 th2 = b[p + 5];
-                ts2 = System.Convert.ToInt32(b[p + 6] & 0x3F);
-                h = System.Convert.ToInt32(th2 > h ? th2 : h);
-                s = System.Convert.ToInt32(ts2 > s ? ts2 : s);
+                ts2 = (int)(b[p + 6] & 0x3F);
+                h = (int)(th2 > h ? th2 : h);
+                s = (int)(ts2 > s ? ts2 : s);
 
                 if (tc2 < tc1)
                 {

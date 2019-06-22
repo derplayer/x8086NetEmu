@@ -367,7 +367,7 @@ namespace x8086SharpEmu
                 this.surfaceGraphics.Clear(this.BackColor);
             }
 
-            Size scanStep = new Size(System.Convert.ToInt32(Math.Ceiling((double)mBitmap.Width / mCanvasSize.Width)), System.Convert.ToInt32(Math.Ceiling((double)mBitmap.Height / mCanvasSize.Height)));
+            Size scanStep = new Size((int)(Math.Ceiling((double)mBitmap.Width / mCanvasSize.Width)), (int)(Math.Ceiling((double)mBitmap.Height / mCanvasSize.Height)));
             //scanStep.Width += mCanvasSize.Width Mod scanStep.Width
             //scanStep.Height += mCanvasSize.Height Mod scanStep.Height
             var scanStepSize = scanStep.Width * scanStep.Height;
@@ -391,9 +391,9 @@ namespace x8086SharpEmu
                 {
                     return;
                 }
-                qr += System.Convert.ToInt32(quantaError[0] * w);
-                qg += System.Convert.ToInt32(quantaError[1] * w);
-                qb += System.Convert.ToInt32(quantaError[2] * w);
+                qr += (int)(quantaError[0] * w);
+                qg += (int)(quantaError[1] * w);
+                qb += (int)(quantaError[2] * w);
                 mCanvas[qx][qy] = new ASCIIChar(ColorToASCII(qr, qg, qb), Color.FromArgb(qr, qg, qb));
             };
 
@@ -423,7 +423,7 @@ namespace x8086SharpEmu
                         {
                             for (var x1 = x; x1 <= x + scanStep.Width - 1; x1++)
                             {
-                                offset = System.Convert.ToInt32((x1 + y1 * mBitmap.Width) * 4);
+                                offset = (int)((x1 + y1 * mBitmap.Width) * 4);
 
                                 r += mBitmap.Bits[offset + 2];
                                 g += mBitmap.Bits[offset + 1];
@@ -436,8 +436,8 @@ namespace x8086SharpEmu
                         b /= scanStepSize;
                     }
 
-                    sx = System.Convert.ToInt32((double)x / scanStep.Width);
-                    sy = System.Convert.ToInt32((double)y / scanStep.Height);
+                    sx = (int)((double)x / scanStep.Width);
+                    sy = (int)((double)y / scanStep.Height);
 
                     switch (mColorMode)
                     {
@@ -445,7 +445,7 @@ namespace x8086SharpEmu
                             mCanvas[sx][sy] = new ASCIIChar(ColorToASCII(r, g, b), Color.White);
                             break;
                         case ColorModes.FullGrayScale:
-                            gray = System.Convert.ToInt32(ToGrayScale(r, g, b));
+                            gray = (int)(ToGrayScale(r, g, b));
                             mCanvas[sx][sy] = new ASCIIChar(ColorToASCII(r, g, b), Color.FromArgb(gray, gray, gray));
                             break;
                         case ColorModes.Color:
@@ -456,13 +456,13 @@ namespace x8086SharpEmu
                             // https://en.wikipedia.org/wiki/Floyd%E2%80%93Steinberg_dithering
                             if (mColorMode == ColorModes.DitheredGrayScale)
                             {
-                                r = System.Convert.ToInt32(ToGrayScale(r, g, b));
+                                r = (int)(ToGrayScale(r, g, b));
                                 g = r;
                                 b = r;
                             }
-                            dr = System.Convert.ToInt32(Math.Round((double)dColorFactor * r / 255) * dFactor);
-                            dg = System.Convert.ToInt32(Math.Round((double)dColorFactor * g / 255) * dFactor);
-                            db = System.Convert.ToInt32(Math.Round((double)dColorFactor * b / 255) * dFactor);
+                            dr = (int)(Math.Round((double)dColorFactor * r / 255) * dFactor);
+                            dg = (int)(Math.Round((double)dColorFactor * g / 255) * dFactor);
+                            db = (int)(Math.Round((double)dColorFactor * b / 255) * dFactor);
 
                             mCanvas[sx][sy] = new ASCIIChar(ColorToASCII(dr, dg, db), Color.FromArgb(dr, dg, db));
 
@@ -601,10 +601,10 @@ namespace x8086SharpEmu
         // http://stackoverflow.com/questions/1988833/converting-color-to-consolecolor
         public static ConsoleColor ToConsoleColorEGA(Color c)
         {
-            int index = System.Convert.ToInt32(c.R > 128 | c.G > 128 | c.B > 128 ? 8 : 0); // Bright bit
-            index = System.Convert.ToInt32(index | (c.R > 64 ? 4 : 0)); // Red bit
-            index = System.Convert.ToInt32(index | (c.G > 64 ? 2 : 0)); // Green bit
-            index = System.Convert.ToInt32(index | (c.B > 64 ? 1 : 0)); // Blue bit
+            int index = (int)(c.R > 128 | c.G > 128 | c.B > 128 ? 8 : 0); // Bright bit
+            index = (int)(index | (c.R > 64 ? 4 : 0)); // Red bit
+            index = (int)(index | (c.G > 64 ? 2 : 0)); // Green bit
+            index = (int)(index | (c.B > 64 ? 1 : 0)); // Blue bit
             return ((ConsoleColor)index);
         }
 

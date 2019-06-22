@@ -114,14 +114,14 @@ namespace x8086SharpEmu
                 return (byte)(0xFF);
             }
 
-            int irq = System.Convert.ToInt32((lowPrio + 1) & 7);
+            int irq = (int)((lowPrio + 1) & 7);
             while ((reqMask & (1 << irq)) == 0)
             {
                 if (!specialMask && ((rISR & (1 << irq)) != 0))
                 {
                     return (byte)(0xFF); // ISR bit blocks all lower-priority requests
                 }
-                irq = System.Convert.ToInt32((irq + 1) & 7);
+                irq = (int)((irq + 1) & 7);
             }
 
             byte irqBit = (byte)(1 << irq);
@@ -185,14 +185,14 @@ namespace x8086SharpEmu
                 if (pollMode)
                 {
                     byte pi = GetPendingInterrupt();
-                    return System.Convert.ToUInt16(pi == 0xFF ? 0 : 0x80 | pi);
+                    return (ushort)(pi == 0xFF ? 0 : 0x80 | pi);
                 }
                 return (readISR ? rISR : rIRR);
             }
             else
             {
                 // A0 = 1
-                return System.Convert.ToUInt16(rIMR);
+                return (ushort)(rIMR);
             }
         }
 
@@ -342,14 +342,14 @@ namespace x8086SharpEmu
             // Resolve non-specific EOI
             if (!specific)
             {
-                //byte m = System.Convert.ToByte(specialMask ? (rISR & (!rIMR)) : rISR);
+                //byte m = (byte)(specialMask ? (rISR & (!rIMR)) : rISR);
                 byte m = (byte)(specialMask ? (rISR & (byte)(~rIMR)) : rISR);
                 if (m != 0)
                 {
                     byte i = lowPrio;
                     do
                     {
-                        i = System.Convert.ToByte((i + 1) & 7);
+                        i = (byte)((i + 1) & 7);
                         if ((m & (1 << i)) != 0)
                         {
                             irq = i;

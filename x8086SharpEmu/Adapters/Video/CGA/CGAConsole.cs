@@ -99,8 +99,8 @@ namespace x8086SharpEmu
 			}
 			else if (MainMode == MainModes.Graphics)
 			{
-				ratio = new Size(System.Convert.ToInt32(Math.Ceiling((double) GraphicsResolution.Width / Console.LargestWindowWidth)), System.Convert.ToInt32(Math.Ceiling((double) GraphicsResolution.Height / Console.LargestWindowHeight)));
-				Console.SetWindowSize(System.Convert.ToInt32((double) GraphicsResolution.Width / ratio.Width), System.Convert.ToInt32((double) GraphicsResolution.Height / ratio.Height));
+				ratio = new Size((int)(Math.Ceiling((double) GraphicsResolution.Width / Console.LargestWindowWidth)), (int)(Math.Ceiling((double) GraphicsResolution.Height / Console.LargestWindowHeight)));
+				Console.SetWindowSize((int)((double) GraphicsResolution.Width / ratio.Width), (int)((double) GraphicsResolution.Height / ratio.Height));
 				ResetI2A();
 				Console.SetWindowSize(i2a.CanvasSize.Width, i2a.CanvasSize.Height);
 			}
@@ -238,7 +238,7 @@ namespace x8086SharpEmu
         {
             byte b = 0;
             uint address = 0;
-            int xDiv = System.Convert.ToInt32(PixelsPerByte == 4 ? 2 : 3);
+            int xDiv = (int)(PixelsPerByte == 4 ? 2 : 3);
 
             for (int y = 0; y <= GraphicsResolution.Height - 1; y++)
             {
@@ -255,19 +255,19 @@ namespace x8086SharpEmu
                                 b = (byte)(b & 3);
                                 break;
                             case 2:
-                                b = System.Convert.ToByte((b >> 2) & 3);
+                                b = (byte)((b >> 2) & 3);
                                 break;
                             case 1:
-                                b = System.Convert.ToByte((b >> 4) & 3);
+                                b = (byte)((b >> 4) & 3);
                                 break;
                             case 0:
-                                b = System.Convert.ToByte((b >> 6) & 3);
+                                b = (byte)((b >> 6) & 3);
                                 break;
                         }
                     }
                     else
                     {
-                        b = System.Convert.ToByte((b >> (7 - (x & 7))) & 1);
+                        b = (byte)((b >> (7 - (x & 7))) & 1);
                     }
 
                     i2a.DirectBitmap.set_Pixel(x, y, CGAPalette[b]);

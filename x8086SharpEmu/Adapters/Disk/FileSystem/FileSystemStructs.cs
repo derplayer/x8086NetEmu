@@ -154,17 +154,17 @@ namespace x8086SharpEmu
 
             private int[] FSTimeToNative(ushort v)
             {
-                int s = System.Convert.ToInt32((v & 0x1F) * 2);
-                int m = System.Convert.ToInt32((v & 0x3E0) >> 5);
-                int h = System.Convert.ToInt32((v & 0xF800) >> 11);
+                int s = (int)((v & 0x1F) * 2);
+                int m = (int)((v & 0x3E0) >> 5);
+                int h = (int)((v & 0xF800) >> 11);
                 return new[] { h, m, s };
             }
 
             private int[] FSDateToNative(ushort v)
             {
                 int d = v & 0x1F;
-                int m = System.Convert.ToInt32((v & 0x1E0) >> 5);
-                int y = System.Convert.ToInt32(((v & 0xFE00) >> 9) + 1980);
+                int m = (int)((v & 0x1E0) >> 5);
+                int y = (int)(((v & 0xFE00) >> 9) + 1980);
                 return new[] { y, m, d };
             }
 
@@ -344,17 +344,17 @@ namespace x8086SharpEmu
 
             private int[] FSTimeToNative(ushort v)
             {
-                int s = System.Convert.ToInt32((v & 0x1F) * 2);
-                int m = System.Convert.ToInt32((v & 0x3E0) >> 5);
-                int h = System.Convert.ToInt32((v & 0xF800) >> 11);
+                int s = (int)((v & 0x1F) * 2);
+                int m = (int)((v & 0x3E0) >> 5);
+                int h = (int)((v & 0xF800) >> 11);
                 return new[] { h, m, s };
             }
 
             private int[] FSDateToNative(ushort v)
             {
                 int d = v & 0x1F;
-                int m = System.Convert.ToInt32((v & 0x1E0) >> 5);
-                int y = System.Convert.ToInt32(((v & 0xFE00) >> 9) + 1980);
+                int m = (int)((v & 0x1E0) >> 5);
+                int y = (int)(((v & 0xFE00) >> 9) + 1980);
                 return new[] { y, m, d };
             }
 

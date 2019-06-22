@@ -272,7 +272,7 @@ namespace x8086SharpEmu
         {
             // Decode command parameters
             cmdMultitrack = (commandbuf[0] & 0x80) == 0x80;
-            cmdDrive = System.Convert.ToByte(commandbuf[1] & 3);
+            cmdDrive = (byte)(commandbuf[1] & 3);
             cmdCylinder = commandbuf[2];
             cmdRecord = commandbuf[4];
             cmdEot = commandbuf[6];
@@ -289,7 +289,7 @@ namespace x8086SharpEmu
                     cmdHead = commandbuf[3];
                     break;
                 default:
-                    cmdHead = System.Convert.ToByte((commandbuf[1] >> 2) & 1);
+                    cmdHead = (byte)((commandbuf[1] >> 2) & 1);
                     break;
             }
 
@@ -348,9 +348,9 @@ namespace x8086SharpEmu
                     {
                         if ((driveSeeking & (1 << i)) != 0)
                         {
-                            driveSeeking = (byte)(driveSeeking & System.Convert.ToByte((~(1 << i)) & 0xFF));
-                            pendingReadyChange = (byte)(pendingReadyChange & System.Convert.ToByte((~(1 << i)) & 0xFF));
-                            CommandEndSense(System.Convert.ToByte(0x20 | i), curCylinder[i]);
+                            driveSeeking = (byte)(driveSeeking & (byte)((~(1 << i)) & 0xFF));
+                            pendingReadyChange = (byte)(pendingReadyChange & (byte)((~(1 << i)) & 0xFF));
+                            CommandEndSense((byte)(0x20 | i), curCylinder[i]);
                             return;
                         }
                     }
@@ -360,8 +360,8 @@ namespace x8086SharpEmu
                     {
                         if ((pendingReadyChange & (1 << i)) != 0)
                         {
-                            pendingReadyChange = (byte)(pendingReadyChange & System.Convert.ToByte((~(1 << i)) & 0xFF));
-                            CommandEndSense(System.Convert.ToByte(0xC0 | i), curCylinder[i]);
+                            pendingReadyChange = (byte)(pendingReadyChange & (byte)((~(1 << i)) & 0xFF));
+                            CommandEndSense((byte)(0xC0 | i), curCylinder[i]);
                             return;
                         }
                     }
@@ -371,15 +371,15 @@ namespace x8086SharpEmu
                     break;
 
                 case Commands.SPECIFY: // SPECIFY: no response
-                    ctlStepRateTime = System.Convert.ToByte((commandbuf[1] >> 4) & 0xF);
-                    ctlHeadUnloadTime = System.Convert.ToByte(commandbuf[1] & 0xF);
-                    ctlHeadLoadTime = System.Convert.ToByte((commandbuf[2] >> 1) & 0x7F);
+                    ctlStepRateTime = (byte)((commandbuf[1] >> 4) & 0xF);
+                    ctlHeadUnloadTime = (byte)(commandbuf[1] & 0xF);
+                    ctlHeadLoadTime = (byte)((commandbuf[2] >> 1) & 0x7F);
                     ctlNonDma = (commandbuf[2] & 1) == 1;
                     CommandEndVoid();
                     break;
 
                 case Commands.SENSE_DRIVE: // SENSE DRIVE: respond immediately
-                    byte st3 = System.Convert.ToByte(commandbuf[1] & 0x7);
+                    byte st3 = (byte)(commandbuf[1] & 0x7);
                     if (curCylinder[cmdDrive] == 0)
                     {
                         st3 = (byte)(st3 | 0x10); // track 0
@@ -501,8 +501,8 @@ namespace x8086SharpEmu
                 case Commands.READ:
                     // Read sector.
                     databuf = new byte[512];
-                    offs = System.Convert.ToInt64(diskimg[cmdDrive].LBA(System.Convert.ToUInt32(cmdCylinder), System.Convert.ToUInt32(cmdHead), System.Convert.ToUInt32(cmdRecord)));
-                    k = System.Convert.ToInt32(diskimg[cmdDrive].Read((ulong)offs, databuf));
+                    offs = (long)(diskimg[cmdDrive].LBA((uint)(cmdCylinder), (uint)(cmdHead), (uint)(cmdRecord)));
+                    k = (int)(diskimg[cmdDrive].Read((ulong)offs, databuf));
                     if (k < 0)
                     {
                         // Read error respond with DATA ERROR.
@@ -533,14 +533,14 @@ namespace x8086SharpEmu
 
                 case Commands.READ_TRACK:
                     // Read track.
-                    n = System.Convert.ToInt32(diskimg[cmdDrive].Sectors);
+                    n = (int)(diskimg[cmdDrive].Sectors);
                     if ((cmdEot & 0xFF) < n)
                     {
                         n = cmdEot & 0xFF;
                     }
                     databuf = new byte[n * 512];
-                    offs = System.Convert.ToInt64(diskimg[cmdDrive].LBA(System.Convert.ToUInt32(cmdCylinder), System.Convert.ToUInt32(cmdHead), (uint)1));
-                    k = System.Convert.ToInt32(diskimg[cmdDrive].Read((ulong)offs, databuf));
+                    offs = (long)(diskimg[cmdDrive].LBA((uint)(cmdCylinder), (uint)(cmdHead), (uint)1));
+                    k = (int)(diskimg[cmdDrive].Read((ulong)offs, databuf));
                     if (k < 0)
                     {
                         // Read error respond with DATA ERROR.
@@ -599,8 +599,8 @@ namespace x8086SharpEmu
                         CommandEndIO(0xC8, 0x0, 0x0); // abnormal (ready change), not ready
                         return;
                     }
-                    offs = System.Convert.ToInt64(diskimg[cmdDrive].LBA(System.Convert.ToUInt32(cmdCylinder), System.Convert.ToUInt32(cmdHead), System.Convert.ToUInt32(cmdRecord)));
-                    k = System.Convert.ToInt32(diskimg[cmdDrive].Write((ulong)offs, databuf));
+                    offs = (long)(diskimg[cmdDrive].LBA((uint)(cmdCylinder), (uint)(cmdHead), (uint)(cmdRecord)));
+                    k = (int)(diskimg[cmdDrive].Write((ulong)offs, databuf));
                     if (k < 0)
                     {
                         // Write error respond with DATA ERROR.
@@ -612,7 +612,7 @@ namespace x8086SharpEmu
                 case Commands.READ_TRACK:
                     // Track done.
                     // Did we encounter a sector matching cmdRecord
-                    n = System.Convert.ToInt32((double)(dataptr + 511) / 512);
+                    n = (int)((double)(dataptr + 511) / 512);
                     if (cmdRecord != 0 && (cmdRecord & 0xFF) <= n)
                     {
                         CommandEndIO(0x0, 0x0, 0x0); // normal termination
@@ -634,9 +634,9 @@ namespace x8086SharpEmu
                         CommandEndIO(0xC8, 0x0, 0x0); // abnormal (ready change), not ready
                         return;
                     }
-                    offs = System.Convert.ToInt64(diskimg[cmdDrive].LBA(System.Convert.ToUInt32(cmdCylinder), System.Convert.ToUInt32(cmdHead), System.Convert.ToUInt32(cmdRecord)));
+                    offs = (long)(diskimg[cmdDrive].LBA((uint)(cmdCylinder), (uint)(cmdHead), (uint)(cmdRecord)));
                     tmpbuf = new byte[512];
-                    k = System.Convert.ToInt32(diskimg[cmdDrive].Read((ulong)offs, tmpbuf));
+                    k = (int)(diskimg[cmdDrive].Read((ulong)offs, tmpbuf));
                     if (k < 0)
                     {
                         // Read error respond with DATA ERROR.
@@ -663,7 +663,7 @@ namespace x8086SharpEmu
                             (cmdCmd == Commands.SCAN_GE && scanGe))
                     {
                         // Scan condition met.
-                        st2 = System.Convert.ToByte(scanEq ? 0x8 : 0x0); // if equal, set scan hit flag
+                        st2 = (byte)(scanEq ? 0x8 : 0x0); // if equal, set scan hit flag
                         CommandEndIO(0x0, 0x0, st2); // normal termination
                         return;
                     }
@@ -886,7 +886,7 @@ namespace x8086SharpEmu
             if ((port & 3) == 0)
             {
                 // main status register
-                return System.Convert.ToUInt16(GetMainStatus());
+                return (ushort)(GetMainStatus());
             }
             else if ((port & 3) == 1)
             {
@@ -898,7 +898,7 @@ namespace x8086SharpEmu
                 if (state == States.RESULT)
                 {
                     // read next byte of result
-                    int v = System.Convert.ToInt32(resultbuf[resultptr] & 0xFF);
+                    int v = (int)(resultbuf[resultptr] & 0xFF);
                     resultptr++;
                     if (resultptr == resultbuf.Length)
                     {
@@ -915,7 +915,7 @@ namespace x8086SharpEmu
                 else if (state == States.TRANSFER_OUT && ctlNonDma)
                 {
                     // read next I/O byte in non-DMA mode
-                    int v = System.Convert.ToInt32(databuf[dataptr] & 0xFF);
+                    int v = (int)(databuf[dataptr] & 0xFF);
                     dataptr++;
                     state = States.TRANSWAIT_OUT;
                     return (ushort)v;

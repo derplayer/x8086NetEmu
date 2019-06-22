@@ -212,7 +212,7 @@ namespace x8086SharpEmu
             // FIXME: change WMI managedobj search in favor of registry hack (mono?)
             //using (System.Management.ManagementObject managementObject = new System.Management.ManagementObject("Win32_Processor.DeviceID='CPU0'"))
             //{
-            //    return System.Convert.ToUInt32(managementObject["CurrentClockSpeed"]);
+            //    return (uint)(managementObject["CurrentClockSpeed"]);
             //}
         }
     }

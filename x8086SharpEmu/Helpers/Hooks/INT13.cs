@@ -239,9 +239,9 @@ namespace x8086SharpEmu
                     }
                     else
                     {
-                        mRegisters.CH = System.Convert.ToByte((dskImg.Cylinders - 1) & 0xFF);
+                        mRegisters.CH = (byte)((dskImg.Cylinders - 1) & 0xFF);
                         mRegisters.CL = (byte)(dskImg.Sectors & 63);
-                        mRegisters.CL += System.Convert.ToByte(((dskImg.Cylinders - 1) / 256) * 64);
+                        mRegisters.CL += (byte)(((dskImg.Cylinders - 1) / 256) * 64);
                         mRegisters.DH = (byte)(dskImg.Heads - 1);
 
                         if (mRegisters.DL < 0x80)

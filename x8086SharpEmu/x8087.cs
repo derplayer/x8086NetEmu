@@ -96,7 +96,7 @@
 //							Debugger.Break(); // E_Exit("FPU stack underflow")
 //						}
 //						fpu.Tags[TOP] = TAGe.Empty;
-//						TOP = System.Convert.ToUInt32((TOP + 1) & 7);
+//						TOP = (uint)((TOP + 1) & 7);
 //						break;
 //				}
 //			}

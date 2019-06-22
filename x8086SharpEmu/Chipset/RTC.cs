@@ -78,7 +78,7 @@ namespace x8086SharpEmu
 
             cpu.TryAttachHook((byte)(0x8), new X8086.IntHandler(() =>
            {
-               uint ticks = System.Convert.ToUInt32((DateTime.Now - new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0)).Ticks / 10000000 * 18.206);
+               uint ticks = (uint)((DateTime.Now - new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0)).Ticks / 10000000 * 18.206);
                 //cpu.RAM16[0x40, 0x6E] = (ticks >> 16) & 0xFFFF;
                 //cpu.RAM16[0x40, 0x6C] = ticks & 0xFFFF;
                 //cpu.RAM8[0x40, 0x70] = 0;
@@ -143,7 +143,7 @@ namespace x8086SharpEmu
                 d = v % 10;
                 r = r | (d << (4 * i));
                 i++;
-                v = System.Convert.ToUInt16((v - d) / 10);
+                v = (ushort)((v - d) / 10);
             }
             return (ushort)r;
         }
@@ -174,9 +174,9 @@ namespace x8086SharpEmu
                 case 0x7:
                     return EncodeTime((ushort)(DateTime.Now.ToUniversalTime().Day));
                 case 0x8:
-                    return EncodeTime(System.Convert.ToUInt16(DateTime.Now.ToUniversalTime().Month + 1));
+                    return EncodeTime((ushort)(DateTime.Now.ToUniversalTime().Month + 1));
                 case 0x9:
-                    return EncodeTime(System.Convert.ToUInt16(DateTime.Now.ToUniversalTime().Year % 100));
+                    return EncodeTime((ushort)(DateTime.Now.ToUniversalTime().Year % 100));
 
                 case 0xA:
                     return (ushort)cmosA;
@@ -188,7 +188,7 @@ namespace x8086SharpEmu
                     return (ushort)cmosD;
 
                 case 0x32:
-                    return EncodeTime(System.Convert.ToUInt16(DateTime.Now.ToUniversalTime().Year / 100));
+                    return EncodeTime((ushort)(DateTime.Now.ToUniversalTime().Year / 100));
             }
 
             return (ushort)(cmosData[index]);
@@ -206,7 +206,7 @@ namespace x8086SharpEmu
                 {
                     case 0xA:
                         cmosA = value & 0x7F;
-                        periodicInt = System.Convert.ToInt64(1000 / (32768 >> (cmosA & 0xF) - 1));
+                        periodicInt = (long)(1000 / (32768 >> (cmosA & 0xF) - 1));
                         break;
                     case 0xB:
                         cmosB = value;

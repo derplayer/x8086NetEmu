@@ -55,7 +55,7 @@ namespace x8086SharpEmu
         {
             if (!(intHooks.ContainsKey(intNum) && intHooks[intNum].Invoke()))
             {
-                PushIntoStack(System.Convert.ToUInt16(mFlags.EFlags));
+                PushIntoStack((ushort)(mFlags.EFlags));
                 PushIntoStack(mRegisters.CS);
 
                 if (isHard)
@@ -68,8 +68,8 @@ namespace x8086SharpEmu
                 }
 
                 tmpUVal = (uint)(intNum * 4);
-                IPAddrOffet = get_RAM16((ushort)0, System.Convert.ToUInt16(tmpUVal), (byte)0, true);
-                mRegisters.CS = get_RAM16((ushort)0, System.Convert.ToUInt16(tmpUVal), (byte)2, true);
+                IPAddrOffet = get_RAM16((ushort)0, (ushort)(tmpUVal), (byte)0, true);
+                mRegisters.CS = get_RAM16((ushort)0, (ushort)(tmpUVal), (byte)2, true);
 
                 if (intNum == 0)
                 {

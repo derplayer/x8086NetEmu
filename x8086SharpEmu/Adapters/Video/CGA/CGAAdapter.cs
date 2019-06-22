@@ -184,7 +184,7 @@ namespace x8086SharpEmu
                 Color.FromArgb(0xFF, 0x55, 0xFF),
                 Color.FromArgb(0xFF, 0xFF, 0x55),
                 Color.FromArgb(0xFF, 0xFF, 0xFF)};
-            vidModeChangeFlag = System.Convert.ToInt32(+0b1000);
+            vidModeChangeFlag = (int)(+0b1000);
 
             this.useInternalTimer = useInternalTimer;
 
@@ -408,7 +408,7 @@ namespace x8086SharpEmu
 
         private void MainLoop()
         {
-            int multiplier = System.Convert.ToInt32(base.CPU.VideoAdapter is CGAConsole ? 2 : 2);
+            int multiplier = (int)(base.CPU.VideoAdapter is CGAConsole ? 2 : 2);
             do
             {
                 waiter.WaitOne((int)(multiplier * 1000 / VERTSYNC));
@@ -572,11 +572,11 @@ namespace x8086SharpEmu
         {
             if ((((port == ((uint)(0x3D0))) || (port == ((uint)(0x3D2)))) || (port == ((uint)(0x3D4)))) || (port == ((uint)(0x3D6)))) // CRT (6845) index register
             {
-                return System.Convert.ToUInt16(CRT6845IndexRegister);
+                return (ushort)(CRT6845IndexRegister);
             } // CRT (6845) data register
             else if (((((port == ((uint)(0x3D1))) || (port == ((uint)(0x3D3)))) || (port == ((uint)(0x3D5)))) || (port == ((uint)(0x3D7)))) || (port == ((uint)(0x3B5))))
             {
-                return System.Convert.ToUInt16(CRT6845DataRegister[CRT6845IndexRegister]);
+                return (ushort)(CRT6845DataRegister[CRT6845IndexRegister]);
             } // CGA mode control register  (except PCjr)
             else if (port == ((uint)(0x3D8)))
             {
@@ -660,9 +660,9 @@ namespace x8086SharpEmu
             {
                 int startOffset = ((CRT6845DataRegister[0xC] & 0x3F) << 8) | (CRT6845DataRegister[0xD] & 0xFF);
                 int p = ((CRT6845DataRegister[0xE] & 0x3F) << 8) | (CRT6845DataRegister[0xF] & 0xFF);
-                //int startOffset = System.Convert.ToInt32(((CRT6845DataRegister[0xC] & 0x3F) << 8) || (CRT6845DataRegister[0xD] & 0xFF));
-                //int p = System.Convert.ToInt32(((CRT6845DataRegister[0xE] & 0x3F) << 8) || (CRT6845DataRegister[0xF] & 0xFF));
-                p = System.Convert.ToInt32((p - startOffset) & 0x1FFF);
+                //int startOffset = (int)(((CRT6845DataRegister[0xC] & 0x3F) << 8) || (CRT6845DataRegister[0xD] & 0xFF));
+                //int p = (int)(((CRT6845DataRegister[0xE] & 0x3F) << 8) || (CRT6845DataRegister[0xF] & 0xFF));
+                p = (int)((p - startOffset) & 0x1FFF);
 
                 if (p < 0)
                 {
@@ -676,8 +676,8 @@ namespace x8086SharpEmu
                 }
             }
 
-            mCursorStart = System.Convert.ToInt32(CRT6845DataRegister[0xA] & +0b11111);
-            mCursorEnd = System.Convert.ToInt32(CRT6845DataRegister[0xB] & +0b11111);
+            mCursorStart = (int)(CRT6845DataRegister[0xA] & +0b11111);
+            mCursorEnd = (int)(CRT6845DataRegister[0xB] & +0b11111);
 
             mBlinkCharOn = CGAModeControlRegister[(int)CGAModeControlRegisters.blink_enabled];
         }
@@ -685,7 +685,7 @@ namespace x8086SharpEmu
         protected virtual void OnModeControlRegisterChanged()
         {
             // http://www.seasip.info/VintagePC/cga.html
-            uint v = System.Convert.ToUInt32(X8086.BitsArrayToWord(CGAModeControlRegister));
+            uint v = (uint)(X8086.BitsArrayToWord(CGAModeControlRegister));
             VideoModes newMode = (VideoModes)(v & 0x17); // 10111
 
             if ((v & vidModeChangeFlag) != 0 && (int)newMode != mVideoMode)
@@ -705,14 +705,14 @@ namespace x8086SharpEmu
             else
             {
                 Color[] colors = null;
-                uint cgaModeReg = System.Convert.ToUInt32(X8086.BitsArrayToWord(CGAModeControlRegister));
-                uint cgaColorReg = System.Convert.ToUInt32(X8086.BitsArrayToWord(CGAPaletteRegister));
+                uint cgaModeReg = (uint)(X8086.BitsArrayToWord(CGAModeControlRegister));
+                uint cgaColorReg = (uint)(X8086.BitsArrayToWord(CGAPaletteRegister));
 
                 if (VideoMode == ((uint)VideoModes.Mode4_Graphic_Color_320x200))
                 {
-                    int intense = System.Convert.ToInt32((cgaColorReg & 0x10) >> 1);
-                    int pal1 = System.Convert.ToInt32((cgaColorReg >> 5) & (~(cgaModeReg >> 2)) & 1);
-                    int pal2 = System.Convert.ToInt32(((~cgaColorReg) >> 5) & (~(cgaModeReg >> 2)) & 1);
+                    int intense = (int)((cgaColorReg & 0x10) >> 1);
+                    int pal1 = (int)((cgaColorReg >> 5) & (~(cgaModeReg >> 2)) & 1);
+                    int pal2 = (int)(((~cgaColorReg) >> 5) & (~(cgaModeReg >> 2)) & 1);
 
                     colors = new Color[] {
                                 CGABasePalette[cgaColorReg & 0xF],

@@ -211,7 +211,7 @@
 //				ctrlSize = new Size(GraphicsResolution.Width, GraphicsResolution.Height);
 //			}
 
-//			Size frmSize = new Size(System.Convert.ToInt32(640 * Zoom), System.Convert.ToInt32(400 * Zoom));
+//			Size frmSize = new Size((int)(640 * Zoom), (int)(400 * Zoom));
 //			Form frm = mRenderControl.FindForm();
 //			frm.ClientSize = frmSize;
 //			mRenderControl.Location = Point.Empty;
@@ -273,13 +273,13 @@
 //		{
 //			byte b0 = 0;
 //			byte b1 = 0;
-//			int xDiv = System.Convert.ToInt32(PixelsPerByte == 4 ? 2 : 3);
-//			int usePal = System.Convert.ToInt32((portRAM[0x3D9] >> 5) & 1);
-//			int intensity = System.Convert.ToInt32(((portRAM[0x3D9] >> 4) & 1) << 3);
+//			int xDiv = (int)(PixelsPerByte == 4 ? 2 : 3);
+//			int usePal = (int)((portRAM[0x3D9] >> 5) & 1);
+//			int intensity = (int)(((portRAM[0x3D9] >> 4) & 1) << 3);
 
 //			// For modes &h12 and &h13
 //			bool planeMode = mVideoMode == 0x12 || mVideoMode == 0x13 ? ((VGA_SC[4] & 6) != 0) : false;
-//			uint vgaPage = System.Convert.ToUInt32(mVideoMode <= 7 || mVideoMode == 0x12 || mVideoMode == 0x13 ? ((VGA_CRTC[0xC] << 8) + VGA_CRTC[0xD]) : 0);
+//			uint vgaPage = (uint)(mVideoMode <= 7 || mVideoMode == 0x12 || mVideoMode == 0x13 ? ((VGA_CRTC[0xC] << 8) + VGA_CRTC[0xD]) : 0);
 
 //			uint address = 0;
 //			uint h1 = 0;
@@ -310,7 +310,7 @@
 //						}
 //						else
 //						{
-//							b1 = System.Convert.ToByte(mCPU.Memory[address + 1] & 15);
+//							b1 = (byte)(mCPU.Memory[address + 1] & 15);
 //						}
 //						RenderChar(b0, videoBMP, brushCache[b1.LowNib()], brushCache[b1.HighNib() && (intensity ? 7 : 0xF)], r.Location);
 
@@ -335,13 +335,13 @@
 //								b0 = b0 & 3;
 //								break;
 //							case 2:
-//								b0 = System.Convert.ToByte((b0 >> 2) & 3);
+//								b0 = (byte)((b0 >> 2) & 3);
 //								break;
 //							case 1:
-//								b0 = System.Convert.ToByte((b0 >> 4) & 3);
+//								b0 = (byte)((b0 >> 4) & 3);
 //								break;
 //							case 0:
-//								b0 = System.Convert.ToByte((b0 >> 6) & 3);
+//								b0 = (byte)((b0 >> 6) & 3);
 //								break;
 //						}
 //						if (mVideoMode == 4)
@@ -362,7 +362,7 @@
 //					else if (mVideoMode == ((uint) 6))
 //					{
 //						b0 = mCPU.Memory[mStartGraphicsVideoAddress + ((y >> 1) * mTextResolution.Width) + ((y & 1) * 0x2000) + (x >> 3)];
-//						b0 = System.Convert.ToByte((b0 >> (7 - (x & 7))) & 1);
+//						b0 = (byte)((b0 >> (7 - (x & 7))) & 1);
 //						b0 *= (byte) 15;
 //						videoBMP.set_Pixel(x, y, CGAPalette[b0]);
 //					}
@@ -371,8 +371,8 @@
 //						h1 = (uint) (x >> 1);
 //						h2 = (uint) (y >> 1);
 //						address = h2 * mTextResolution.Width + (h1 >> 3);
-//						h1 = System.Convert.ToUInt32(7 - (h1 & 7));
-//						b0 = System.Convert.ToByte((vRAM[address] >> h1) & 1);
+//						h1 = (uint)(7 - (h1 & 7));
+//						b0 = (byte)((vRAM[address] >> h1) & 1);
 //						b0 = b0 + ((vRAM[address + 0x10000] >> h1) & 1) << 1;
 //						b0 = b0 + ((vRAM[address + 0x20000] >> h1) & 1) << 2;
 //						b0 = b0 + ((vRAM[address + 0x30000] >> h1) & 1) << 3;
@@ -381,8 +381,8 @@
 //					else if (mVideoMode == ((uint) (0x10)))
 //					{
 //						address = (uint) ((y * mTextResolution.Width) + (x >> 3));
-//						h1 = System.Convert.ToUInt32(7 - (x & 7));
-//						b0 = System.Convert.ToByte((vRAM[address] >> h1) & 1);
+//						h1 = (uint)(7 - (x & 7));
+//						b0 = (byte)((vRAM[address] >> h1) & 1);
 //						b0 = b0 | ((vRAM[address + 0x10000] >> h1) & 1) << 1;
 //						b0 = b0 | ((vRAM[address + 0x20000] >> h1) & 1) << 2;
 //						b0 = b0 | ((vRAM[address + 0x30000] >> h1) & 1) << 3;
@@ -390,9 +390,9 @@
 //					}
 //					else if (mVideoMode == ((uint) (0x12)))
 //					{
-//						address = System.Convert.ToUInt32((y * mTextResolution.Width) + ((double) x / 8));
-//						h1 = System.Convert.ToUInt32((~x) & 7);
-//						b0 = System.Convert.ToByte((vRAM[address] >> h1) & 1);
+//						address = (uint)((y * mTextResolution.Width) + ((double) x / 8));
+//						h1 = (uint)((~x) & 7);
+//						b0 = (byte)((vRAM[address] >> h1) & 1);
 //						b0 = b0 | ((vRAM[address + 0x10000] >> h1) & 1) << 1;
 //						b0 = b0 | ((vRAM[address + 0x20000] >> h1) & 1) << 2;
 //						b0 = b0 | ((vRAM[address + 0x30000] >> h1) & 1) << 3;
@@ -413,7 +413,7 @@
 //					else if (mVideoMode == ((uint) 127))
 //					{
 //						b0 = mCPU.Memory[mStartGraphicsVideoAddress + ((y & 3) << 13) + ((y >> 2) * 90) + (x >> 3)];
-//						b0 = System.Convert.ToByte((b0 >> (7 - (x & 7))) & 1);
+//						b0 = (byte)((b0 >> (7 - (x & 7))) & 1);
 //						videoBMP.set_Pixel(x, y, CGAPalette[b0]);
 //					}
 //					else
@@ -427,19 +427,19 @@
 //									b0 = b0 & 3;
 //									break;
 //								case 2:
-//									b0 = System.Convert.ToByte((b0 >> 2) & 3);
+//									b0 = (byte)((b0 >> 2) & 3);
 //									break;
 //								case 1:
-//									b0 = System.Convert.ToByte((b0 >> 4) & 3);
+//									b0 = (byte)((b0 >> 4) & 3);
 //									break;
 //								case 0:
-//									b0 = System.Convert.ToByte((b0 >> 6) & 3);
+//									b0 = (byte)((b0 >> 6) & 3);
 //									break;
 //							}
 //						}
 //						else
 //						{
-//							b0 = System.Convert.ToByte((b0 >> (7 - (x & 7))) & 1);
+//							b0 = (byte)((b0 >> (7 - (x & 7))) & 1);
 //						}
 //						videoBMP.set_Pixel(x, y, CGAPalette[b0]);
 //					}
@@ -617,7 +617,7 @@
 //					regions = graphics.MeasureCharacterRanges(text.ToString(), font, rect, textFormat);
 //					rect = regions[0].GetBounds(graphics);
 
-//					size = new Size(System.Convert.ToInt32(rect.Right - 1), System.Convert.ToInt32(rect.Bottom));
+//					size = new Size((int)(rect.Right - 1), (int)(rect.Bottom));
 //					charSizeCache.Add(code, size);
 //					break;
 //				case FontSources.ROM:

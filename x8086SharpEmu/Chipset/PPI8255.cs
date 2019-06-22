@@ -109,16 +109,16 @@ namespace x8086SharpEmu
             if ((port & 3) == ((uint)0)) // port &h60 (PPI port A)
             {
                 // Return keyboard data if bit 7 in port B is cleared.
-                return System.Convert.ToUInt16(((ppiB & 0x80) == 0) ? (GetKeyData()) : 0);
+                return (ushort)(((ppiB & 0x80) == 0) ? (GetKeyData()) : 0);
             } // port &h61 (PPI port B)
             else if ((port & 3) == ((uint)1))
             {
                 // Return last value written to the port.
-                return System.Convert.ToUInt16(ppiB);
+                return (ushort)(ppiB);
             } // port &h62 (PPI port C)
             else if ((port & 3) == ((uint)2))
             {
-                return System.Convert.ToUInt16(GetStatusByte());
+                return (ushort)(GetStatusByte());
             }
             else
             {
@@ -140,7 +140,7 @@ namespace x8086SharpEmu
                 // bit 6: enable(1) or disable(0) keyboard clock ?
                 // bit 7: pulse 1 to reset keyboard and IRQ1
                 uint oldv = ppiB;
-                ppiB = System.Convert.ToUInt32(value);
+                ppiB = (uint)(value);
                 if ((timer != null) && ((oldv ^ value) & 1) != 0)
                 {
                     timer.SetCh2Gate((ppiB & 1) != 0);
@@ -236,7 +236,7 @@ namespace x8086SharpEmu
                 if (keyBuf.Length > 0)
                 {
                     // read byte from buffer
-                    lastKeyCode = System.Convert.ToUInt16(keyMap.GetScanCode(keyBuf[0]) & 0xFF);
+                    lastKeyCode = (ushort)(keyMap.GetScanCode(keyBuf[0]) & 0xFF);
                     if (keyUpStates[0])
                     {
                         lastKeyCode = (ushort)(lastKeyCode | 0x80);
@@ -267,8 +267,8 @@ namespace x8086SharpEmu
             bool timerout = Convert.ToBoolean((timer == null) ? ((object)0) : ((object)timer.GetOutput(2)));
 
             bool speakerout = timerout && ((ppiB & 2) != 0);
-            int vh = System.Convert.ToInt32((speakerout ? 0 : 0x10) | (timerout ? 0x20 : 0));
-            int vl = System.Convert.ToInt32(((ppiB & 0x8) == 0) ? SwitchData : SwitchData >> 4);
+            int vh = (int)((speakerout ? 0 : 0x10) | (timerout ? 0x20 : 0));
+            int vl = (int)(((ppiB & 0x8) == 0) ? SwitchData : SwitchData >> 4);
             return (byte)((vh & 0xF0) | (vl & 0xF));
         }
     }

@@ -271,7 +271,7 @@ namespace x8086SharpEmu
         public static void DrawLine(char c, int fromCol, int fromRow, int toCol, int toRow, ConsoleColor foreColor, ConsoleColor backColor)
         {
             double angle = Atan2(toCol - fromCol, toRow - fromRow);
-            int length = System.Convert.ToInt32(Math.Sqrt(Math.Pow((toCol - fromCol), 2) + Math.Pow((toRow - fromRow), 2)));
+            int length = (int)(Math.Sqrt(Math.Pow((toCol - fromCol), 2) + Math.Pow((toRow - fromRow), 2)));
             int px = 0;
             int py = 0;
             double ca = Math.Cos(angle * toRadians);
@@ -279,8 +279,8 @@ namespace x8086SharpEmu
 
             for (int radius = 0; radius <= length; radius++)
             {
-                px = System.Convert.ToInt32(radius * ca + fromCol);
-                py = System.Convert.ToInt32(radius * sa + fromRow);
+                px = (int)(radius * ca + fromCol);
+                py = (int)(radius * sa + fromRow);
 
                 ConsoleCrayon.WriteFast(c.ToString(), foreColor, backColor, px, py);
             }
@@ -368,7 +368,7 @@ namespace x8086SharpEmu
                     case TextAlignment.Right:
                         return new string(' ', width - text.Length) + text;
                     case TextAlignment.Center:
-                        return string.Format("{0}{1}{0}", new string(' ', System.Convert.ToInt32((width - text.Length) / 2)), text);
+                        return string.Format("{0}{1}{0}", new string(' ', (int)((width - text.Length) / 2)), text);
                     default:
                         return text;
                 }
@@ -441,7 +441,7 @@ namespace x8086SharpEmu
             // lighter bg colours are 100 -> 107 rather than 40 -> 47
 
             bool light = false;
-            int code = System.Convert.ToInt32(TranslateColor(color, ref light) + (isForeground ? 30 : 40) + (light ? 60 : 0));
+            int code = (int)(TranslateColor(color, ref light) + (isForeground ? 30 : 40) + (light ? 60 : 0));
 
             return ESC + code.ToString() + "m";
         }

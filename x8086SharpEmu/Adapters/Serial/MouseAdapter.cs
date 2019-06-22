@@ -53,7 +53,7 @@ namespace x8086SharpEmu
                 {
                     tmp = (int)(sm.buf[0]);
                     Array.Copy(sm.buf, 1, sm.buf, 0, 15);
-                    sm.bufPtr = System.Convert.ToUInt32((sm.bufPtr - 1) & 0xF);
+                    sm.bufPtr = (uint)((sm.bufPtr - 1) & 0xF);
 
                     if (sm.bufPtr < 0)
                     {
@@ -64,27 +64,27 @@ namespace x8086SharpEmu
                         irq.Raise(true);
                     }
 
-                    sm.reg[4] = System.Convert.ToUInt32((~sm.reg[4]) & 1);
+                    sm.reg[4] = (uint)((~sm.reg[4]) & 1);
                 }
 
                 return (ushort)tmp;
             } // Line Status Register - LSR
             else if (port == ((uint)(0x3FD)))
             {
-                tmp = System.Convert.ToInt32(sm.bufPtr > 0 ? 1 : 0);
+                tmp = (int)(sm.bufPtr > 0 ? 1 : 0);
 
                 return (ushort)tmp;
                 //Return &H60 Or tmp
                 //Return &H1
             }
 
-            return System.Convert.ToUInt16(sm.reg[port & 7]);
+            return (ushort)(sm.reg[port & 7]);
         }
 
         public override void Out(uint port, ushort value)
         {
             int oldReg = (int)(sm.reg[port & 7]);
-            sm.reg[port & 7] = System.Convert.ToUInt32(value);
+            sm.reg[port & 7] = (uint)(value);
 
             if (port == ((uint)(0x3FC))) // Modem Control Register - MCR
             {
@@ -114,7 +114,7 @@ namespace x8086SharpEmu
                     irq.Raise(true);
                 }
 
-                sm.buf[sm.bufPtr] = System.Convert.ToUInt32(value);
+                sm.buf[sm.bufPtr] = (uint)(value);
                 sm.bufPtr++;
             }
         }
@@ -127,8 +127,8 @@ namespace x8086SharpEmu
             //If p.X <> 0 Then If p.X > 0 Then p.X = 1 Else p.X = -1
             //If p.Y <> 0 Then If p.Y > 0 Then p.Y = 1 Else p.Y = -1
 
-            p.X = System.Convert.ToInt32(Math.Ceiling((double)Math.Abs(p.X) / 5) * Math.Sign(p.X));
-            p.Y = System.Convert.ToInt32(Math.Ceiling((double)Math.Abs(p.Y) / 5) * Math.Sign(p.Y));
+            p.X = (int)(Math.Ceiling((double)Math.Abs(p.X) / 5) * Math.Sign(p.X));
+            p.Y = (int)(Math.Ceiling((double)Math.Abs(p.Y) / 5) * Math.Sign(p.Y));
 
             byte highbits = (byte)0;
             if (p.X < 0)
@@ -150,7 +150,7 @@ namespace x8086SharpEmu
                 btns = (byte)(btns | 1);
             }
 
-            BufSerMouseData(System.Convert.ToByte(0x40 | (btns << 4) | highbits));
+            BufSerMouseData((byte)(0x40 | (btns << 4) | highbits));
             BufSerMouseData((byte)(p.X & 0x3F));
             BufSerMouseData((byte)(p.Y & 0x3F));
         }

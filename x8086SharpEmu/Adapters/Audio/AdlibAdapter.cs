@@ -144,12 +144,12 @@ namespace x8086SharpEmu
 			
 			System.Threading.Tasks.Task.Run(()=>
 			{
-				long maxTicks = System.Convert.ToInt64(100000 * Scheduler.BASECLOCK / SpeakerAdpater.SampleRate);
+				long maxTicks = (long)(100000 * Scheduler.BASECLOCK / SpeakerAdpater.SampleRate);
 				long curTick = 0;
 				long lastTick = 0;
 				do
 				{
-					curTick = System.Convert.ToInt64(base.CPU.Sched.CurrentTime);
+					curTick = (long)(base.CPU.Sched.CurrentTime);
 					
 					if (curTick >= (lastTick + maxTicks))
 					{
@@ -191,8 +191,8 @@ namespace x8086SharpEmu
 		public override ushort In(uint port)
 		{
 			status = (regMem[4] == 0) ? 0 : 0x80;
-			status += System.Convert.ToByte((regMem[4] & 1) * 0x40 + (regMem[4] & 2) * 0x10);
-			return System.Convert.ToUInt16(status);
+			status += (byte)((regMem[4] & 1) * 0x40 + (regMem[4] & 2) * 0x10);
+			return (ushort)(status);
 		}
 		
 		public override void Out(uint port, ushort value)
@@ -203,7 +203,7 @@ namespace x8086SharpEmu
 				return;
 			}
 			
-			port = System.Convert.ToUInt32(address);
+			port = (uint)(address);
 			regMem[port] = value;
 			
 			if (port == ((uint) 4)) // Timer Control
@@ -221,23 +221,23 @@ namespace x8086SharpEmu
 			
 			if (port >= 0x60 && port <= 0x75) // Attack / Decay
 			{
-				port = System.Convert.ToUInt32((port & 15) % 9);
+				port = (uint)((port & 15) % 9);
 				attack[port] = attackTable[15 - (value >> 4)] * 1.006;
 				decay[port] = decayTable[value & 15];
 			}
 			else if (port >= 0xA0 && port <= 0xB8) // Octave / Frequency / Key On
 			{
-				port = System.Convert.ToUInt32((port & 15) % 9);
+				port = (uint)((port & 15) % 9);
 				if (!channel[port].KeyOn && ((regMem[0xB0 + port] >> 5) & 1) == 1)
 				{
 					attack2[port] = false;
 					envelope[port] = 0.0025;
 				}
 				
-				channel[port].Frequency = System.Convert.ToUInt16(regMem[0xA0 + port] | ((regMem[0xB0 + port] & 3) << 8));
+				channel[port].Frequency = (ushort)(regMem[0xA0 + port] | ((regMem[0xB0 + port] & 3) << 8));
 				channel[port].ConvFreq = System.Convert.ToDouble(channel[port].Frequency * 0.7626459);
 				channel[port].KeyOn = ((regMem[0xB0 + port] >> 5) & 1) == 1;
-				channel[port].Octave = System.Convert.ToUInt16((regMem[0xB0 + port] >> 2) & 7);
+				channel[port].Octave = (ushort)((regMem[0xB0 + port] >> 2) & 7);
 			}
 			else if (port >= 0xE0 & port <= 0xF5) // Waveform select
 			{
@@ -253,7 +253,7 @@ namespace x8086SharpEmu
 			{
 				return (ushort)  0;
 			}
-			tmpFreq = System.Convert.ToUInt16(channel[chanNum].ConvFreq);
+			tmpFreq = (ushort)(channel[chanNum].ConvFreq);
 			
 			switch (channel[chanNum].Octave)
 			{
@@ -291,8 +291,8 @@ namespace x8086SharpEmu
 			}
 			
 			ushort fullStep = (ushort) (SpeakerAdpater.SampleRate / Frequency(chanNum));
-			byte idx = System.Convert.ToByte((oplSstep[chanNum] / (fullStep / 256.0)) % 255);
-			uint tmpSample = System.Convert.ToUInt32(oplWave[channel[chanNum].WaveformSelect][idx]);
+			byte idx = (byte)((oplSstep[chanNum] / (fullStep / 256.0)) % 255);
+			uint tmpSample = (uint)(oplWave[channel[chanNum].WaveformSelect][idx]);
 			double tmpStep = envelope[chanNum];
 			if (tmpStep > 1.0)
 			{

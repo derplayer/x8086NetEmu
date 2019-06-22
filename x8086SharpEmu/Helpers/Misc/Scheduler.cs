@@ -137,7 +137,7 @@ namespace x8086SharpEmu
         {
             get
             {
-                return System.Convert.ToInt64((double)DateTime.Now.Ticks / 10000);
+                return (long)((double)DateTime.Now.Ticks / 10000);
             }
         }
 
@@ -183,7 +183,7 @@ namespace x8086SharpEmu
 
         public void RunTaskAfter(Task tsk, long d)
         {
-            long t = System.Convert.ToInt64(mCurrentTime + d);
+            long t = (long)(mCurrentTime + d);
 
             lock (tsk)
             {
@@ -205,7 +205,7 @@ namespace x8086SharpEmu
 
         public void RunTaskEach(Task tsk, long interval)
         {
-            long t = System.Convert.ToInt64(mCurrentTime + interval);
+            long t = (long)(mCurrentTime + interval);
 
             lock (tsk)
             {
@@ -251,13 +251,13 @@ namespace x8086SharpEmu
             {
                 return 0;
             }
-            else if (syncScheduler && (nextTime > System.Convert.ToInt64(mCurrentTime + syncQuantum)))
+            else if (syncScheduler && (nextTime > (long)(mCurrentTime + syncQuantum)))
             {
                 return syncQuantum;
             }
             else
             {
-                return System.Convert.ToInt64(nextTime - mCurrentTime);
+                return (long)(nextTime - mCurrentTime);
             }
         }
 
@@ -267,29 +267,29 @@ namespace x8086SharpEmu
             if (syncScheduler)
             {
                 syncTimeSaldo += t;
-                if (syncTimeSaldo > System.Convert.ToInt32(3 * syncQuantum))
+                if (syncTimeSaldo > (int)(3 * syncQuantum))
                 {
                     // Check the wall clock
                     long wallTime = CurrentTimeMillis;
-                    long wallDelta = System.Convert.ToInt64(wallTime - syncWallTimeMillis);
+                    long wallDelta = (long)(wallTime - syncWallTimeMillis);
                     syncWallTimeMillis = wallTime;
                     if (wallDelta < 0)
                     {
                         wallDelta = 0; // Some clown has set the system clock back
                     }
-                    syncTimeSaldo -= System.Convert.ToInt64(wallDelta * syncSimTimePerWallMs);
+                    syncTimeSaldo -= (long)(wallDelta * syncSimTimePerWallMs);
                     if (syncTimeSaldo < 0)
                     {
                         syncTimeSaldo = 0;
                     }
-                    if (syncTimeSaldo > System.Convert.ToInt32(2 * syncQuantum))
+                    if (syncTimeSaldo > (int)(2 * syncQuantum))
                     {
                         // The simulation has gained more than one time quantum
-                        int sleepTime = System.Convert.ToInt32((syncTimeSaldo - syncQuantum) / syncSimTimePerWallMs);
-                        if (syncTimeSaldo > System.Convert.ToInt32(4 * syncQuantum))
+                        int sleepTime = (int)((syncTimeSaldo - syncQuantum) / syncSimTimePerWallMs);
+                        if (syncTimeSaldo > (int)(4 * syncQuantum))
                         {
                             // Force a hard sleep
-                            int s = System.Convert.ToInt32((double)syncQuantum / syncSimTimePerWallMs);
+                            int s = (int)((double)syncQuantum / syncSimTimePerWallMs);
                             Thread.Sleep(s);
                             sleepTime -= s;
                         }
@@ -324,49 +324,49 @@ namespace x8086SharpEmu
             {
                 if (nextTime != STOPPING)
                 {
-                    syncTimeSaldo += System.Convert.ToInt64(nextTime - mCurrentTime);
+                    syncTimeSaldo += (long)(nextTime - mCurrentTime);
                 }
-                if (syncTimeSaldo > System.Convert.ToInt32(3 * syncQuantum))
+                if (syncTimeSaldo > (int)(3 * syncQuantum))
                 {
                     // Check the wall clock
                     long wallTime = CurrentTimeMillis;
-                    long wallDelta = System.Convert.ToInt64(wallTime - syncWallTimeMillis);
+                    long wallDelta = (long)(wallTime - syncWallTimeMillis);
                     syncWallTimeMillis = wallTime;
                     if (wallDelta < 0)
                     {
                         wallDelta = 0; // some clown has set the system clock back
                     }
-                    syncTimeSaldo -= System.Convert.ToInt64(wallDelta * syncSimTimePerWallMs);
+                    syncTimeSaldo -= (long)(wallDelta * syncSimTimePerWallMs);
                     if (syncTimeSaldo < 0)
                     {
                         syncTimeSaldo = 0;
                     }
-                    if (syncTimeSaldo > System.Convert.ToInt32(2 * syncQuantum))
+                    if (syncTimeSaldo > (int)(2 * syncQuantum))
                     {
                         // Skipping would give a gain of more than one time quantum
-                        int sleepTime = System.Convert.ToInt32((syncTimeSaldo - syncQuantum) / syncSimTimePerWallMs);
+                        int sleepTime = (int)((syncTimeSaldo - syncQuantum) / syncSimTimePerWallMs);
                         Wait(sleepTime);
                         if (pendingInput.Count > 0)
                         {
                             // We woke up from our sleep; find out how long
                             //   we slept and how much simulated time has passed
                             wallTime = CurrentTimeMillis;
-                            wallDelta = System.Convert.ToInt64(wallTime - syncWallTimeMillis);
+                            wallDelta = (long)(wallTime - syncWallTimeMillis);
                             syncWallTimeMillis = wallTime;
                             if (wallDelta < 0)
                             {
                                 wallDelta = 0; // Same clown again
                             }
-                            syncTimeSaldo -= System.Convert.ToInt64(wallDelta * syncSimTimePerWallMs);
-                            if (syncTimeSaldo > System.Convert.ToInt32(syncQuantum + nextTime - mCurrentTime))
+                            syncTimeSaldo -= (long)(wallDelta * syncSimTimePerWallMs);
+                            if (syncTimeSaldo > (int)(syncQuantum + nextTime - mCurrentTime))
                             {
                                 // No simulated time passed at all
-                                syncTimeSaldo -= System.Convert.ToInt64(nextTime - mCurrentTime);
+                                syncTimeSaldo -= (long)(nextTime - mCurrentTime);
                             }
                             else if (syncTimeSaldo > syncQuantum)
                             {
                                 // Some simulated time passed, but not enough
-                                mCurrentTime = System.Convert.ToInt64(nextTime - System.Convert.ToInt32(syncTimeSaldo - syncQuantum));
+                                mCurrentTime = (long)(nextTime - (int)(syncTimeSaldo - syncQuantum));
                                 syncTimeSaldo = syncQuantum;
                             }
                             else
@@ -417,7 +417,7 @@ namespace x8086SharpEmu
                     if (tsk.Interval > 0)
                     {
                         // Schedule next execution
-                        long t = System.Convert.ToInt64(tsk.NextTime + tsk.Interval);
+                        long t = (long)(tsk.NextTime + tsk.Interval);
                         tsk.NextTime = t;
                         pq.Add(tsk, t);
                         if (t < nextTime)

@@ -110,7 +110,7 @@
 //'										break;
 //'									case "/keyDown":
 //'										Keys k_1 = (Keys) (@params.Split("=".ToCharArray())[1]);
-//'										if (k_1 == lastKeyDown && System.Convert.ToInt32(DateTime.Now.Ticks - lastKeyDownTime) < 3000000)
+//'										if (k_1 == lastKeyDown && (int)(DateTime.Now.Ticks - lastKeyDownTime) < 3000000)
 //'										{
 //'											break;
 //'										}
@@ -120,7 +120,7 @@
 //'										break;
 //'									case "/keyUp":
 //'										Keys k = (Keys) (@params.Split("=".ToCharArray())[1]);
-//'										if (k == lastKeyUp && System.Convert.ToInt32(DateTime.Now.Ticks - lastKeyUpTime) < 3000000)
+//'										if (k == lastKeyUp && (int)(DateTime.Now.Ticks - lastKeyUpTime) < 3000000)
 //'										{
 //'											break;
 //'										}

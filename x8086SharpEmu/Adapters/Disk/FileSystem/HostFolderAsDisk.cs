@@ -54,7 +54,7 @@ namespace x8086SharpEmu
 
             if (offset < 0 || offset + (ushort)data.Length > mFileLength)
             {
-                //return System.Convert.ToInt32(FileSystem.EOF());
+                //return (int)(FileSystem.EOF());
                 return -1;
             }
 

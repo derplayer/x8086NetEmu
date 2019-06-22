@@ -348,7 +348,7 @@
 //								switch (mode)
 //								{
 //									case X8086.MemHookMode.Read:
-//										value = System.Convert.ToUInt16(VideoRAM(address - mStartTextVideoAddress));
+//										value = (ushort)(VideoRAM(address - mStartTextVideoAddress));
 //									case X8086.MemHookMode.Write:
 //										VideoRAM[address - mStartTextVideoAddress] = value;
 //								}
@@ -361,7 +361,7 @@
 //								switch (mode)
 //								{
 //									case X8086.MemHookMode.Read:
-//										value = System.Convert.ToUInt16(VideoRAM(address - mStartGraphicsVideoAddress));
+//										value = (ushort)(VideoRAM(address - mStartGraphicsVideoAddress));
 //									case X8086.MemHookMode.Write:
 //										VideoRAM[address - mStartGraphicsVideoAddress] = value;
 //								}
@@ -384,10 +384,10 @@
 //							switch (mCPU.Registers.AL)
 //							{
 //								case 0x10: // Set individual DAC register
-//									vgaPalette[mCPU.Registers.BX % 256] = Color.FromArgb(RGBToUInt(System.Convert.ToUInt32(mCPU.Registers.DH & 0x3F) << 2, System.Convert.ToUInt32(mCPU.Registers.CH & 0x3F) << 2, System.Convert.ToUInt32(mCPU.Registers.CL & 0x3F) << 2));
+//									vgaPalette[mCPU.Registers.BX % 256] = Color.FromArgb(RGBToUInt((uint)(mCPU.Registers.DH & 0x3F) << 2, (uint)(mCPU.Registers.CH & 0x3F) << 2, (uint)(mCPU.Registers.CL & 0x3F) << 2));
 //								case 0x12: // Set block of DAC registers
-//									int addr = System.Convert.ToInt32((System.Convert.ToUInt32(mCPU.Registers.ES)) * 16U + mCPU.Registers.DX);
-//									for (int n = mCPU.Registers.BX; n <= System.Convert.ToInt32(mCPU.Registers.BX + mCPU.Registers.CX) - 1; n++)
+//									int addr = (int)(((uint)(mCPU.Registers.ES)) * 16U + mCPU.Registers.DX);
+//									for (int n = mCPU.Registers.BX; n <= (int)(mCPU.Registers.BX + mCPU.Registers.CX) - 1; n++)
 //									{
 //										vgaPalette[n] = Color.FromArgb(RGBToUInt(mCPU.Memory(addr + 0) << 2,
 //										mCPU.Memory(addr + 1) << 2,
@@ -425,7 +425,7 @@
 //				}
 //				else
 //				{
-//					return Read(System.Convert.ToUInt32(address));
+//					return Read((uint)(address));
 //				}
 //			}
 //			public void set_VideoRAM(ushort address, byte value)
@@ -440,7 +440,7 @@
 //				}
 //				else
 //				{
-//					Write(System.Convert.ToUInt32(address), System.Convert.ToUInt16(value));
+//					Write((uint)(address), (ushort)(value));
 //				}
 //			}
 
@@ -480,7 +480,7 @@
 //							mMainMode = MainModes.Text;
 //							mPixelsPerByte = 4;
 //							mUseVRAM = false;
-//							portRAM[0x3D8] = System.Convert.ToByte(portRAM[0x3D8] & 0xFE);
+//							portRAM[0x3D8] = (byte)(portRAM[0x3D8] & 0xFE);
 //						} // 80x25 Mono Text
 //						else if (mVideoMode == ((uint) 2))
 //						{
@@ -492,7 +492,7 @@
 //							mMainMode = MainModes.Graphics;
 //							mPixelsPerByte = 4;
 //							mUseVRAM = false;
-//							portRAM[0x3D8] = System.Convert.ToByte(portRAM[0x3D8] & 0xFE);
+//							portRAM[0x3D8] = (byte)(portRAM[0x3D8] & 0xFE);
 //						} // 80x25 Color Text
 //						else if (mVideoMode == ((uint) 3))
 //						{
@@ -504,7 +504,7 @@
 //							mMainMode = MainModes.Text;
 //							mPixelsPerByte = 4;
 //							mUseVRAM = false;
-//							portRAM[0x3D8] = System.Convert.ToByte(portRAM[0x3D8] & 0xFE);
+//							portRAM[0x3D8] = (byte)(portRAM[0x3D8] & 0xFE);
 //						} // 320x200 4 Colors
 //						else if ((mVideoMode == ((uint) 4)) || (mVideoMode == ((uint) 5)))
 //						{
@@ -536,7 +536,7 @@
 //							mMainMode = MainModes.Graphics;
 //							mPixelsPerByte = 2;
 //							mUseVRAM = false;
-//							portRAM[0x3D8] = System.Convert.ToByte(portRAM[0x3D8] & 0xFE);
+//							portRAM[0x3D8] = (byte)(portRAM[0x3D8] & 0xFE);
 //						} // 640x200 2 Colors
 //						else if (mVideoMode == ((uint) 7))
 //						{
@@ -559,7 +559,7 @@
 //							mMainMode = MainModes.Graphics;
 //							mPixelsPerByte = 4;
 //							mUseVRAM = false;
-//							portRAM[0x3D8] = System.Convert.ToByte(portRAM[0x3D8] & 0xFE);
+//							portRAM[0x3D8] = (byte)(portRAM[0x3D8] & 0xFE);
 //						} // 320x200 16 Colors
 //						else if (mVideoMode == ((uint) (0xD)))
 //						{
@@ -571,7 +571,7 @@
 //							mMainMode = MainModes.Graphics;
 //							mPixelsPerByte = 4;
 //							mUseVRAM = true;
-//							portRAM[0x3D8] = System.Convert.ToByte(portRAM[0x3D8] & 0xFE);
+//							portRAM[0x3D8] = (byte)(portRAM[0x3D8] & 0xFE);
 //						} // 640x200 16 Colors
 //						else if (mVideoMode == ((uint) (0xE)))
 //						{
@@ -605,7 +605,7 @@
 //							mMainMode = MainModes.Graphics;
 //							mPixelsPerByte = 4;
 //							mUseVRAM = true;
-//							portRAM[0x3D8] = System.Convert.ToByte(portRAM[0x3D8] & 0xFE);
+//							portRAM[0x3D8] = (byte)(portRAM[0x3D8] & 0xFE);
 //						}
 //						else if (mVideoMode == ((uint) (0x13)))
 //						{
@@ -617,7 +617,7 @@
 //							mMainMode = MainModes.Graphics;
 //							mPixelsPerByte = 4;
 //							mUseVRAM = true;
-//							portRAM[0x3D8] = System.Convert.ToByte(portRAM[0x3D8] & 0xFE);
+//							portRAM[0x3D8] = (byte)(portRAM[0x3D8] & 0xFE);
 //						} // 90x25 Mono Text
 //						else if (mVideoMode == ((uint) 127))
 //						{
@@ -628,7 +628,7 @@
 //							mCellSize = new Size(8, 16);
 //							mMainMode = MainModes.Text;
 //							mPixelsPerByte = 1;
-//							portRAM[0x3D8] = System.Convert.ToByte(portRAM[0x3D8] & 0xFE);
+//							portRAM[0x3D8] = (byte)(portRAM[0x3D8] & 0xFE);
 
 //							//Case &H30 ' 800x600 Color Tseng ET3000/4000 chipset
 //							//    mStartTextVideoAddress = &HA0000
@@ -673,19 +673,19 @@
 //			{
 //				if (port == ((uint) (0x3C1)))
 //				{
-//					return System.Convert.ToUInt16(VGA_ATTR[portRAM[0x3C0]]);
+//					return (ushort)(VGA_ATTR[portRAM[0x3C0]]);
 //				}
 //				else if (port == ((uint) (0x3C5)))
 //				{
-//					return System.Convert.ToUInt16(VGA_SC[portRAM[0x3C4]]);
+//					return (ushort)(VGA_SC[portRAM[0x3C4]]);
 //				}
 //				else if (port == ((uint) (0x3D5)))
 //				{
-//					return System.Convert.ToUInt16(VGA_CRTC[portRAM[0x3D4]]);
+//					return (ushort)(VGA_CRTC[portRAM[0x3D4]]);
 //				}
 //				else if (port == ((uint) (0x3C7)))
 //				{
-//					return System.Convert.ToUInt16(stateDAC);
+//					return (ushort)(stateDAC);
 //				}
 //				else if (port == ((uint) (0x3C8)))
 //				{
@@ -696,13 +696,13 @@
 //					switch (latchReadRGB)
 //					{
 //						case 0: // B
-//							tmpRGB = System.Convert.ToUInt32(vgaPalette[latchReadPal].ToArgb() >> 2);
+//							tmpRGB = (uint)(vgaPalette[latchReadPal].ToArgb() >> 2);
 //							break;
 //						case 1: // G
-//							tmpRGB = System.Convert.ToUInt32(vgaPalette[latchReadPal].ToArgb() >> 10);
+//							tmpRGB = (uint)(vgaPalette[latchReadPal].ToArgb() >> 10);
 //							break;
 //						case 2: // R
-//							tmpRGB = System.Convert.ToUInt32(vgaPalette[latchReadPal].ToArgb() >> 18);
+//							tmpRGB = (uint)(vgaPalette[latchReadPal].ToArgb() >> 18);
 //							latchReadPal++;
 //							latchReadRGB = -1;
 //							break;
@@ -716,7 +716,7 @@
 //					return base.In(port);
 //				}
 
-//				return System.Convert.ToUInt16(portRAM[port]);
+//				return (ushort)(portRAM[port]);
 //			}
 
 //			public override void Out(uint port, ushort value)
@@ -760,7 +760,7 @@
 //					switch (latchWriteRGB)
 //					{
 //						case 0: // R
-//							tmpRGB = System.Convert.ToUInt32(value << 2);
+//							tmpRGB = (uint)(value << 2);
 //							break;
 //						case 1: // G
 //							tmpRGB = tmpRGB | (value << 10);
@@ -771,7 +771,7 @@
 //							latchWritePal++;
 //							break;
 //					}
-//					latchWriteRGB = System.Convert.ToInt32((latchWriteRGB + 1) % 3);
+//					latchWriteRGB = (int)((latchWriteRGB + 1) % 3);
 //				} // 6845 index register
 //				else if (port == ((uint) (0x3D4)))
 //				{
@@ -856,7 +856,7 @@
 //				base.InitVideoMemory(clearScreen);
 
 //				mEndGraphicsVideoAddress = mStartGraphicsVideoAddress + 128 * 1024; // 128KB
-//				ramOffset = System.Convert.ToUInt32(mMainMode == MainModes.Text ? mStartTextVideoAddress : mStartGraphicsVideoAddress);
+//				ramOffset = (uint)(mMainMode == MainModes.Text ? mStartTextVideoAddress : mStartGraphicsVideoAddress);
 
 //				AutoSize();
 //			}
@@ -867,7 +867,7 @@
 
 //				if ((int) (VGA_GC[5] & 3) == 0)
 //				{
-//					value = System.Convert.ToUInt16(ShiftVGA(value));
+//					value = (ushort)(ShiftVGA(value));
 
 //					if ((VGA_SC[2] & 1) != 0)
 //					{
@@ -880,7 +880,7 @@
 //							curValue = value;
 //						}
 //						curValue = LogicVGA(curValue, VGA_Latch[0]);
-//						vRAM[address + planeSize * 0] = System.Convert.ToByte(((!VGA_GC[8]) & curValue) || (VGA_SC[8] & VGA_Latch[0]));
+//						vRAM[address + planeSize * 0] = (byte)(((!VGA_GC[8]) & curValue) || (VGA_SC[8] & VGA_Latch[0]));
 //					}
 
 //					if ((VGA_SC[2] & 2) != 0)
@@ -894,7 +894,7 @@
 //							curValue = value;
 //						}
 //						curValue = LogicVGA(curValue, VGA_Latch[1]);
-//						vRAM[address + planeSize * 1] = System.Convert.ToByte(((!VGA_GC[8]) & curValue) || (VGA_SC[8] & VGA_Latch[1]));
+//						vRAM[address + planeSize * 1] = (byte)(((!VGA_GC[8]) & curValue) || (VGA_SC[8] & VGA_Latch[1]));
 //					}
 
 //					if ((VGA_SC[2] & 4) != 0)
@@ -908,7 +908,7 @@
 //							curValue = value;
 //						}
 //						curValue = LogicVGA(curValue, VGA_Latch[2]);
-//						vRAM[address + planeSize * 2] = System.Convert.ToByte(((!VGA_GC[8]) & curValue) || (VGA_SC[8] & VGA_Latch[2]));
+//						vRAM[address + planeSize * 2] = (byte)(((!VGA_GC[8]) & curValue) || (VGA_SC[8] & VGA_Latch[2]));
 //					}
 
 //					if ((VGA_SC[2] & 8) != 0)
@@ -922,7 +922,7 @@
 //							curValue = value;
 //						}
 //						curValue = LogicVGA(curValue, VGA_Latch[3]);
-//						vRAM[address + planeSize * 3] = System.Convert.ToByte(((!VGA_GC[8]) & curValue) || (VGA_SC[8] & VGA_Latch[3]));
+//						vRAM[address + planeSize * 3] = (byte)(((!VGA_GC[8]) & curValue) || (VGA_SC[8] & VGA_Latch[3]));
 //					}
 //				}
 //				else if ((int) (VGA_GC[5] & 3) == 1)
@@ -964,7 +964,7 @@
 //							curValue = value;
 //						}
 //						curValue = LogicVGA(curValue, VGA_Latch[0]);
-//						curValue = System.Convert.ToByte(((!VGA_GC[8]) & curValue) || (VGA_SC[8] & VGA_Latch[0]));
+//						curValue = (byte)(((!VGA_GC[8]) & curValue) || (VGA_SC[8] & VGA_Latch[0]));
 //						vRAM[address + planeSize * 0] = curValue;
 //					}
 
@@ -986,7 +986,7 @@
 //							curValue = value;
 //						}
 //						curValue = LogicVGA(curValue, VGA_Latch[1]);
-//						curValue = System.Convert.ToByte(((!VGA_GC[8]) & curValue) || (VGA_SC[8] & VGA_Latch[1]));
+//						curValue = (byte)(((!VGA_GC[8]) & curValue) || (VGA_SC[8] & VGA_Latch[1]));
 //						vRAM[address + planeSize * 1] = curValue;
 //					}
 
@@ -1008,7 +1008,7 @@
 //							curValue = value;
 //						}
 //						curValue = LogicVGA(curValue, VGA_Latch[2]);
-//						curValue = System.Convert.ToByte(((!VGA_GC[8]) & curValue) || (VGA_SC[8] & VGA_Latch[2]));
+//						curValue = (byte)(((!VGA_GC[8]) & curValue) || (VGA_SC[8] & VGA_Latch[2]));
 //						vRAM[address + planeSize * 2] = curValue;
 //					}
 
@@ -1030,14 +1030,14 @@
 //							curValue = value;
 //						}
 //						curValue = LogicVGA(curValue, VGA_Latch[3]);
-//						curValue = System.Convert.ToByte(((!VGA_GC[8]) & curValue) || (VGA_SC[8] & VGA_Latch[3]));
+//						curValue = (byte)(((!VGA_GC[8]) & curValue) || (VGA_SC[8] & VGA_Latch[3]));
 //						vRAM[address + planeSize * 3] = curValue;
 //					}
 //				}
 //				else if ((int) (VGA_GC[5] & 3) == 3)
 //				{
 //					tmpVal = value & VGA_GC[8];
-//					value = System.Convert.ToUInt16(ShiftVGA(value));
+//					value = (ushort)(ShiftVGA(value));
 
 //					if ((VGA_SC[2] & 1) != 0)
 //					{
@@ -1053,7 +1053,7 @@
 //							}
 //						}
 //						curValue = LogicVGA(curValue, VGA_Latch[0]);
-//						curValue = System.Convert.ToByte(((!tmpVal) & curValue) | (tmpVal & VGA_Latch[0]));
+//						curValue = (byte)(((!tmpVal) & curValue) | (tmpVal & VGA_Latch[0]));
 //						vRAM[address + planeSize * 0] = curValue;
 //					}
 
@@ -1071,7 +1071,7 @@
 //							}
 //						}
 //						curValue = LogicVGA(curValue, VGA_Latch[1]);
-//						curValue = System.Convert.ToByte(((!tmpVal) & curValue) | (tmpVal & VGA_Latch[1]));
+//						curValue = (byte)(((!tmpVal) & curValue) | (tmpVal & VGA_Latch[1]));
 //						vRAM[address + planeSize * 1] = curValue;
 //					}
 
@@ -1089,7 +1089,7 @@
 //							}
 //						}
 //						curValue = LogicVGA(curValue, VGA_Latch[2]);
-//						curValue = System.Convert.ToByte(((!tmpVal) & curValue) | (tmpVal & VGA_Latch[2]));
+//						curValue = (byte)(((!tmpVal) & curValue) | (tmpVal & VGA_Latch[2]));
 //						vRAM[address + planeSize * 2] = curValue;
 //					}
 
@@ -1107,7 +1107,7 @@
 //							}
 //						}
 //						curValue = LogicVGA(curValue, VGA_Latch[3]);
-//						curValue = System.Convert.ToByte(((!tmpVal) & curValue) | (tmpVal & VGA_Latch[3]));
+//						curValue = (byte)(((!tmpVal) & curValue) | (tmpVal & VGA_Latch[3]));
 //						vRAM[address + planeSize * 3] = curValue;
 //					}
 //				}
@@ -1122,19 +1122,19 @@
 
 //				if ((VGA_SC[2] & 1) != 0)
 //				{
-//					return System.Convert.ToUInt16(vRAM[address + planeSize * 0]);
+//					return (ushort)(vRAM[address + planeSize * 0]);
 //				}
 //				if ((VGA_SC[2] & 2) != 0)
 //				{
-//					return System.Convert.ToUInt16(vRAM[address + planeSize * 1]);
+//					return (ushort)(vRAM[address + planeSize * 1]);
 //				}
 //				if ((VGA_SC[2] & 4) != 0)
 //				{
-//					return System.Convert.ToUInt16(vRAM[address + planeSize * 2]);
+//					return (ushort)(vRAM[address + planeSize * 2]);
 //				}
 //				if ((VGA_SC[2] & 8) != 0)
 //				{
-//					return System.Convert.ToUInt16(vRAM[address + planeSize * 3]);
+//					return (ushort)(vRAM[address + planeSize * 3]);
 //				}
 
 //				return (ushort)  0;
@@ -1144,7 +1144,7 @@
 //			{
 //				for (int i = 0; i <= (VGA_GC[3] & 7) - 1; i++)
 //				{
-//					value = System.Convert.ToByte((value >> 1) | ((value & 1) << 7));
+//					value = (byte)((value >> 1) | ((value & 1) << 7));
 //				}
 //				return value;
 //			}

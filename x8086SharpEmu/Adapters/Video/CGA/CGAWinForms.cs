@@ -217,7 +217,7 @@
 //				ctrlSize = new Size(GraphicsResolution.Width, GraphicsResolution.Height);
 //			}
 
-//			Size frmSize = new Size(System.Convert.ToInt32(640 * Zoom), System.Convert.ToInt32(400 * Zoom));
+//			Size frmSize = new Size((int)(640 * Zoom), (int)(400 * Zoom));
 //			Form frm = mRenderControl.FindForm();
 //			frm.ClientSize = frmSize;
 //			mRenderControl.Location = Point.Empty;
@@ -356,7 +356,7 @@
 //		private void RenderGraphics()
 //		{
 //			byte b = 0;
-//			int xDiv = System.Convert.ToInt32(PixelsPerByte == 4 ? 2 : 3);
+//			int xDiv = (int)(PixelsPerByte == 4 ? 2 : 3);
 
 //			for (int y = 0; y <= GraphicsResolution.Height - 1; y++)
 //			{
@@ -372,19 +372,19 @@
 //								b = b & 3;
 //								break;
 //							case 2:
-//								b = System.Convert.ToByte((b >> 2) & 3);
+//								b = (byte)((b >> 2) & 3);
 //								break;
 //							case 1:
-//								b = System.Convert.ToByte((b >> 4) & 3);
+//								b = (byte)((b >> 4) & 3);
 //								break;
 //							case 0:
-//								b = System.Convert.ToByte((b >> 6) & 3);
+//								b = (byte)((b >> 6) & 3);
 //								break;
 //						}
 //					}
 //					else
 //					{
-//						b = System.Convert.ToByte((b >> (7 - (x & 7))) & 1);
+//						b = (byte)((b >> (7 - (x & 7))) & 1);
 //					}
 
 //					videoBMP.set_Pixel(x, y, CGAPalette[b]);
@@ -440,11 +440,11 @@
 //			{
 //				g.ResetTransform();
 
-//				int h = System.Convert.ToInt32(mRenderControl.Height * 0.6);
-//				int h2 = System.Convert.ToInt32((double) h / 2);
-//				Point p1 = new Point(0, System.Convert.ToInt32(base.CPU.PIT.Speaker.AudioBuffer[0] / byte.MaxValue * h + h * 0.4));
+//				int h = (int)(mRenderControl.Height * 0.6);
+//				int h2 = (int)((double) h / 2);
+//				Point p1 = new Point(0, (int)(base.CPU.PIT.Speaker.AudioBuffer[0] / byte.MaxValue * h + h * 0.4));
 //				Point p2 = new Point();
-//				int len = System.Convert.ToInt32(base.CPU.PIT.Speaker.AudioBuffer.Length);
+//				int len = (int)(base.CPU.PIT.Speaker.AudioBuffer.Length);
 
 //				using (Pen p = new Pen(Brushes.Red, 3))
 //				{
@@ -452,7 +452,7 @@
 //					{
 //						try
 //						{
-//							p2 = new Point(System.Convert.ToInt32((double) i / len * mRenderControl.Width), System.Convert.ToInt32(base.CPU.PIT.Speaker.AudioBuffer[i] / byte.MaxValue * h + h * 0.4));
+//							p2 = new Point((int)((double) i / len * mRenderControl.Width), (int)(base.CPU.PIT.Speaker.AudioBuffer[i] / byte.MaxValue * h + h * 0.4));
 //							g.DrawLine(p, p1, p2);
 //							p1 = p2;
 //						}
@@ -493,7 +493,7 @@
 //					regions = graphics.MeasureCharacterRanges(text.ToString(), font, rect, textFormat);
 //					rect = regions[0].GetBounds(graphics);
 
-//					size = new Size(System.Convert.ToInt32(rect.Right - 1), System.Convert.ToInt32(rect.Bottom));
+//					size = new Size((int)(rect.Right - 1), (int)(rect.Bottom));
 //					charSizeCache.Add(code, size);
 //					break;
 //				case FontSources.ROM:

@@ -186,7 +186,7 @@ namespace x8086SharpEmu
             ch0TriggerPeriod = period;
             if (ch0NextTrigger == -1 && period > 0)
             {
-                ch0NextTrigger = System.Convert.ToInt64(cpu.Sched.CurrentTime + period);
+                ch0NextTrigger = (long)(cpu.Sched.CurrentTime + period);
             }
         }
 
@@ -205,8 +205,8 @@ namespace x8086SharpEmu
                 // timer channel 1, but probably nobody will notice.
                 if (ch0TriggerPeriod > 0)
                 {
-                    long d = System.Convert.ToInt64(t - ch0NextTrigger);
-                    ntrigger = System.Convert.ToInt64(1 + System.Convert.ToInt32((double)d / ch0TriggerPeriod));
+                    long d = (long)(t - ch0NextTrigger);
+                    ntrigger = (long)(1 + (int)((double)d / ch0TriggerPeriod));
                     ch0NextTrigger = t + ch0TriggerPeriod - (d % ch0TriggerPeriod);
                 }
                 else
@@ -238,20 +238,20 @@ namespace x8086SharpEmu
 
             // Update count, address and status registers to account for
             // the past triggers.
-            int addrstep = System.Convert.ToInt32(((cmdReg & 0x2) == 0) ? (((channels[0].Mode & 0x20) == 0) ? 1 : -1) : 0);
+            int addrstep = (int)(((cmdReg & 0x2) == 0) ? (((channels[0].Mode & 0x20) == 0) ? 1 : -1) : 0);
             if (ntrigger <= channels[0].CurrentCount)
             {
                 // no terminal count
                 int n = (int)ntrigger;
                 channels[0].CurrentCount -= n;
-                channels[0].CurrentAddress = System.Convert.ToInt32((channels[0].CurrentAddress + n * addrstep) & 0xFFFF);
+                channels[0].CurrentAddress = (int)((channels[0].CurrentAddress + n * addrstep) & 0xFFFF);
             }
             else
             {
                 // terminal count occurred
-                int n = System.Convert.ToInt32(System.Convert.ToInt32(System.Convert.ToInt32(ntrigger - channels[0].CurrentCount) - 1) % (channels[0].BaseCount + 1));
+                int n = (int)((int)((int)(ntrigger - channels[0].CurrentCount) - 1) % (channels[0].BaseCount + 1));
                 channels[0].CurrentCount = channels[0].BaseCount - n;
-                channels[0].CurrentAddress = System.Convert.ToInt32((channels[0].BaseAddress + n * addrstep) & 0xFFFF);
+                channels[0].CurrentAddress = (int)((channels[0].BaseAddress + n * addrstep) & 0xFFFF);
                 statusReg = statusReg | 1;
             }
         }
@@ -269,7 +269,7 @@ namespace x8086SharpEmu
                     rbits = rbits | (1 << i);
                 }
             }
-            statusReg = System.Convert.ToInt32((statusReg & 0xF) | (rbits << 4));
+            statusReg = (int)((statusReg & 0xF) | (rbits << 4));
 
             // Don't start a transfer during dead time after a previous transfer
             if (pendingTask)
@@ -294,7 +294,7 @@ namespace x8086SharpEmu
             i = prioChannel;
             while (((rbits >> i) & 1) == 0)
             {
-                i = System.Convert.ToInt32((i + 1) & 3);
+                i = (int)((i + 1) & 3);
             }
 
             // Just decided to start a transfer on channel i
@@ -306,7 +306,7 @@ namespace x8086SharpEmu
             // Update dynamic priority
             if ((cmdReg & 10) != 0)
             {
-                prioChannel = System.Convert.ToInt32((i + 1) & 3);
+                prioChannel = (int)((i + 1) & 3);
             }
 
             // Block further transactions until this one completes
@@ -330,7 +330,7 @@ namespace x8086SharpEmu
                 int curcount = chan.CurrentCount;
                 int maxlen = curcount + 1;
                 int curaddr = chan.CurrentAddress;
-                int addrstep = System.Convert.ToInt32(((chan.Mode & 0x20) == 0) ? 1 : -1);
+                int addrstep = (int)(((chan.Mode & 0x20) == 0) ? 1 : -1);
                 chan.ExternalEop = false;
 
                 // Don't combine too much single transfers in one atomic action
@@ -345,8 +345,8 @@ namespace x8086SharpEmu
                     case 0x0:
                         // DMA verify
                         curcount -= maxlen;
-                        curaddr = System.Convert.ToInt32((curaddr + maxlen * addrstep) & 0xFFFF);
-                        transferTime += System.Convert.ToInt64(3 * maxlen * Scheduler.BASECLOCK / cpu.Clock);
+                        curaddr = (int)((curaddr + maxlen * addrstep) & 0xFFFF);
+                        transferTime += (long)(3 * maxlen * Scheduler.BASECLOCK / cpu.Clock);
                         break;
                     case 0x4:
                         // DMA write
@@ -358,8 +358,8 @@ namespace x8086SharpEmu
                             }
                             maxlen--;
                             curcount--;
-                            curaddr = System.Convert.ToInt32((curaddr + addrstep) & 0xFFFF);
-                            transferTime += System.Convert.ToInt64(3 * Scheduler.BASECLOCK / cpu.Clock);
+                            curaddr = (int)((curaddr + addrstep) & 0xFFFF);
+                            transferTime += (long)(3 * Scheduler.BASECLOCK / cpu.Clock);
                         }
                         break;
                     case 0x8:
@@ -372,15 +372,15 @@ namespace x8086SharpEmu
                             }
                             maxlen--;
                             curcount--;
-                            curaddr = System.Convert.ToInt32((curaddr + addrstep) & 0xFFFF);
-                            transferTime += System.Convert.ToInt64(3 * Scheduler.BASECLOCK / cpu.Clock);
+                            curaddr = (int)((curaddr + addrstep) & 0xFFFF);
+                            transferTime += (long)(3 * Scheduler.BASECLOCK / cpu.Clock);
                         }
                         break;
                 }
 
                 // Update registers
                 bool termcount = curcount < 0;
-                chan.CurrentCount = System.Convert.ToInt32(termcount ? 0xFFFF : curcount);
+                chan.CurrentCount = (int)(termcount ? 0xFFFF : curcount);
                 chan.CurrentAddress = curaddr;
 
                 // Handle terminal count or external EOP
@@ -421,7 +421,7 @@ namespace x8086SharpEmu
             {
                 // DMA controller: channel status
                 Channel chan = channels[(port >> 1) & 3];
-                int x = System.Convert.ToInt32(((port & 1) == 0) ? chan.CurrentAddress : chan.CurrentCount);
+                int x = (int)(((port & 1) == 0) ? chan.CurrentAddress : chan.CurrentCount);
                 bool p = msbFlipFlop;
                 msbFlipFlop = !p;
                 return (ushort)((p ? ((x >> 8) & 0xFF) : x & 0xFF));
@@ -472,13 +472,13 @@ namespace x8086SharpEmu
                 msbFlipFlop = !p;
                 if (p)
                 {
-                    x = System.Convert.ToInt32((x & 0xFF) | ((value << 8) & 0xFF00));
-                    y = System.Convert.ToInt32((y & 0xFF) | ((value << 8) & 0xFF00));
+                    x = (int)((x & 0xFF) | ((value << 8) & 0xFF00));
+                    y = (int)((y & 0xFF) | ((value << 8) & 0xFF00));
                 }
                 else
                 {
-                    x = System.Convert.ToInt32((x & 0xFF00) | (value & 0xFF));
-                    y = System.Convert.ToInt32((y & 0xFF00) | (value & 0xFF));
+                    x = (int)((x & 0xFF00) | (value & 0xFF));
+                    y = (int)((y & 0xFF00) | (value & 0xFF));
                 }
                 if ((port & 1) == 0)
                 {
@@ -533,14 +533,14 @@ namespace x8086SharpEmu
                     {
                         MaskReg = MaskReg | (1 << (value & 3)); // set mask bit
                     }
-                    channels[value & 3].Masked = System.Convert.ToInt32((value >> 2) & 1);
+                    channels[value & 3].Masked = (int)((value >> 2) & 1);
                 } // write mode register
                 else if ((port & 0xF) == ((uint)11))
                 {
                     channels[value & 3].Mode = value;
-                    channels[value & 3].Direction = System.Convert.ToInt32((value >> 5) & 1);
-                    channels[value & 3].AutoInit = System.Convert.ToInt32((value >> 4) & 1);
-                    channels[value & 3].WriteMode = System.Convert.ToInt32((value >> 2) & 1);
+                    channels[value & 3].Direction = (int)((value >> 5) & 1);
+                    channels[value & 3].AutoInit = (int)((value >> 4) & 1);
+                    channels[value & 3].WriteMode = (int)((value >> 2) & 1);
                     if ((value & 3) == 0 && (value & 0xDC) != 0x58)
                     {
                         cpu.RaiseException("DMA8237: unsupported mode on channel 0");

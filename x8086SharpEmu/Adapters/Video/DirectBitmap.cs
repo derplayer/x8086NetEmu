@@ -66,9 +66,9 @@ namespace x8086SharpEmu
                 {
                     srcOffset = x * srcBytesPerPixel + y * sourceStride;
 
-                    a = System.Convert.ToInt32(srcBytesPerPixel == 4 ? (Marshal.ReadByte(sourcePointer, srcOffset + 3)) : 255);
+                    a = (int)(srcBytesPerPixel == 4 ? (Marshal.ReadByte(sourcePointer, srcOffset + 3)) : 255);
                     pa = (double)a / 255;
-                    set_Pixel(x, y, Color.FromArgb(a, System.Convert.ToInt32(Marshal.ReadByte(sourcePointer, srcOffset + 2) * pa), System.Convert.ToInt32(Marshal.ReadByte(sourcePointer, srcOffset + 1) * pa), System.Convert.ToInt32(Marshal.ReadByte(sourcePointer, srcOffset + 0) * pa)));
+                    set_Pixel(x, y, Color.FromArgb(a, (int)(Marshal.ReadByte(sourcePointer, srcOffset + 2) * pa), (int)(Marshal.ReadByte(sourcePointer, srcOffset + 1) * pa), (int)(Marshal.ReadByte(sourcePointer, srcOffset + 0) * pa)));
                 }
             }
 
@@ -182,7 +182,7 @@ namespace x8086SharpEmu
             {
                 return 0;
             }
-            return System.Convert.ToInt32(Math.Floor((c1 * a1p + c2 * a2p * (1 - a1p)) * a));
+            return (int)(Math.Floor((c1 * a1p + c2 * a2p * (1 - a1p)) * a));
         }
 
         private double GetAlpha(double a1p, double a2p)
@@ -248,11 +248,11 @@ namespace x8086SharpEmu
         {
             int dx = x2 - x1;
             int dy = y2 - y1;
-            int l = System.Convert.ToInt32(Math.Sqrt(Math.Pow(dx, 2) + Math.Pow(dy, 2)));
+            int l = (int)(Math.Sqrt(Math.Pow(dx, 2) + Math.Pow(dy, 2)));
             double a = Math.Atan2(dy, dx);
             for (int r = 0; r <= l; r++)
             {
-                dbmp.set_Pixel(System.Convert.ToInt32(x1 + r * Math.Cos(System.Convert.ToDouble(-a))), System.Convert.ToInt32(y1 + r * Math.Sin(a)), c);
+                dbmp.set_Pixel((int)(x1 + r * Math.Cos(System.Convert.ToDouble(-a))), (int)(y1 + r * Math.Sin(a)), c);
             }
         }
 
@@ -267,7 +267,7 @@ namespace x8086SharpEmu
             int l = p.Length;
             for (int i = 0; i <= l - 1; i++)
             {
-                j = System.Convert.ToInt32((i + 1) % l);
+                j = (int)((i + 1) % l);
                 dbmp.DrawLine(c, p[i], p[j]);
             }
         }
@@ -278,7 +278,7 @@ namespace x8086SharpEmu
             Point[] pi = new Point[l + 1];
             for (int i = 0; i <= l; i++)
             {
-                pi[i] = new Point(System.Convert.ToInt32(p[i].X), System.Convert.ToInt32(p[i].Y));
+                pi[i] = new Point((int)(p[i].X), (int)(p[i].Y));
             }
             dbmp.DrawPolygon(c, pi);
         }

@@ -163,11 +163,11 @@ namespace x8086SharpEmu
             mMasterBootRecord.Partitions = new Partition[1];
             mMasterBootRecord.Partitions[0] = new Partition { BootIndicator = BootIndicators.SystemPartition };
 
-            for (int i = 0; i <= System.Convert.ToInt32((double)geometryTable.Length / 4 - 1); i++)
+            for (int i = 0; i <= (int)((double)geometryTable.Length / 4 - 1); i++)
             {
                 if (strm.Length == geometryTable[i, 3])
                 {
-                    mMasterBootRecord.Partitions[0].EndingSectorCylinder = System.Convert.ToUInt16(((geometryTable[i, 0] & 0x3FC) << 8) |
+                    mMasterBootRecord.Partitions[0].EndingSectorCylinder = (ushort)(((geometryTable[i, 0] & 0x3FC) << 8) |
                         ((geometryTable[i, 0] & 0x3) << 6) |
                         geometryTable[i, 2]);
                     mMasterBootRecord.Partitions[0].EndingHead = (byte)(geometryTable[i, 1]);
@@ -195,7 +195,7 @@ namespace x8086SharpEmu
                 mMasterBootRecord.Partitions[0].SystemId = SystemIds.EMPTY;
             }
 
-            mMasterBootRecord.Signature = System.Convert.ToUInt16(((FAT12.BootSector)mBootSectors[0]).Signature);
+            mMasterBootRecord.Signature = (ushort)(((FAT12.BootSector)mBootSectors[0]).Signature);
 
             ReadFAT(0);
         }
@@ -213,7 +213,7 @@ namespace x8086SharpEmu
 
             for (int partitionNumber = 0; partitionNumber <= 4 - 1; partitionNumber++)
             {
-                strm.Position = System.Convert.ToInt64(mMasterBootRecord.Partitions[partitionNumber].RelativeSector * 512);
+                strm.Position = (long)(mMasterBootRecord.Partitions[partitionNumber].RelativeSector * 512);
                 strm.Read(b, 0, b.Length);
                 pb = GCHandle.Alloc(b, GCHandleType.Pinned);
 
@@ -244,7 +244,7 @@ namespace x8086SharpEmu
         {
             FATRegionStart[partitionNumber] = strm.Position;
 
-            mFATDataPointers[partitionNumber] = new ushort[(System.Convert.ToUInt32(((FAT12.BootSector)mBootSectors[partitionNumber]).BIOSParameterBlock.SectorsPerFAT)) * ((FAT12.BootSector)mBootSectors[partitionNumber]).BIOSParameterBlock.BytesPerSector / 2];
+            mFATDataPointers[partitionNumber] = new ushort[((uint)(((FAT12.BootSector)mBootSectors[partitionNumber]).BIOSParameterBlock.SectorsPerFAT)) * ((FAT12.BootSector)mBootSectors[partitionNumber]).BIOSParameterBlock.BytesPerSector / 2];
             for (int j = 0; j <= mFATDataPointers[partitionNumber].Length - 1; j++)
             {
                 // mBootSectors(partitionNumber).ExtendedBIOSParameterBlock.FileSystemType
@@ -274,7 +274,7 @@ namespace x8086SharpEmu
 
         public object[] GetDirectoryEntries(int partitionNumber, int clusterIndex = -1) // FAT12.DirectoryEntry()
         {
-            ushort bytesInCluster = System.Convert.ToUInt16(((FAT12.BootSector)mBootSectors[partitionNumber]).BIOSParameterBlock.SectorsPerCluster * ((FAT12.BootSector)mBootSectors[partitionNumber]).BIOSParameterBlock.BytesPerSector);
+            ushort bytesInCluster = (ushort)(((FAT12.BootSector)mBootSectors[partitionNumber]).BIOSParameterBlock.SectorsPerCluster * ((FAT12.BootSector)mBootSectors[partitionNumber]).BIOSParameterBlock.BytesPerSector);
             GCHandle pb = new GCHandle();
             object[] des = null; // FAT12.DirectoryEntry = Nothing
             byte[] b = new byte[32];
@@ -286,7 +286,7 @@ namespace x8086SharpEmu
             {
                 if (clusterIndex == -1)
                 {
-                    strm.Position = System.Convert.ToInt64(FATRegionStart[partitionNumber] + ((FAT12.BootSector)mBootSectors[partitionNumber]).BIOSParameterBlock.NumberOfFATCopies * mFATDataPointers[partitionNumber].Length * 2);
+                    strm.Position = (long)(FATRegionStart[partitionNumber] + ((FAT12.BootSector)mBootSectors[partitionNumber]).BIOSParameterBlock.NumberOfFATCopies * mFATDataPointers[partitionNumber].Length * 2);
                 }
                 else
                 {
@@ -329,7 +329,7 @@ namespace x8086SharpEmu
                         bytesRead += (uint)b.Length;
                         if (bytesRead % bytesInCluster == 0)
                         {
-                            clusterIndex = System.Convert.ToInt32(mFATDataPointers[partitionNumber][clusterIndex]);
+                            clusterIndex = (int)(mFATDataPointers[partitionNumber][clusterIndex]);
                             break;
                         }
                     }
@@ -348,17 +348,17 @@ namespace x8086SharpEmu
         private long ClusterIndexToSector(int partitionNumber, int clusterIndex)
         {
             dynamic bs = mBootSectors[partitionNumber];
-            long rootDirectoryRegionStart = System.Convert.ToInt64(FATRegionStart[partitionNumber] + bs.BIOSParameterBlock.NumberOfFATCopies * bs.BIOSParameterBlock.SectorsPerFAT * bs.BIOSParameterBlock.BytesPerSector);
+            long rootDirectoryRegionStart = (long)(FATRegionStart[partitionNumber] + bs.BIOSParameterBlock.NumberOfFATCopies * bs.BIOSParameterBlock.SectorsPerFAT * bs.BIOSParameterBlock.BytesPerSector);
             long dataRegionStart = rootDirectoryRegionStart + bs.BIOSParameterBlock.MaxRootEntries * 32;
             return dataRegionStart + (clusterIndex - 2) * bs.BIOSParameterBlock.SectorsPerCluster * bs.BIOSParameterBlock.BytesPerSector;
         }
 
         public byte[] ReadFile(int partitionNumber, dynamic de)
         {
-            uint bytesInCluster = System.Convert.ToUInt32(((FAT12.BootSector)mBootSectors[partitionNumber]).BIOSParameterBlock.SectorsPerCluster * ((FAT12.BootSector)mBootSectors[partitionNumber]).BIOSParameterBlock.BytesPerSector);
-            uint clustersInFile = System.Convert.ToUInt32(Math.Ceiling(System.Convert.ToDecimal(de.FileSize / bytesInCluster)));
+            uint bytesInCluster = (uint)(((FAT12.BootSector)mBootSectors[partitionNumber]).BIOSParameterBlock.SectorsPerCluster * ((FAT12.BootSector)mBootSectors[partitionNumber]).BIOSParameterBlock.BytesPerSector);
+            uint clustersInFile = (uint)(Math.Ceiling(System.Convert.ToDecimal(de.FileSize / bytesInCluster)));
             byte[] b = new byte[clustersInFile * bytesInCluster];
-            ushort clusterIndex = System.Convert.ToUInt16(de.StartingClusterValue);
+            ushort clusterIndex = (ushort)(de.StartingClusterValue);
             long bytesRead = 0;
 
             while (clusterIndex < 0xFFF8 && bytesRead < de.FileSize)
@@ -372,7 +372,7 @@ namespace x8086SharpEmu
 
                     if (bytesRead >= de.FileSize && (bytesRead % bytesInCluster) == 0)
                     {
-                        clusterIndex = System.Convert.ToUInt16(mFATDataPointers[partitionNumber][clusterIndex]);
+                        clusterIndex = (ushort)(mFATDataPointers[partitionNumber][clusterIndex]);
                         break;
                     }
                 } while (true);
@@ -419,16 +419,16 @@ namespace x8086SharpEmu
         public short Cylinders(int partitionIndex)
         {
             short sc = (short)(mMasterBootRecord.Partitions[partitionIndex].StartingSectorCylinder >> 6);
-            sc = System.Convert.ToInt16((sc >> 2) | ((sc & 0x3) << 8));
+            sc = (short)((sc >> 2) | ((sc & 0x3) << 8));
             short ec = (short)(mMasterBootRecord.Partitions[partitionIndex].EndingSectorCylinder >> 6);
-            ec = System.Convert.ToInt16((ec >> 2) | ((ec & 0x3) << 8));
+            ec = (short)((ec >> 2) | ((ec & 0x3) << 8));
             return (short)(ec - sc + 1);
         }
 
         public short Sectors(int partitionIndex)
         {
-            short ss = System.Convert.ToInt16(mMasterBootRecord.Partitions[partitionIndex].StartingSectorCylinder & 0x3F);
-            short es = System.Convert.ToInt16(mMasterBootRecord.Partitions[partitionIndex].EndingSectorCylinder & 0x3F);
+            short ss = (short)(mMasterBootRecord.Partitions[partitionIndex].StartingSectorCylinder & 0x3F);
+            short es = (short)(mMasterBootRecord.Partitions[partitionIndex].EndingSectorCylinder & 0x3F);
             return (short)(es - ss);
         }
 

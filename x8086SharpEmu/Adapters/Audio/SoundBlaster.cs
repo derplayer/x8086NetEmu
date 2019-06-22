@@ -101,13 +101,13 @@
 //				{
 //					if (blaster.WaitForArg == 2)
 //					{
-//						blaster.BlockSize = System.Convert.ToUInt32((blaster.BlockSize & 0xFF00) | value);
+//						blaster.BlockSize = (uint)((blaster.BlockSize & 0xFF00) | value);
 //						blaster.WaitForArg = (byte) 3;
 //						return;
 //					}
 //					else
 //					{
-//						blaster.BlockSize = System.Convert.ToUInt32((blaster.BlockSize & 0xFF) | (value << 8));
+//						blaster.BlockSize = (uint)((blaster.BlockSize & 0xFF) | (value << 8));
 
 //						blaster.UsingDma = true;
 //						blaster.BlockStep = (uint) 0;
@@ -118,20 +118,20 @@
 //				} // set time constant
 //				else if (blaster.LastCmdVal == ((byte) (0x40)))
 //				{
-//					blaster.SampleRate = System.Convert.ToUInt16(base.CPU.Clock / (256 - value));
+//					blaster.SampleRate = (ushort)(base.CPU.Clock / (256 - value));
 //					SetSampleTicks();
 //				} // set DSP block transfer size
 //				else if (blaster.LastCmdVal == ((byte) (0x48)))
 //				{
 //					if (blaster.WaitForArg == 2)
 //					{
-//						blaster.BlockSize = System.Convert.ToUInt32((blaster.BlockSize & 0xFF00) | value);
+//						blaster.BlockSize = (uint)((blaster.BlockSize & 0xFF00) | value);
 //						blaster.WaitForArg = (byte) 3;
 //						return;
 //					}
 //					else
 //					{
-//						blaster.BlockSize = System.Convert.ToUInt32((blaster.BlockSize & 0xFF) | (value << 8));
+//						blaster.BlockSize = (uint)((blaster.BlockSize & 0xFF) | (value << 8));
 //						blaster.BlockStep = (uint) 0;
 //					}
 //				} // DSP identification for Sound Blaster 2.0 and newer (invert each bit and put in read buffer)
@@ -254,12 +254,12 @@
 //			{
 //				return (ushort)  0;
 //			}
-//			return System.Convert.ToUInt16(blaster.Sample); //- 128
+//			return (ushort)(blaster.Sample); //- 128
 //		}
 
 //		private void MixerReset()
 //		{
-//			byte v = System.Convert.ToByte((4 << 5) | (4 << 1));
+//			byte v = (byte)((4 << 5) | (4 << 1));
 
 //			Array.Clear(blaster.MixerData.Reg, 0, blaster.MixerData.Reg.Length);
 
@@ -344,7 +344,7 @@
 //			}
 //			else if (port & 0xF == ((uint) (0x5)))
 //			{
-//				return System.Convert.ToUInt16(mixer[mixerIndex]);
+//				return (ushort)(mixer[mixerIndex]);
 //			} // read data
 //			else if (port & 0xF == ((uint) (0xA)))
 //			{
@@ -357,7 +357,7 @@
 //					byte r = blaster.Mem[0];
 //					Array.Copy(blaster.Mem, 0, blaster.Mem, 1, blaster.Mem.Length - 1);
 //					blaster.MemPtr--;
-//					return System.Convert.ToUInt16(r);
+//					return (ushort)(r);
 //				}
 //			} // read-buffer status
 //			else if (port & 0xF == ((uint) (0xE)))

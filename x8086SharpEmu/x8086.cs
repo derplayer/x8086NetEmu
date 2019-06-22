@@ -86,8 +86,8 @@ namespace x8086SharpEmu
         public const long KHz = 1000;
         public const long MHz = KHz * KHz;
         public const long GHz = MHz * KHz;
-        public static long BASECLOCK = Convert.ToInt64(4.77273 * MHz); // http://dosmandrivel.blogspot.com/2009/03/ibm-pc-design-antics.html
-        private long mCyclesPerSecond = Convert.ToInt64(4.77273 * MHz);
+        public static long BASECLOCK = (long)(4.77273 * MHz); // http://dosmandrivel.blogspot.com/2009/03/ibm-pc-design-antics.html
+        private long mCyclesPerSecond = (long)(4.77273 * MHz);
         private long clkCyc = 0;
 
         private bool mDoReSchedule;
@@ -676,7 +676,7 @@ namespace x8086SharpEmu
             } // ADD AL Ib
             else if (opCode == ((byte)(0x4)))
             {
-                mRegisters.AL = Convert.ToByte(Eval((uint)(mRegisters.AL), (uint)(Param(index: ParamIndex.First, size: DataSize.Byte)), Operation.Add, DataSize.Byte));
+                mRegisters.AL = (byte)(Eval((uint)(mRegisters.AL), (uint)(Param(index: ParamIndex.First, size: DataSize.Byte)), Operation.Add, DataSize.Byte));
                 clkCyc += 4;
             } // ADD AX Iv
             else if (opCode == ((byte)(0x5)))
@@ -719,7 +719,7 @@ namespace x8086SharpEmu
             } // OR AL Ib
             else if (opCode == ((byte)(0xC)))
             {
-                mRegisters.AL = Convert.ToByte(Eval((uint)(mRegisters.AL), (uint)(Param(index: ParamIndex.First, size: DataSize.Byte)), Operation.LogicOr, DataSize.Byte));
+                mRegisters.AL = (byte)(Eval((uint)(mRegisters.AL), (uint)(Param(index: ParamIndex.First, size: DataSize.Byte)), Operation.LogicOr, DataSize.Byte));
                 clkCyc += 4;
             } // OR AX Iv
             else if (opCode == ((byte)(0xD)))
@@ -765,7 +765,7 @@ namespace x8086SharpEmu
             } // ADC AL Ib
             else if (opCode == ((byte)(0x14)))
             {
-                mRegisters.AL = Convert.ToByte(Eval((uint)(mRegisters.AL), (uint)(Param(index: ParamIndex.First, size: DataSize.Byte)), Operation.AddWithCarry, DataSize.Byte));
+                mRegisters.AL = (byte)(Eval((uint)(mRegisters.AL), (uint)(Param(index: ParamIndex.First, size: DataSize.Byte)), Operation.AddWithCarry, DataSize.Byte));
                 clkCyc += 3;
             } // ADC AX Iv
             else if (opCode == ((byte)(0x15)))
@@ -811,7 +811,7 @@ namespace x8086SharpEmu
             } // SBB AL Ib
             else if (opCode == ((byte)(0x1C)))
             {
-                mRegisters.AL = Convert.ToByte(Eval((uint)(mRegisters.AL), (uint)(Param(index: ParamIndex.First, size: DataSize.Byte)), Operation.SubstractWithCarry, DataSize.Byte));
+                mRegisters.AL = (byte)(Eval((uint)(mRegisters.AL), (uint)(Param(index: ParamIndex.First, size: DataSize.Byte)), Operation.SubstractWithCarry, DataSize.Byte));
                 clkCyc += 4;
             } // SBB AX Iv
             else if (opCode == ((byte)(0x1D)))
@@ -854,7 +854,7 @@ namespace x8086SharpEmu
             } // AND AL Ib
             else if (opCode == ((byte)(0x24)))
             {
-                mRegisters.AL = Convert.ToByte(Eval((uint)(mRegisters.AL), (uint)(Param(index: ParamIndex.First, size: DataSize.Byte)), Operation.LogicAnd, DataSize.Byte));
+                mRegisters.AL = (byte)(Eval((uint)(mRegisters.AL), (uint)(Param(index: ParamIndex.First, size: DataSize.Byte)), Operation.LogicAnd, DataSize.Byte));
                 clkCyc += 4;
             } // AND AX Iv
             else if (opCode == ((byte)(0x25)))
@@ -876,7 +876,7 @@ namespace x8086SharpEmu
                     tmpUVal = (uint)((mRegisters.AL) + 6);
                     mRegisters.AL += (byte)6;
                     mFlags.AF = (byte)1;
-                    mFlags.CF = Convert.ToByte((mFlags.CF | (((tmpUVal & 0xFF00) != 0) ? 1 : 0)));
+                    mFlags.CF = (byte)((mFlags.CF | (((tmpUVal & 0xFF00) != 0) ? 1 : 0)));
                 }
                 else
                 {
@@ -919,7 +919,7 @@ namespace x8086SharpEmu
             } // SUB AL Ib
             else if (opCode == ((byte)(0x2C)))
             {
-                mRegisters.AL = Convert.ToByte(Eval((uint)(mRegisters.AL), (uint)(Param(index: ParamIndex.First, size: DataSize.Byte)), Operation.Substract, DataSize.Byte));
+                mRegisters.AL = (byte)(Eval((uint)(mRegisters.AL), (uint)(Param(index: ParamIndex.First, size: DataSize.Byte)), Operation.Substract, DataSize.Byte));
                 clkCyc += 4;
             } // SUB AX, Iv
             else if (opCode == ((byte)(0x2D)))
@@ -935,7 +935,7 @@ namespace x8086SharpEmu
                     tmpUVal = (uint)((mRegisters.AL) - 6);
                     mRegisters.AL -= (byte)6;
                     mFlags.AF = (byte)1;
-                    mFlags.CF = Convert.ToByte(mFlags.CF | (((tmpUVal & 0xFF00) != 0) ? 1 : 0));
+                    mFlags.CF = (byte)(mFlags.CF | (((tmpUVal & 0xFF00) != 0) ? 1 : 0));
                 }
                 else
                 {
@@ -978,7 +978,7 @@ namespace x8086SharpEmu
             } // XOR AL Ib
             else if (opCode == ((byte)(0x34)))
             {
-                mRegisters.AL = Convert.ToByte(Eval((uint)(mRegisters.AL), (uint)(Param(index: ParamIndex.First, size: DataSize.Byte)), Operation.LogicXor, DataSize.Byte));
+                mRegisters.AL = (byte)(Eval((uint)(mRegisters.AL), (uint)(Param(index: ParamIndex.First, size: DataSize.Byte)), Operation.LogicXor, DataSize.Byte));
                 clkCyc += 4;
             } // XOR AX Iv
             else if (opCode == ((byte)(0x35)))
@@ -999,7 +999,7 @@ namespace x8086SharpEmu
                     mFlags.AF = (byte)0;
                     mFlags.CF = (byte)0;
                 }
-                mRegisters.AL = System.Convert.ToByte(mRegisters.AL.LowNib());
+                mRegisters.AL = (byte)(mRegisters.AL.LowNib());
                 clkCyc += 8;
             } // CMP Eb Gb | Ev Gv | Gb Eb | Gv Ev
             else if (opCode >= 0x38 && opCode <= 0x3B)
@@ -1046,7 +1046,7 @@ namespace x8086SharpEmu
                     mFlags.AF = (byte)0;
                     mFlags.CF = (byte)0;
                 }
-                mRegisters.AL = System.Convert.ToByte(mRegisters.AL.LowNib());
+                mRegisters.AL = (byte)(mRegisters.AL.LowNib());
                 clkCyc += 8;
             } // INC AX | CX | DX | BX | SP | BP | SI | DI
             else if (opCode >= 0x40 && opCode <= 0x47)
@@ -1672,7 +1672,7 @@ namespace x8086SharpEmu
                     + mFlags.PF.ToString() + "1" + mFlags.CF.ToString();
                 byte tmpAHReg = (byte)Binary.From(binaryChain, Binary.Sizes.Byte);
 
-                //mRegisters.AH = System.Convert.ToByte(mFlags.EFlags); //TODO: AH -> 134 on VB (undefined behaviour)
+                //mRegisters.AH = (byte)(mFlags.EFlags); //TODO: AH -> 134 on VB (undefined behaviour)
                 mRegisters.AH = tmpAHReg;
                 clkCyc += 4;
             } // MOV AL Ob
@@ -2983,7 +2983,7 @@ namespace x8086SharpEmu
         private void HandleREPMode()
         {
             tmpUVal = mRegisters.ActiveSegmentValue;
-            tmpVal = System.Convert.ToInt32((((opCode & 1) == 1) ? 2 : 1) * (mFlags.DF == 0 ? 1 : -1));
+            tmpVal = (int)((((opCode & 1) == 1) ? 2 : 1) * (mFlags.DF == 0 ? 1 : -1));
 
             if (mRepeLoopMode == REPLoopModes.None)
             {

@@ -135,30 +135,30 @@ namespace x8086SharpEmu
                     case RegistersTypes.AX:
                         return AX;
                     case RegistersTypes.AH:
-                        return System.Convert.ToUInt16(AH);
+                        return (ushort)(AH);
                     case RegistersTypes.AL:
-                        return System.Convert.ToUInt16(AL);
+                        return (ushort)(AL);
 
                     case RegistersTypes.BX:
                         return BX;
                     case RegistersTypes.BH:
-                        return System.Convert.ToUInt16(BH);
+                        return (ushort)(BH);
                     case RegistersTypes.BL:
-                        return System.Convert.ToUInt16(BL);
+                        return (ushort)(BL);
 
                     case RegistersTypes.CX:
                         return CX;
                     case RegistersTypes.CH:
-                        return System.Convert.ToUInt16(CH);
+                        return (ushort)(CH);
                     case RegistersTypes.CL:
-                        return System.Convert.ToUInt16(CL);
+                        return (ushort)(CL);
 
                     case RegistersTypes.DX:
                         return DX;
                     case RegistersTypes.DH:
-                        return System.Convert.ToUInt16(DH);
+                        return (ushort)(DH);
                     case RegistersTypes.DL:
-                        return System.Convert.ToUInt16(DL);
+                        return (ushort)(DL);
 
                     case RegistersTypes.CS:
                         return CS;
@@ -291,7 +291,7 @@ namespace x8086SharpEmu
             {
                 get
                 {
-                    return System.Convert.ToUInt32(get_Val(mActiveSegmentRegister));
+                    return (uint)(get_Val(mActiveSegmentRegister));
                 }
             }
 
@@ -371,7 +371,7 @@ namespace x8086SharpEmu
                 {
                     /*
                     // IOPL, NT and bit 15 are always "1" on 8086
-                    return System.Convert.ToUInt16((int) (CF * (int) FlagsTypes.CF) |  
+                    return (ushort)((int) (CF * (int) FlagsTypes.CF) |  
 						1 * Math.Pow(2, 1) |
 						PF * (int) FlagsTypes.PF |
 						0 * Math.Pow(2, 3) |
@@ -490,7 +490,7 @@ namespace x8086SharpEmu
 
         public static uint SegmentOffetToAbsolute(ushort segment, ushort offset)
         {
-            return System.Convert.ToUInt32(System.Convert.ToInt32(segment << 4) + offset);
+            return (uint)((int)(segment << 4) + offset);
         }
 
         public static ushort AbsoluteToSegment(uint address)
@@ -562,19 +562,19 @@ namespace x8086SharpEmu
 
         public ushort get_RAMn(bool ignoreHooks = false)
         {
-            return System.Convert.ToUInt16(addrMode.Size == DataSize.Byte ? (
-                get_RAM8(System.Convert.ToUInt16(mRegisters.ActiveSegmentValue), addrMode.IndAdr, (byte)0, ignoreHooks)) : (
-                get_RAM16(System.Convert.ToUInt16(mRegisters.ActiveSegmentValue), addrMode.IndAdr, (byte)0, ignoreHooks)));
+            return (ushort)(addrMode.Size == DataSize.Byte ? (
+                get_RAM8((ushort)(mRegisters.ActiveSegmentValue), addrMode.IndAdr, (byte)0, ignoreHooks)) : (
+                get_RAM16((ushort)(mRegisters.ActiveSegmentValue), addrMode.IndAdr, (byte)0, ignoreHooks)));
         }
         public void set_RAMn(bool ignoreHooks, ushort value)
         {
             if (addrMode.Size == DataSize.Byte)
             {
-                set_RAM8(System.Convert.ToUInt16(mRegisters.ActiveSegmentValue), addrMode.IndAdr, (byte)0, ignoreHooks, (byte)value);
+                set_RAM8((ushort)(mRegisters.ActiveSegmentValue), addrMode.IndAdr, (byte)0, ignoreHooks, (byte)value);
             }
             else
             {
-                set_RAM16(System.Convert.ToUInt16(mRegisters.ActiveSegmentValue), addrMode.IndAdr, (byte)0, ignoreHooks, value);
+                set_RAM16((ushort)(mRegisters.ActiveSegmentValue), addrMode.IndAdr, (byte)0, ignoreHooks, value);
             }
         }
     }

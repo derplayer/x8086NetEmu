@@ -193,22 +193,22 @@ namespace x8086SharpEmu
 
         public static Binary operator +(Binary value1, Binary value2)
         {
-            return AdjustSize(System.Convert.ToInt64(value1.ToLong() + value2.ToLong()), value1.Size);
+            return AdjustSize((long)(value1.ToLong() + value2.ToLong()), value1.Size);
         }
 
         public static Binary operator -(Binary value1, Binary value2)
         {
-            return AdjustSize(System.Convert.ToInt64(value1.ToLong() - value2.ToLong()), value1.Size);
+            return AdjustSize((long)(value1.ToLong() - value2.ToLong()), value1.Size);
         }
 
         public static Binary operator *(Binary value1, Binary value2)
         {
-            return AdjustSize(System.Convert.ToInt64(value1.ToLong() * value2.ToLong()), value1.Size);
+            return AdjustSize((long)(value1.ToLong() * value2.ToLong()), value1.Size);
         }
 
         public static Binary operator /(Binary value1, Binary value2)
         {
-            return AdjustSize(System.Convert.ToInt64(value1.ToLong() / value2.ToLong()), value1.Size);
+            return AdjustSize((long)(value1.ToLong() / value2.ToLong()), value1.Size);
         }
 
         //public static Binary operator \(Binary value1, Binary value2)
@@ -227,7 +227,7 @@ namespace x8086SharpEmu
 
         public static Binary operator %(Binary value1, Binary value2)
         {
-            return AdjustSize(System.Convert.ToInt64(value1.ToLong() % value2.ToLong()), value1.Size);
+            return AdjustSize((long)(value1.ToLong() % value2.ToLong()), value1.Size);
         }
 
         public static Binary operator &(Binary value1, Binary value2)
@@ -252,12 +252,12 @@ namespace x8086SharpEmu
 
         public static Binary operator <<(Binary value1, int value2)
         {
-            return AdjustSize(System.Convert.ToInt64(value1.ToLong() << value2), value1.Size);
+            return AdjustSize((long)(value1.ToLong() << value2), value1.Size);
         }
 
         public static Binary operator >>(Binary value1, int value2)
         {
-            return AdjustSize(System.Convert.ToInt64(value1.ToLong() >> value2), value1.Size);
+            return AdjustSize((long)(value1.ToLong() >> value2), value1.Size);
         }
 
         public static Binary From(string value, Sizes size = Binary.Sizes.Undefined)
@@ -334,7 +334,7 @@ namespace x8086SharpEmu
         {
             if (Size <= Sizes.DoubleWord)
             {
-                return Convert.ToString(System.Convert.ToInt32(binaryValue), @base).ToUpper();
+                return Convert.ToString((int)(binaryValue), @base).ToUpper();
             }
             else
             {
@@ -352,7 +352,7 @@ namespace x8086SharpEmu
                     do
                     {
                         i = n / @base;
-                        r = System.Convert.ToInt64(n - System.Convert.ToInt32(i * @base));
+                        r = (long)(n - (int)(i * @base));
                         result = Convert.ToString(r, @base) + result;
                         n = i;
                     } while (n > 0);
