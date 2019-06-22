@@ -255,8 +255,8 @@ ModelManifest.xml
 **/BuildFolder/*.manifest
 **/BuildFolder/states/
 
-**/BuildFolder/disks/*
-!**/BuildFolder/disks/hd0-dist.img
+!**/BuildFolder/disks/*
+
 
 **/BuildFolder/roms/*
 !**/BuildFolder/roms/BASICC11.BIN
@@ -264,4 +264,4 @@ ModelManifest.xml
 
 !**/PCXTBios/
 
-**/settings.dat
+!**/settings.dat

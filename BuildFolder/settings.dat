@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<settings>
+  <simulationMultiplier>1</simulationMultiplier>
+  <clockSpeed>47700000</clockSpeed>
+  <videoZoom>2</videoZoom>
+  <floppies>
+    <floppy>
+      <letter>A</letter>
+      <index>0</index>
+      <image>disks\dos2.img</image>
+      <readOnly>False</readOnly>
+    </floppy>
+  </floppies>
+  <disks>
+    <disk>
+      <letter>C</letter>
+      <index>128</index>
+      <image>disks\hdd0.img</image>
+      <readOnly>False</readOnly>
+    </disk>
+  </disks>
+  <extras>
+    <consoleVisible>false</consoleVisible>
+    <debuggerVisible>false</debuggerVisible>
+    <emulateINT13>true</emulateINT13>
+    <vic20>true</vic20>
+    <fullScreen>false</fullScreen>
+    <lastZoomLevel>0</lastZoomLevel>
+  </extras>
+</settings>
