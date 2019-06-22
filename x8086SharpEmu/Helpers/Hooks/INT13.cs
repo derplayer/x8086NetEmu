@@ -18,7 +18,7 @@ namespace x8086SharpEmu
     {
         private bool HandleINT13()
         {
-            if (ReferenceEquals(mFloppyController, null))
+            if (mFloppyController == null)
             {
                 ThrowException("Disk Adapter Not Found");
                 return true;
@@ -28,13 +28,13 @@ namespace x8086SharpEmu
             int AL = 0;
             long offset = 0;
 
-            DiskImage dskImg = mFloppyController.get_DiskImage(mRegisters.DL);
+            DiskImage dskImg = mFloppyController.get_DiskImage((int)mRegisters.DL);
             int bufSize = 0;
 
             if (mRegisters.AH == ((byte)(0x0))) // Reset drive
             {
                 X8086.Notify("Drive {0:000} Reset", NotificationReasons.Info, mRegisters.DL);
-                ret = System.Convert.ToInt32(ReferenceEquals(dskImg, null) ? 0xAA : 0);
+                ret = (int)(ReferenceEquals(dskImg, null) ? 0xAA : 0);
             } // Get last operation status
             else if (mRegisters.AH == ((byte)(0x1)))
             {
@@ -45,16 +45,16 @@ namespace x8086SharpEmu
             } // Read sectors
             else if (mRegisters.AH == ((byte)(0x2)))
             {
-                if (ReferenceEquals(dskImg, null))
+                if (dskImg == null)
                 {
                     X8086.Notify("Invalid Drive Number: Drive {0:000} Not Ready", NotificationReasons.Info, mRegisters.DL);
                     ret = 0xAA; // fixed disk drive not ready
                 }
 
-                offset = dskImg.LBA(System.Convert.ToUInt32(mRegisters.CH), System.Convert.ToUInt32(mRegisters.DH), System.Convert.ToUInt32(mRegisters.CL));
+                offset = dskImg.LBA((uint)(mRegisters.CH), (uint)(mRegisters.DH), (uint)(mRegisters.CL));
                 bufSize = mRegisters.AL * dskImg.SectorSize;
 
-                if (offset < 0 || System.Convert.ToInt32(offset + bufSize) > (int)dskImg.FileLength)
+                if (offset < 0 || (int)(offset + bufSize) > (int)dskImg.FileLength)
                 {
                     X8086.Notify("Read Sectors: Drive {0:000} Seek Fail", NotificationReasons.Warn, mRegisters.DL);
                     ret = 0x40; // seek failed
@@ -99,10 +99,10 @@ namespace x8086SharpEmu
                     ret = 0x3; // write protected
                 }
 
-                offset = dskImg.LBA(System.Convert.ToUInt32(mRegisters.CH), System.Convert.ToUInt32(mRegisters.DH), System.Convert.ToUInt32(mRegisters.CL));
+                offset = dskImg.LBA((uint)(mRegisters.CH), (uint)(mRegisters.DH), (uint)(mRegisters.CL));
                 bufSize = mRegisters.AL * dskImg.SectorSize;
 
-                if (offset < 0 || System.Convert.ToInt32(offset + bufSize) > (int)dskImg.FileLength)
+                if (offset < 0 || (int)(offset + bufSize) > (int)dskImg.FileLength)
                 {
                     X8086.Notify("Write Sectors: Drive {0:000} Seek Failed", NotificationReasons.Warn, mRegisters.DL);
                     ret = 0x40; // seek failed
@@ -141,10 +141,10 @@ namespace x8086SharpEmu
                     ret = 0xAA; // fixed disk drive not ready
                 }
 
-                offset = dskImg.LBA(System.Convert.ToUInt32(mRegisters.CH), System.Convert.ToUInt32(mRegisters.DH), System.Convert.ToUInt32(mRegisters.CL));
+                offset = dskImg.LBA((uint)(mRegisters.CH), (uint)(mRegisters.DH), (uint)(mRegisters.CL));
                 bufSize = mRegisters.AL * dskImg.SectorSize;
 
-                if (offset < 0 || System.Convert.ToInt32(offset + bufSize) > (int)dskImg.FileLength)
+                if (offset < 0 || (int)(offset + bufSize) > (int)dskImg.FileLength)
                 {
                     X8086.Notify("Verify Sector: Drive {0} Seek Failed", NotificationReasons.Warn, mRegisters.DL);
                     ret = 0x40; // seek failed
@@ -171,10 +171,10 @@ namespace x8086SharpEmu
                     ret = 0xAA; // fixed disk drive not ready
                 }
 
-                offset = dskImg.LBA(System.Convert.ToUInt32(mRegisters.CH), System.Convert.ToUInt32(mRegisters.DH), System.Convert.ToUInt32(mRegisters.CL));
+                offset = dskImg.LBA((uint)(mRegisters.CH), (uint)(mRegisters.DH), (uint)(mRegisters.CL));
                 bufSize = mRegisters.AL * dskImg.SectorSize;
 
-                if (offset < 0 || System.Convert.ToInt32(offset + bufSize) > (int)dskImg.FileLength)
+                if (offset < 0 || (int)(offset + bufSize) > (int)dskImg.FileLength)
                 {
                     X8086.Notify("Format Track: Drive {0:000} Seek Failed", NotificationReasons.Warn, mRegisters.DL);
                     ret = 0x40; // seek failed
@@ -230,31 +230,33 @@ namespace x8086SharpEmu
                     X8086.Notify("Invalid Drive Number: Drive {0:000} Not Ready", NotificationReasons.Info, mRegisters.DL);
                     ret = 0xAA; // fixed disk drive not ready
                 }
-
-                if (dskImg.Tracks <= 0)
-                {
-                    X8086.Notify("Get Drive Parameters: Drive {0:000} Unknown Geometry", NotificationReasons.Warn, mRegisters.DL);
-                    ret = 0xAA;
-                }
                 else
                 {
-                    mRegisters.CH = System.Convert.ToByte((dskImg.Cylinders - 1) & 0xFF);
-                    mRegisters.CL = (byte)(dskImg.Sectors & 63);
-                    mRegisters.CL += System.Convert.ToByte(((dskImg.Cylinders - 1) / 256) * 64);
-                    mRegisters.DH = (byte)(dskImg.Heads - 1);
-
-                    if (mRegisters.DL < 0x80)
+                    if (dskImg.Tracks <= 0)
                     {
-                        mRegisters.BL = (byte)4;
-                        mRegisters.DL = (byte)2;
+                        X8086.Notify("Get Drive Parameters: Drive {0:000} Unknown Geometry", NotificationReasons.Warn, mRegisters.DL);
+                        ret = 0xAA;
                     }
                     else
                     {
-                        mRegisters.DL = (byte)DiskImage.HardDiskCount;
-                    }
+                        mRegisters.CH = System.Convert.ToByte((dskImg.Cylinders - 1) & 0xFF);
+                        mRegisters.CL = (byte)(dskImg.Sectors & 63);
+                        mRegisters.CL += System.Convert.ToByte(((dskImg.Cylinders - 1) / 256) * 64);
+                        mRegisters.DH = (byte)(dskImg.Heads - 1);
 
-                    X8086.Notify("Drive {0:000} Get Parameters", NotificationReasons.Info, mRegisters.DL);
-                    ret = 0;
+                        if (mRegisters.DL < 0x80)
+                        {
+                            mRegisters.BL = (byte)4;
+                            mRegisters.DL = (byte)2;
+                        }
+                        else
+                        {
+                            mRegisters.DL = (byte)DiskImage.HardDiskCount;
+                        }
+
+                        X8086.Notify("Drive {0:000} Get Parameters", NotificationReasons.Info, mRegisters.DL);
+                        ret = 0;
+                    }
                 }
             } // Initialize Drive Pair Characteristic
             else if (mRegisters.AH == ((byte)(0x9)))
@@ -277,10 +279,10 @@ namespace x8086SharpEmu
                     ret = 0xAA; // fixed disk drive not ready
                 }
 
-                offset = dskImg.LBA(System.Convert.ToUInt32(mRegisters.CH), System.Convert.ToUInt32(mRegisters.DH), System.Convert.ToUInt32(mRegisters.CL));
+                offset = dskImg.LBA((uint)(mRegisters.CH), (uint)(mRegisters.DH), (uint)(mRegisters.CL));
                 bufSize = mRegisters.AL * dskImg.SectorSize;
 
-                if (offset < 0 || System.Convert.ToInt32(offset + bufSize) > (int)dskImg.FileLength)
+                if (offset < 0 || (int)(offset + bufSize) > (int)dskImg.FileLength)
                 {
                     X8086.Notify("Read Sectors Long: Drive {0:000} Seek Fail", NotificationReasons.Warn, mRegisters.DL);
                     ret = 0x40; // seek failed
@@ -392,15 +394,15 @@ namespace x8086SharpEmu
                 }
 
                 uint dap = X8086.SegmentOffetToAbsolute(mRegisters.DS, mRegisters.SI);
-                bufSize = System.Convert.ToInt32(get_RAM(dap + 3) << 8 | get_RAM(dap + 2));
-                int seg = System.Convert.ToInt32(get_RAM(dap + 7) << 8 | get_RAM(dap + 6));
-                int Off = System.Convert.ToInt32(get_RAM(dap + 5) << 8 | get_RAM(dap + 4));
-                offset = System.Convert.ToInt64(get_RAM(dap + 0xF) << 56 | get_RAM(dap + 0xE) << 48 |
+                bufSize = (int)(get_RAM(dap + 3) << 8 | get_RAM(dap + 2));
+                int seg = (int)(get_RAM(dap + 7) << 8 | get_RAM(dap + 6));
+                int Off = (int)(get_RAM(dap + 5) << 8 | get_RAM(dap + 4));
+                offset = (long)(get_RAM(dap + 0xF) << 56 | get_RAM(dap + 0xE) << 48 |
                     get_RAM(dap + 0xD) << 40 | get_RAM(dap + 0xC) << 32 |
                     get_RAM(dap + 0xB) << 24 | get_RAM(dap + 0xA) << 16 |
                     get_RAM(dap + 0x9) << 8 | get_RAM(dap + 0x8));
 
-                if (offset < 0 || System.Convert.ToInt32(offset + bufSize) > (int)dskImg.FileLength)
+                if (offset < 0 || (int)(offset + bufSize) > (int)dskImg.FileLength)
                 {
                     X8086.Notify("Read Sectors: Drive {0:000} Seek Fail", NotificationReasons.Warn, mRegisters.DL);
                     ret = 0x40; // seek failed
@@ -425,7 +427,7 @@ namespace x8086SharpEmu
                     X8086.Notify("Read Sectors: Drive {0:000} Sector Not Found", NotificationReasons.Warn, mRegisters.DL);
                     ret = 0x4; // sector not found
                 }
-                CopyToMemory(buf, X8086.SegmentOffetToAbsolute((ushort)seg, System.Convert.ToUInt16(Off)));
+                CopyToMemory(buf, X8086.SegmentOffetToAbsolute((ushort)seg, (ushort)(Off)));
                 AL = bufSize / dskImg.SectorSize;
             } // Extended Sectors Write
             else if (mRegisters.AH == ((byte)(0x43)))
@@ -437,15 +439,15 @@ namespace x8086SharpEmu
                 }
 
                 uint dap = X8086.SegmentOffetToAbsolute(mRegisters.DS, mRegisters.SI);
-                bufSize = System.Convert.ToInt32(get_RAM(dap + 3) << 8 | get_RAM(dap + 2));
-                int seg = System.Convert.ToInt32(get_RAM(dap + 7) << 8 | get_RAM(dap + 6));
-                int Off = System.Convert.ToInt32(get_RAM(dap + 5) << 8 | get_RAM(dap + 4));
-                offset = System.Convert.ToInt64(get_RAM(dap + 0xF) << 56 | get_RAM(dap + 0xE) << 48 |
+                bufSize = (int)(get_RAM(dap + 3) << 8 | get_RAM(dap + 2));
+                int seg = (int)(get_RAM(dap + 7) << 8 | get_RAM(dap + 6));
+                int Off = (int)(get_RAM(dap + 5) << 8 | get_RAM(dap + 4));
+                offset = (long)(get_RAM(dap + 0xF) << 56 | get_RAM(dap + 0xE) << 48 |
                     get_RAM(dap + 0xD) << 40 | get_RAM(dap + 0xC) << 32 |
                     get_RAM(dap + 0xB) << 24 | get_RAM(dap + 0xA) << 16 |
                     get_RAM(dap + 0x9) << 8 | get_RAM(dap + 0x8));
 
-                if (offset < 0 || System.Convert.ToInt32(offset + bufSize) > (int)dskImg.FileLength)
+                if (offset < 0 || (int)(offset + bufSize) > (int)dskImg.FileLength)
                 {
                     X8086.Notify("Write Sectors: Drive {0:000} Seek Fail", NotificationReasons.Warn, mRegisters.DL);
                     ret = 0x40; // seek failed
@@ -459,7 +461,7 @@ namespace x8086SharpEmu
                     Off);
 
                 byte[] buf = new byte[bufSize];
-                CopyFromMemory(buf, X8086.SegmentOffetToAbsolute((ushort)seg, System.Convert.ToUInt16(Off)));
+                CopyFromMemory(buf, X8086.SegmentOffetToAbsolute((ushort)seg, (ushort)(Off)));
                 ret = dskImg.Write((ulong)offset, buf);
                 if (ret == DiskImage.EIO)
                 {
@@ -504,11 +506,11 @@ namespace x8086SharpEmu
             if (mRegisters.AH != 0)
             {
                 set_RAM8((ushort)(0x40), (ushort)(0x41), 0, false, (byte)ret);
-                mRegisters.AX = System.Convert.ToUInt16((ret << 8) | AL);
+                mRegisters.AX = (ushort)((ret << 8) | AL);
             }
             mFlags.CF = (byte)(ret != 0 ? 1 : 0);
 
-            lastAH[mRegisters.DL] = System.Convert.ToUInt16(mRegisters.AH);
+            lastAH[mRegisters.DL] = (ushort)(mRegisters.AH);
             lastCF[mRegisters.DL] = mFlags.CF;
 
             if ((mRegisters.DL & 0x80) != 0)

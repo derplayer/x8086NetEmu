@@ -101,8 +101,7 @@ namespace x8086SharpEmu
                 //throw;
             }
 
-            //if (LogToConsole)
-            if (true)
+            if (LogToConsole)
             {
                 //Console.WriteLine(formattedMessage);
                 Debug.WriteLine(formattedMessage);

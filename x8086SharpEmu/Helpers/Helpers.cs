@@ -72,9 +72,9 @@ namespace x8086SharpEmu
             public void Decode(byte data, byte addressingModeByte)
             {
                 Size = (DataSize)(data & 1); // (0000 0001)
-                Direction = System.Convert.ToByte((data >> 1) & 1); // (0000 0010)
+                Direction = (byte)((data >> 1) & 1); // (0000 0010)
                 Modifier = (byte)(addressingModeByte >> 6); // (1100 0000)
-                Reg = System.Convert.ToByte((addressingModeByte >> 3) & 7); // (0011 1000)
+                Reg = (byte)((addressingModeByte >> 3) & 7); // (0011 1000)
                 Rm = (byte)(addressingModeByte & 7); // (0000 0111)
 
                 regOffset = (byte)((int)Size << 3);
@@ -187,7 +187,7 @@ namespace x8086SharpEmu
                 }
                 else if (addrMode.Rm == ((byte)6))
                 {
-                    addrMode.IndAdr = System.Convert.ToUInt16(To32bitsWithSign(Param(ParamIndex.First, (ushort)2, DataSize.Word)));
+                    addrMode.IndAdr = (ushort)(To32bitsWithSign(Param(ParamIndex.First, (ushort)2, DataSize.Word)));
                     clkCyc += 9; // 110 Direct Addressing
                 }
                 else if (addrMode.Rm == ((byte)7))
@@ -286,7 +286,7 @@ namespace x8086SharpEmu
                     addrMode.IndAdr = mRegisters.BX;
                     clkCyc += 5; // 111 [BX]
                 }
-                //var dbgTmpValue = System.Convert.ToUInt16(To32bitsWithSign(Param(ParamIndex.First, (ushort)2, DataSize.Word)));
+                //var dbgTmpValue = (ushort)(To32bitsWithSign(Param(ParamIndex.First, (ushort)2, DataSize.Word)));
                 addrMode.IndAdr += ((Param(ParamIndex.First, (ushort)2, DataSize.Word)));
                 addrMode.IndMem = get_RAMn();
             } // 11
@@ -300,18 +300,18 @@ namespace x8086SharpEmu
 
         private ushort To16bitsWithSign(ushort v)
         {
-            return System.Convert.ToUInt16(((v & 0x80) != 0) ? 0xFF00U | v : v);
+            return (ushort)(((v & 0x80) != 0) ? 0xFF00U | v : v);
         }
 
         private uint To32bitsWithSign(ushort v)
         {
-            //return System.Convert.ToUInt32(((v & 0x8000) != 0) ? 0xFFFF_0000 | v : v);
+            //return (uint)(((v & 0x8000) != 0) ? 0xFFFF_0000 | v : v);
             return (uint)(((v & 0x8000) != 0) ? (-65536 | v) : v);
         }
 
         private uint ToXbitsWithSign(uint v)
         {
-            return System.Convert.ToUInt32(addrMode.Size == DataSize.Byte ? (To16bitsWithSign(System.Convert.ToUInt16(v))) : (To32bitsWithSign(System.Convert.ToUInt16(v))));
+            return (uint)(addrMode.Size == DataSize.Byte ? (To16bitsWithSign((ushort)(v))) : (To32bitsWithSign((ushort)(v))));
         }
 
         private void SendToPort(uint portAddress, uint value)
@@ -330,7 +330,7 @@ namespace x8086SharpEmu
                 {
                     if (p.ValidPortAddress.Contains(portAddress))
                     {
-                        p.Out(portAddress, System.Convert.ToUInt16(value));
+                        p.Out(portAddress, (ushort)(value));
                         //X8086.Notify(String.Format("Write {0} to Port {1} on Adapter '{2}'", value.ToString("X2"), portAddress.ToString("X4"), p.Name), NotificationReasons.Info)
                         portsCache.Add(portAddress, p);
                         return;
@@ -341,7 +341,7 @@ namespace x8086SharpEmu
                 {
                     if (a.ValidPortAddress.Contains(portAddress))
                     {
-                        a.Out(portAddress, System.Convert.ToUInt16(value));
+                        a.Out(portAddress, (ushort)(value));
                         //X8086.Notify(String.Format("Write {0} to Port {1} on Adapter '{2}'", value.ToString("X2"), portAddress.ToString("X4"), a.Name), NotificationReasons.Info)
                         portsCache.Add(portAddress, a);
                         return;
@@ -369,7 +369,7 @@ namespace x8086SharpEmu
                     {
                         //X8086.Notify(String.Format("Read From Port {0} on Adapter '{1}'", portAddress.ToString("X4"), p.Name), NotificationReasons.Info)
                         portsCache.Add(portAddress, p);
-                        return System.Convert.ToUInt32(p.In(portAddress));
+                        return (uint)(p.In(portAddress));
                     }
                 }
 
@@ -379,7 +379,7 @@ namespace x8086SharpEmu
                     {
                         //X8086.Notify(String.Format("Read From Port {0} on Adapter '{1}'", portAddress.ToString("X4"), a.Name), NotificationReasons.Info)
                         portsCache.Add(portAddress, a);
-                        return System.Convert.ToUInt32(a.In(portAddress));
+                        return (uint)(a.In(portAddress));
                     }
                 }
             }
@@ -404,14 +404,14 @@ namespace x8086SharpEmu
             // This is too CPU expensive, with few benefits, if any... not worth it
             //If (mRegisters.IP Mod 2) <> 0 Then clkCyc += 4
 
-            return System.Convert.ToUInt16((size == DataSize.Byte || (size == DataSize.UseAddressingMode && addrMode.Size == DataSize.Byte)) ? (
+            return (ushort)((size == DataSize.Byte || (size == DataSize.UseAddressingMode && addrMode.Size == DataSize.Byte)) ? (
                 get_RAM8(mRegisters.CS, mRegisters.IP, (byte)(ipOffset + index), true)) : (
                 get_RAM16(mRegisters.CS, mRegisters.IP, (byte)(ipOffset + (int)index * 2), true)));
         }
 
         private ushort OffsetIP(DataSize size)
         {
-            //return System.Convert.ToUInt16(size == DataSize.Byte ? (
+            //return (ushort)(size == DataSize.Byte ? (
             //	mRegisters.IP + To16bitsWithSign(Param(index: ParamIndex.First, size: size)) + opCodeSize) : (
             //	mRegisters.IP + Param(index: ParamIndex.First, size: size) + opCodeSize));
             return (size == DataSize.Byte) ? ((ushort)((ushort)(mRegisters.IP + To16bitsWithSign(Param(ParamIndex.First, (ushort)1, size))) + opCodeSize)) : ((ushort)((ushort)(mRegisters.IP + Param(ParamIndex.First, (ushort)1, size)) + opCodeSize));
@@ -527,7 +527,7 @@ namespace x8086SharpEmu
             {
                 if (b[i])
                 {
-                    r += System.Convert.ToUInt16(Math.Pow(2, i));
+                    r += (ushort)(Math.Pow(2, i));
                 }
             }
             return r;
