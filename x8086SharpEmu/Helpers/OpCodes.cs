@@ -13,8 +13,270 @@ namespace x8086SharpEmu
 {
     public partial class X8086
     {
-        private delegate void ExecOpcode();
-        private ExecOpcode[] opCodes;
+        public delegate void ExecOpcode();
+
+        public ExecOpcode[] opCodes;// = new ExecOpcode[255];
+        public void InitOpcodeTable()
+        {
+            opCodes = new ExecOpcode[] {
+            _00_03,// ADD Eb Gb
+            _00_03,// ADD Ev Gv
+            _00_03,// ADD Gb Eb
+            _00_03,// ADD Gv Ev
+            _04,// ADD AL Ib
+            _05,// ADD AX Iv
+            _06,// PUSH ES
+            _07,// POP ES
+            _08_0B,// OR Eb Gb
+            _08_0B,// OR Ev Gv
+            _08_0B,// OR Gb Eb
+            _08_0B,// OR Gv Ev
+            _0C,// OR AL Ib
+            _0D,// OR AX Iv
+            _0E,// PUSH CS
+            _0F,// POP CS
+            _10_13,// ADC Eb Gb
+            _10_13,// ADC Ev Gv
+            _10_13,// ADC Gb Eb
+            _10_13,// ADC Gv Ev
+            _14,// ADC AL Ib
+            _15,// ADC AX Iv
+            _16,// PUSH SS
+            _17,// POP SS
+            _18_1B,// SBB Eb Gb
+            _18_1B,// SBB Ev Gv
+            _18_1B,// SBB Gb Eb
+            _18_1B,// SBB Gv Ev
+            _1C,// SBB AL Ib
+            _1D,// SBB AX Iv
+            _1E,// PUSH DS
+            _1F,// POP DS
+            _20_23,// AND Eb Gb
+            _20_23,// AND Ev Gv
+            _20_23,// AND Gb Eb
+            _20_23,// AND Gv Ev
+            _24,// AND AL Ib
+            _25,// AND AX Iv
+            _26_2E_36_3E,// ES, CS, SS and DS segment override prefix
+            _27,// DAA
+            _28_2B,// SUB Eb Gb
+            _28_2B,// SUB Ev Gv
+            _28_2B,// SUB Gb Eb
+            _28_2B,// SUB Gv Ev
+            _2C,// SUB AL Ib
+            _2D,// SUB AX, Iv
+            _26_2E_36_3E,// ES, CS, SS and DS segment override prefix
+            _2F,// DAS
+            _30_33,// XOR Eb Gb
+            _30_33,// XOR Ev Gv
+            _30_33,// XOR Gb Eb
+            _30_33,// XOR Gv Ev
+            _34,// XOR AL Ib
+            _35,// XOR AX Iv
+            _26_2E_36_3E,// ES, CS, SS and DS segment override prefix
+            _37,// AAA
+            _38_3B,// CMP Eb Gb
+            _38_3B,// CMP Ev Gv
+            _38_3B,// CMP Gb Eb
+            _38_3B,// CMP Gv Ev
+            _3C,// CMP AL Ib
+            _3D,// CMP AX Iv
+            _26_2E_36_3E,// ES, CS, SS and DS segment override prefix
+            _3F,// AAS
+            _40_47,// INC AX
+            _40_47,// INC CX
+            _40_47,// INC DX
+            _40_47,// INC BX
+            _40_47,// INC SP
+            _40_47,// INC BP
+            _40_47,// INC SI
+            _40_47,// INC DI
+            _48_4F,// DEC AX
+            _48_4F,// DEC CX
+            _48_4F,// DEC DX
+            _48_4F,// DEC BX
+            _48_4F,// DEC SP
+            _48_4F,// DEC BP
+            _48_4F,// DEC SI
+            _48_4F,// DEC DI
+            _50_57,// PUSH AX
+            _50_57,// PUSH CX
+            _50_57,// PUSH DX
+            _50_57,// PUSH BX
+            _50_57,// PUSH SP
+            _50_57,// PUSH BP
+            _50_57,// PUSH SI
+            _50_57,// PUSH DI
+            _58_5F,// POP AX
+            _58_5F,// POP CX
+            _58_5F,// POP DX
+            _58_5F,// POP BX
+            _58_5F,// POP SP
+            _58_5F,// POP BP
+            _58_5F,// POP SI
+            _58_5F,// POP DI
+            _60,// PUSHA (80186)
+            _61,// POPA (80186)
+            _62,// BOUND (80186)
+            OpCodeNotImplemented,
+            OpCodeNotImplemented,
+            OpCodeNotImplemented,
+            OpCodeNotImplemented,
+            OpCodeNotImplemented,
+            _68,// PUSH Iv (80186)
+            _69,// IMUL (80186)
+            _6A,// PUSH Ib (80186)
+            _6B,// IMUL (80186)
+            _6C_6F,// Ignore 80186/V20 port operations... for now...
+            _6C_6F,// Ignore 80186/V20 port operations... for now...
+            _6C_6F,// Ignore 80186/V20 port operations... for now...
+            _6C_6F,// Ignore 80186/V20 port operations... for now...
+            _70,// JO Jb
+            _71,// JNO  Jb
+            _72,// JB/JNAE/JC Jb
+            _73,// JNB/JAE/JNC Jb
+            _74,// JZ/JE Jb
+            _75,// JNZ/JNE Jb
+            _76,// JBE/JNA Jb
+            _77,// JA/JNBE Jb
+            _78,// JS Jb
+            _79,// JNS Jb
+            _7A,// JPE/JP Jb
+            _7B,// JPO/JNP Jb
+            _7C,// JL/JNGE Jb
+            _7D,// JGE/JNL Jb
+            _7E,// JLE/JNG Jb
+            _7F,// JG/JNLE Jb
+            _80_83,
+            _80_83,
+            _80_83,
+            _80_83,
+            _84_85,// TEST Gb Eb
+            _84_85,// TEST Gv Ev
+            _86_87,// XCHG Gb Eb
+            _86_87,// XCHG Gv Ev
+            _88_8B,// MOV Eb Gb
+            _88_8B,// MOV Ev Gv
+            _88_8B,// MOV Gb Eb
+            _88_8B,// MOV Gv Ev
+            _8C,// MOV Ew Sw
+            _8D,// LEA Gv M
+            _8E,// MOV Sw Ew
+            _8F,// POP Ev
+            _90,// NOP
+            _91,// XCHG CX AX
+            _92,// XCHG DX AX
+            _93,// XCHG BX AX
+            _94,// XCHG SP AX
+            _95,// XCHG BP AX
+            _96,// XCHG SI AX
+            _97,// XCHG DI AX
+            _98,// CBW
+            _99,// CWD
+            _9A,// CALL Ap
+            _9B,// WAIT
+            _9C,// PUSHF
+            _9D,// POPF
+            _9E,// SAHF
+            _9F,// LAHF
+            _A0,// MOV AL Ob
+            _A1,// MOV AX Ov
+            _A2,// MOV Ob AL
+            _A3,// MOV Ov AX
+            _A4_A7,
+            _A4_A7,
+            _A4_A7,
+            _A4_A7,
+            _A8,// TEST AL Ib
+            _A9,// TEST AX Iv
+            _AA_AF,
+            _AA_AF,
+            _AA_AF,
+            _AA_AF,
+            _AA_AF,
+            _AA_AF,
+            _B0,// MOV AL Ib
+            _B1,// MOV CL Ib
+            _B2,// MOV DL Ib
+            _B3,// MOV BL Ib
+            _B4,// MOV AH Ib
+            _B5,// MOV CH Ib
+            _B6,// MOV DH Ib
+            _B7,// MOV BH Ib
+            _B8,// MOV AX Ib
+            _B9,// MOV CX Ib
+            _BA,// MOV DX Ib
+            _BB,// MOV BX Ib
+            _BC,// MOV SP Ib
+            _BD,// MOV BP Ib
+            _BE,// MOV SI Ib
+            _BF,// MOV DI Ib
+            _C0_C1,// GRP2 byte/word imm8/16 ??? (80186)
+            _C0_C1,// GRP2 byte/word imm8/16 ??? (80186)
+            _C2,// RET Iw
+            _C3,// RET
+            _C4_C5,// LES / LDS Gv Mp
+            _C4_C5,// LES / LDS Gv Mp
+            _C6_C7,// MOV Eb Ib
+            _C6_C7,// MOV MOV Ev Iv
+            _C8,// ENTER (80186)
+            _C9,// LEAVE (80186)
+            _CA,// RETF Iw
+            _CB,// RETF
+            _CC,// INT 3
+            _CD,// INT Ib
+            _CE,// INTO
+            _CF,// IRET
+            _D0_D3,
+            _D0_D3,
+            _D0_D3,
+            _D0_D3,
+            _D4,// AAM I0
+            _D5,// AAD I0
+            _D6,// XLAT for V20 / SALC
+            _D7,// XLATB
+            _D8_DF,// Ignore 8087 co-processor instructions
+            _D8_DF,// Ignore 8087 co-processor instructions
+            _D8_DF,// Ignore 8087 co-processor instructions
+            _D8_DF,// Ignore 8087 co-processor instructions
+            _D8_DF,// Ignore 8087 co-processor instructions
+            _D8_DF,// Ignore 8087 co-processor instructions
+            _D8_DF,// Ignore 8087 co-processor instructions
+            _D8_DF,// Ignore 8087 co-processor instructions
+            _E0,// LOOPNE/LOOPNZ
+            _E1,// LOOPE/LOOPZ
+            _E2,// LOOP
+            _E3,// JCXZ/JECXZ
+            _E4,// IN AL Ib
+            _E5,// IN AX Ib
+            _E6,// OUT Ib AL
+            _E7,// OUT Ib AX
+            _E8,// CALL Jv
+            _E9,// JMP Jv
+            _EA,// JMP Ap
+            _EB,// JMP Jb
+            _EC,// IN AL DX
+            _ED,// IN AX DX
+            _EE,// OUT DX AL
+            _EF,// OUT DX AX
+            _F0,// LOCK
+            OpCodeNotImplemented,
+            _F2,// REPBE/REPNZ
+            _F3,// repe/repz
+            _F4,// HLT
+            _F5,// CMC
+            _F6_F7,
+            _F6_F7,
+            _F8,// CLC
+            _F9,// STC
+            _FA,// CLI
+            _FB,// STI
+            _FC,// CLD
+            _FD,// STD
+            _FE_FF,
+            _FE_FF
+            };
+                }
 
         private void _00_03() // ADD Gv Ev
         {

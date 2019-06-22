@@ -39,9 +39,11 @@ namespace x8086SharpEmuConsole
             cpu.Adapters.Add(new CGAConsole(cpu));
             cpu.Adapters.Add(new KeyboardAdapter(cpu));
             // cpu.Adapters.Add(New MouseAdapter(cpu)) ' So far, useless in Console mode
+#if Win32_dbg
+            cpu.Adapters.Add(new SpeakerAdpater(cpu));
+#endif
 
 #if Win32
-			cpu.Adapters.Add(new SpeakerAdpater(cpu));
 			cpu.Adapters.Add(new AdlibAdapter(cpu));
 #endif
 
@@ -57,7 +59,7 @@ namespace x8086SharpEmuConsole
 
         private static void LoadSettings()
         {
-            return; // disabled for now
+            //return; // disabled for now
             if (System.IO.File.Exists("settings.dat"))
             {
                 var xml = XDocument.Load("settings.dat");
@@ -68,35 +70,35 @@ namespace x8086SharpEmuConsole
 
         private static void ParseSettings(System.Xml.Linq.XElement xml)
         {
-        //    cpu.SimulationMultiplier = double.Parse(System.Convert.ToString(cpu.SimulationMultiplier("simulationMultiplier").Value));
+            cpu.SimulationMultiplier = double.Parse(System.Convert.ToString(cpu.SimulationMultiplier));
 
-        //    cpu.Clock = double.Parse(System.Convert.ToString(cpu.Clock("clockSpeed").Value));
+            cpu.Clock = double.Parse(System.Convert.ToString(cpu.Clock));
 
-        //    for (int i = 0; i <= 512 - 1; i++)
-        //    {
-        //        if (cpu.FloppyContoller.DiskImage(i) != null)
-        //        {
-        //            cpu.FloppyContoller.DiskImage(i).Close();
-        //        }
-        //    }
+            for (int i = 0; i <= 512 - 1; i++)
+            {
+                if (cpu.FloppyContoller.get_DiskImage(i) != null)
+                {
+                    cpu.FloppyContoller.get_DiskImage(i).Close();
+                }
+            }
 
-        //    foreach (var f in f("floppies").Elements("floppy"))
-        //    {
-        //        int index = Strings.Asc(System.Convert.ToChar(f.Element("letter").Value)) - 65;
-        //        string image = System.Convert.ToString(f.Element("image").Value);
-        //        bool ro = bool.Parse(System.Convert.ToString(f.Element("readOnly").Value));
+            foreach (var f in xml.Element("floppies").Elements("floppy"))
+            {
+                int index = (char)(System.Convert.ToChar(f.Element("letter").Value)) - 65;
+                string image = System.Convert.ToString(f.Element("image").Value);
+                bool ro = bool.Parse(System.Convert.ToString(f.Element("readOnly").Value));
 
-        //        cpu.FloppyContoller.DiskImage(index) = new DiskImage(image, ro);
-        //    }
+                cpu.FloppyContoller.set_DiskImage(index, new DiskImage(image, ro));
+            }
 
-        //    foreach (var d in d("disks").Elements("disk"))
-        //    {
-        //        int index = Strings.Asc(System.Convert.ToChar(d.Element("letter").Value)) - 67 + 128;
-        //        string image = System.Convert.ToString(d.Element("image").Value);
-        //        bool ro = bool.Parse(System.Convert.ToString(d.Element("readOnly").Value));
+            foreach (var d in xml.Element("disks").Elements("disk"))
+            {
+                int index = (char)(System.Convert.ToChar(d.Element("letter").Value)) - 67 + 128;
+                string image = System.Convert.ToString(d.Element("image").Value);
+                bool ro = bool.Parse(System.Convert.ToString(d.Element("readOnly").Value));
 
-        //        cpu.FloppyContoller.DiskImage(index) = new DiskImage(image, ro, true);
-        //    }
+                cpu.FloppyContoller.set_DiskImage(index, new DiskImage(image, ro, true));
+            }
         }
     }
 

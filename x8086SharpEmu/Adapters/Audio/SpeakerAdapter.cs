@@ -12,9 +12,9 @@ using x8086SharpEmu;
 
 namespace x8086SharpEmu
 {
-#if Win32
-	
-	public partial class SpeakerAdpater : Adapter
+#if Win32_dbg
+
+    public partial class SpeakerAdpater : Adapter
 	{
 		
 		public class CustomBufferProvider : IWaveProvider
@@ -105,7 +105,7 @@ namespace x8086SharpEmu
 		{
 			if (mFrequency > 0)
 			{
-				waveLength = SampleRate / mFrequency;
+				waveLength = (int)(SampleRate / mFrequency);
 			}
 			else
 			{
@@ -202,10 +202,10 @@ namespace x8086SharpEmu
 			waveOut.Play();
 		}
 		
-//#DisableWarningBC42353;
 		public override ushort In(uint port)
 		{
-		}
+            return (ushort)0;
+        }
 		
 		public override void Out(uint port, ushort value)
 		{

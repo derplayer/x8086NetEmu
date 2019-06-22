@@ -24,6 +24,8 @@ namespace x8086SharpEmu
             }
         }
 
+        private void OpCodeNotImplemented() { OpCodeNotImplemented(""); }
+
         private void OpCodeNotImplemented(string comment = "")
         {
             int originalOpCodeSize = opCodeSize;
@@ -100,9 +102,10 @@ namespace x8086SharpEmu
             }
 
             //if (LogToConsole)
-            if (LogToConsole)
+            if (true)
             {
-                Console.WriteLine(formattedMessage);
+                //Console.WriteLine(formattedMessage);
+                Debug.WriteLine(formattedMessage);
 #if DEBUG
                 if (reason == NotificationReasons.Dbg)
                 {

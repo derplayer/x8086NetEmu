@@ -125,7 +125,7 @@ namespace x8086SharpEmu
 #if DEBUG
             addrMode.Decode(opCode, get_RAM8(mRegisters.CS, (ushort)(mRegisters.IP + 1), (byte)0, false));
 #else
-			addrMode = decoderCache[(opCode << 8) | get_RAM8(mRegisters.CS, (ushort) (mRegisters.IP + 1), (byte) 0, false)];
+            addrMode = decoderCache[(ushort)(opCode << 8) | get_RAM8(mRegisters.CS, (ushort)(mRegisters.IP + 1), (byte)0, ignoreHooks: false)];
 #endif
 
             if (forceSize != DataSize.UseAddressingMode)

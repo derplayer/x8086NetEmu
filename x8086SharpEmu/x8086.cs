@@ -442,11 +442,12 @@ namespace x8086SharpEmu
             mDebugMode = debugMode;
             cancelAllThreads = false;
 
-#if Win32
+#if Win32_dbg
 			if (PIT?.Speaker != null)
 			{
 				PIT.Speaker.Enabled = true;
 			}
+
 			if (mVideoAdapter != null)
 			{
 				mVideoAdapter.Reset();
@@ -512,7 +513,7 @@ namespace x8086SharpEmu
                     Thread.Sleep(10);
                 } while (mIsExecuting);
 
-#if Win32
+#if Win32_dbg
 				if (PIT?.Speaker != null)
 				{
 					PIT.Speaker.Enabled = false;
@@ -577,6 +578,7 @@ namespace x8086SharpEmu
                 maxRunTime = Scheduler.BASECLOCK;
             }
             long maxRunCycl = (maxRunTime * mCyclesPerSecond - leftCycleFrags + Scheduler.BASECLOCK - 1) / Scheduler.BASECLOCK;
+            InitOpcodeTable();
 
             if (mDebugMode)
             {

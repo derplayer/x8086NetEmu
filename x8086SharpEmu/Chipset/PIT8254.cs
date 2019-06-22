@@ -936,7 +936,7 @@ namespace x8086SharpEmu
             //    End If
             //End If
 
-#if Win32
+#if Win32_dbg
 			if (mSpeaker != null)
 			{
 				long period = System.Convert.ToInt64(mChannels[2].GetSquareWavePeriod());
