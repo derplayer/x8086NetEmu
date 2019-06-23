@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Xml.Linq;
 using System.Collections;
-using System.Windows.Forms;
+
 
 using x8086SharpEmu;
 
@@ -840,15 +840,15 @@ namespace x8086SharpEmu
                 uint tmp2 = (uint)(Param(index: ParamIndex.First, size: DataSize.Word));
                 if ((tmp1 & 0x8000) == 0x8000)
                 {
-                    tmp1 = tmp1 | 0xFFFF_0000;
+                    tmp1 = (uint)(tmp1 | -65536);
                 }
                 if ((tmp2 & 0x8000) == 0x8000)
                 {
-                    tmp2 = tmp2 | 0xFFFF_0000;
+                    tmp2 = (uint)(tmp2 | -65536);
                 }
                 uint tmp3 = tmp1 * tmp2;
                 mRegisters.set_Val(addrMode.Register1, (ushort)(tmp3 & 0xFFFF));
-                if ((tmp3 & 0xFFFF_0000) != 0)
+                if ((tmp3 & -65536) != 0)
                 {
                     mFlags.CF = (byte)1;
                     mFlags.OF = (byte)1;
@@ -890,15 +890,15 @@ namespace x8086SharpEmu
                 uint tmp2 = (uint)(To16bitsWithSign(Param(index: ParamIndex.First, size: DataSize.Byte)));
                 if ((tmp1 & 0x8000) == 0x8000)
                 {
-                    tmp1 = tmp1 | 0xFFFF_0000;
+                    tmp1 = (uint)(tmp1 | -65536);
                 }
                 if ((tmp2 & 0x8000) == 0x8000)
                 {
-                    tmp2 = tmp2 | 0xFFFF_0000;
+                    tmp2 = (uint)(tmp2 | -65536);
                 }
                 uint tmp3 = tmp1 * tmp2;
                 mRegisters.set_Val(addrMode.Register1, (ushort)(tmp3 & 0xFFFF));
-                if ((tmp3 & 0xFFFF_0000) != 0)
+                if ((tmp3 & -65536) != 0)
                 {
                     mFlags.CF = (byte)1;
                     mFlags.OF = (byte)1;

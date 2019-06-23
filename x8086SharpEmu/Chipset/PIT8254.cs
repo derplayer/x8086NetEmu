@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Xml.Linq;
 using System.Collections;
-using System.Windows.Forms;
+
 
 using x8086SharpEmu;
 
@@ -126,7 +126,7 @@ namespace x8086SharpEmu
                 }
             }
 
-            public dynamic GetByte()
+            public int GetByte()
             {
                 if (countMode < 0)
                 {
@@ -818,7 +818,7 @@ namespace x8086SharpEmu
             else
             {
                 // read from counter
-                return mChannels[c].GetByte();
+                return (ushort)(mChannels[c].GetByte());
             }
         }
 

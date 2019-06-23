@@ -5,9 +5,10 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Xml.Linq;
 using System.Collections;
-using System.Windows.Forms;
+
 
 using x8086SharpEmu;
+using System.Windows.Forms;
 
 namespace x8086SharpEmu
 {
@@ -241,7 +242,7 @@ namespace x8086SharpEmu
         public void HandleInput(ExternalInputEvent e)
         {
             KeyEventArgs keyEvent = (KeyEventArgs)e.TheEvent;
-            bool isUp = System.Convert.ToBoolean(e.Extra);
+            bool isUp = (e.Extra);
 
             if (base.CPU.PPI != null)
             {

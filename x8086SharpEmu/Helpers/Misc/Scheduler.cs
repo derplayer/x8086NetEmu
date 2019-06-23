@@ -5,10 +5,11 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Xml.Linq;
 using System.Collections;
-using System.Windows.Forms;
+
 using System.Threading;
 
 using x8086SharpEmu;
+using System.Windows.Forms;
 
 namespace x8086SharpEmu
 {
@@ -554,7 +555,7 @@ namespace x8086SharpEmu
 
                 if (((int)(theEvent.Modifiers) & (int)Keys.Control) == (int)Keys.Control)
                 {
-                    isCtrlDown = !System.Convert.ToBoolean(e.Extra);
+                    isCtrlDown = !(e.Extra);
                 }
                 else
                 {
@@ -562,7 +563,7 @@ namespace x8086SharpEmu
                 }
                 if (((int)(theEvent.Modifiers) & (int)Keys.Alt) == (int)Keys.Alt)
                 {
-                    isAltDown = !System.Convert.ToBoolean(e.Extra);
+                    isAltDown = !(e.Extra);
                 }
                 else
                 {
@@ -600,7 +601,7 @@ namespace x8086SharpEmu
         public IExternalInputHandler Handler { get; set; }
         public EventArgs TheEvent { get; set; }
         public long TimeStamp { get; set; }
-        public dynamic Extra { get; set; }
+        public bool Extra { get; set; }
 
         public ExternalInputEvent(IExternalInputHandler handler, EventArgs theEvent)
         {
@@ -608,11 +609,11 @@ namespace x8086SharpEmu
             this.TheEvent = theEvent;
         }
 
-        public ExternalInputEvent(IExternalInputHandler handler, EventArgs theEvent, object extra)
+        public ExternalInputEvent(IExternalInputHandler handler, EventArgs theEvent, bool? extra)
         {
             this.Handler = handler;
             this.TheEvent = theEvent;
-            this.Extra = extra;
+            this.Extra = (bool)extra;
         }
 
         //Public Shared Operator =(e1 As ExternalInputEvent, e2 As ExternalInputEvent) As Boolean

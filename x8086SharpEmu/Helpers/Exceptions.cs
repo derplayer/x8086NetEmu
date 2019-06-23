@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Xml.Linq;
 using System.Collections;
-using System.Windows.Forms;
+
 
 using x8086SharpEmu;
 
@@ -77,6 +77,7 @@ namespace x8086SharpEmu
                 if (ErrorEvent != null)
                     ErrorEvent(this, new EmulatorErrorEventArgs(message));
             }
+
         }
 
         public enum NotificationReasons
@@ -105,6 +106,7 @@ namespace x8086SharpEmu
             {
                 //Console.WriteLine(formattedMessage);
                 Debug.WriteLine(formattedMessage);
+                UnityEngine.Debug.Log(formattedMessage);
 #if DEBUG
                 if (reason == NotificationReasons.Dbg)
                 {

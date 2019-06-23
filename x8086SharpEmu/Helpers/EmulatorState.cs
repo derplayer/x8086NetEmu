@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Xml.Linq;
 using System.Collections;
-using System.Windows.Forms;
+
 using System.Runtime.CompilerServices;
 
 using x8086SharpEmu;
@@ -72,9 +72,9 @@ namespace x8086SharpEmu
         private XElement GetFloppyImages()
         {
             //var curPath = (new Microsoft.VisualBasic.ApplicationServices.ConsoleApplicationBase()).Info.DirectoryPath + "\\";
-            string curPath = System.IO.Directory.GetParent(Application.ExecutablePath) + "\\";
+            string curPath = System.IO.Directory.GetParent(UnityEngine.Application.dataPath) + "\\";
             var xml = System.Xml.Linq.XElement.Parse("<floppies></floppies>");
-
+            
             if (mCPU.FloppyContoller != null)
             {
                 for (int i = 0; i <= 128 - 1; i++)
@@ -96,7 +96,7 @@ namespace x8086SharpEmu
 
         private XElement GetDiskImages()
         {
-            string curPath = System.IO.Directory.GetParent(Application.ExecutablePath) + "\\";
+            string curPath = System.IO.Directory.GetParent(UnityEngine.Application.dataPath) + "\\";
             var xml = System.Xml.Linq.XElement.Parse("<disks></disks>");
 
             for (int i = 128; i <= 1000 - 1; i++)

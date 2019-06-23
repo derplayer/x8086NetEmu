@@ -5,9 +5,10 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Xml.Linq;
 using System.Collections;
-using System.Windows.Forms;
+
 
 using x8086SharpEmu;
+using Assets.CCC.x8086Sharp.UnityHelpers;
 
 namespace x8086SharpEmu
 {
@@ -103,7 +104,7 @@ namespace x8086SharpEmu
             mCharset = Charsets.Standard;
             mGrayScaleMode = GrayscaleModes.Average;
             mBackColor = Color.Black;
-            mFont = new Font("Consolas", 12, GraphicsUnit.Pixel);
+            mFont = new Font("Consolas", 12); //, GraphicsUnit.Pixel
             SetCharSize();
         }
 
@@ -279,15 +280,15 @@ namespace x8086SharpEmu
 
             using (DirectBitmap bmp = new DirectBitmap(100, 100))
             {
-                using (Graphics g = Graphics.FromImage(bmp.Bitmap))
-                {
-                    g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-                    g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.None;
-                    g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+                //using (Graphics g = Graphics.FromImage(bmp.Bitmap))
+                //{
+                //    g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+                //    g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.None;
+                //    g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
 
-                    g.Clear(Color.Black);
-                    g.DrawString("█", mFont, Brushes.White, 0, 0);
-                }
+                //    g.Clear(Color.Black);
+                //    g.DrawString("█", mFont, Brushes.White, 0, 0);
+                //}
 
 
                 Point lt = new Point();
@@ -346,7 +347,7 @@ namespace x8086SharpEmu
 
                 if (mSurface != null)
                 {
-                    mSurface.Dispose();
+                    //mSurface.Dispose();
                 }
                 mSurface = (Bitmap)new DirectBitmap(mCanvasSize.Width * CharSize.Width, mCanvasSize.Height * CharSize.Height);
 
@@ -363,7 +364,7 @@ namespace x8086SharpEmu
 
             if (surfaceGraphics)
             {
-                this.surfaceGraphics = Graphics.FromImage(mSurface);
+                //this.surfaceGraphics = Graphics.FromImage(mSurface);
                 this.surfaceGraphics.Clear(this.BackColor);
             }
 

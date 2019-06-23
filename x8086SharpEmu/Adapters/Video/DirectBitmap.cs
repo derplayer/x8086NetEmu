@@ -5,12 +5,12 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Xml.Linq;
 using System.Collections;
-using System.Windows.Forms;
-using System.Drawing.Imaging;
+
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 using x8086SharpEmu;
+using Assets.CCC.x8086Sharp.UnityHelpers;
 
 namespace x8086SharpEmu
 {
@@ -31,7 +31,7 @@ namespace x8086SharpEmu
         private int w4;
         private int bufferSize;
 
-        private static ImageConverter imgConverter = new ImageConverter();
+        //private static ImageConverter imgConverter = new ImageConverter();
         private static Type imgFormat = typeof(byte[]);
 
         public DirectBitmap(int w, int h)
@@ -45,34 +45,35 @@ namespace x8086SharpEmu
             Bits = new byte[bufferSize + 1];
 
             bitsHandle = GCHandle.Alloc(Bits, GCHandleType.Pinned);
-            this.Bitmap = new Bitmap(w, h, w4, PixelFormat.Format32bppPArgb, bitsHandle.AddrOfPinnedObject());
+            //this.Bitmap = new Bitmap(w, h, w4, PixelFormat.Format32bppPArgb, bitsHandle.AddrOfPinnedObject());
         }
 
         public DirectBitmap(Bitmap bmp) : this(bmp.Width, bmp.Height)
         {
 
-            BitmapData sourceData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, bmp.PixelFormat);
-            IntPtr sourcePointer = sourceData.Scan0;
-            int sourceStride = sourceData.Stride;
-            int srcBytesPerPixel = sourceStride / bmp.Width;
-            int srcOffset = 0;
+            //BitmapData sourceData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, bmp.PixelFormat);
+            //IntPtr sourcePointer = sourceData.Scan0;
+            //int sourceStride = sourceData.Stride;
+            //int srcBytesPerPixel = sourceStride / bmp.Width;
+            //int srcOffset = 0;
 
-            int a = 0;
-            double pa = 0;
+            //int a = 0;
+            //double pa = 0;
 
-            for (int y = 0; y <= bmp.Height - 1; y++)
-            {
-                for (int x = 0; x <= bmp.Width - 1; x++)
-                {
-                    srcOffset = x * srcBytesPerPixel + y * sourceStride;
+            //for (int y = 0; y <= bmp.Height - 1; y++)
+            //{
+            //    for (int x = 0; x <= bmp.Width - 1; x++)
+            //    {
+            //        srcOffset = x * srcBytesPerPixel + y * sourceStride;
 
-                    a = (int)(srcBytesPerPixel == 4 ? (Marshal.ReadByte(sourcePointer, srcOffset + 3)) : 255);
-                    pa = (double)a / 255;
-                    set_Pixel(x, y, Color.FromArgb(a, (int)(Marshal.ReadByte(sourcePointer, srcOffset + 2) * pa), (int)(Marshal.ReadByte(sourcePointer, srcOffset + 1) * pa), (int)(Marshal.ReadByte(sourcePointer, srcOffset + 0) * pa)));
-                }
-            }
+            //        a = (int)(srcBytesPerPixel == 4 ? (Marshal.ReadByte(sourcePointer, srcOffset + 3)) : 255);
+            //        pa = (double)a / 255;
+            //        set_Pixel(x, y, Color.FromArgb(a, (int)(Marshal.ReadByte(sourcePointer, srcOffset + 2) * pa), (int)(Marshal.ReadByte(sourcePointer, srcOffset + 1) * pa), (int)(Marshal.ReadByte(sourcePointer, srcOffset + 0) * pa)));
+            //    }
+            //}
 
-            bmp.UnlockBits(sourceData);
+            //bmp.UnlockBits(sourceData);
+            //TODO revert advanced lockbits to slower but normal unity supported one
         }
 
         public static implicit operator DirectBitmap(Bitmap bmp)
@@ -83,10 +84,12 @@ namespace x8086SharpEmu
             }
 
             DirectBitmap dbmp = new DirectBitmap(bmp.Width, bmp.Height);
-            using (Graphics g = Graphics.FromImage(dbmp.Bitmap))
-            {
-                g.DrawImageUnscaled(bmp, Point.Empty);
-            }
+
+            //TODO: PORT FROM UNITY TEXTURE -> DRAWIMAGE WITH UNSCALED RECT
+            //using (Graphics g = Graphics.FromImage(dbmp.Bitmap))
+            //{
+            //    g.DrawImageUnscaled(bmp, Point.Empty);
+            //}
 
 
             return dbmp;
@@ -103,7 +106,8 @@ namespace x8086SharpEmu
 
         public static explicit operator byte[] (DirectBitmap dbmp)
         {
-            return (byte[])imgConverter.ConvertTo(dbmp.Bitmap, imgFormat);
+            return null;
+            //return (byte[])imgConverter.ConvertTo(dbmp.Bitmap, imgFormat);
         }
 
         public Color get_Pixel(Point p)
@@ -201,7 +205,7 @@ namespace x8086SharpEmu
                 if (disposing)
                 {
                     // TODO: dispose managed state (managed objects).
-                    Bitmap.Dispose();
+                    //Bitmap.Dispose();
                     bitsHandle.Free();
                 }
 

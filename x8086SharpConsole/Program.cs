@@ -17,9 +17,9 @@ namespace x8086SharpEmuConsole
     {
         private static X8086 cpu;
 
-        public static void Main()
+        public static void Run8086Console()
         {
-            X8086.LogToConsole = false;
+            X8086.LogToConsole = true;
 
             X8086.Error += (object s, X8086.EmulatorErrorEventArgs e) =>
             {
@@ -28,12 +28,13 @@ namespace x8086SharpEmuConsole
                 cpu?.Pause();
                 Console.WriteLine(e.Message);
                 cpu?.Close();
-                Environment.Exit(1);
+                //Environment.Exit(1);
+                UnityEngine.Application.Quit();
             };
 
             cpu = new X8086(true, true, null);
 
-            cpu.EmulationTerminated += () => Environment.Exit(0);
+            cpu.EmulationTerminated += () => UnityEngine.Application.Quit();// Environment.Exit(0);
 
             cpu.Adapters.Add(new FloppyControllerAdapter(cpu));
             cpu.Adapters.Add(new CGAConsole(cpu));
@@ -51,10 +52,10 @@ namespace x8086SharpEmuConsole
 
             cpu.Run();
 
-            do
-            {
-                System.Threading.Thread.Sleep(500);
-            } while (true);
+            //do
+            //{
+            //    System.Threading.Thread.Sleep(500);
+            //} while (true);
         }
 
         private static void LoadSettings()

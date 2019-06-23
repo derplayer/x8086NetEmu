@@ -5,9 +5,11 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Xml.Linq;
 using System.Collections;
-using System.Windows.Forms;
+
 
 using x8086SharpEmu;
+using Assets.CCC.x8086Sharp.UnityHelpers;
+using System.Windows.Forms;
 
 namespace x8086SharpEmu
 {

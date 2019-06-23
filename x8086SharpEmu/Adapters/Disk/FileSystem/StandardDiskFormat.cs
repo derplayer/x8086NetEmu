@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Xml.Linq;
 using System.Collections;
-using System.Windows.Forms;
+
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
@@ -280,7 +280,7 @@ namespace x8086SharpEmu
             byte[] b = new byte[32];
             uint bytesRead = 0;
             int dirEntryCount = -1;
-            dynamic de = null;
+            //dynamic de = null;
 
             while (clusterIndex < 0xFFF8)
             {
@@ -307,22 +307,22 @@ namespace x8086SharpEmu
                         b[0] = (byte)(0xE5);
                     }
                     pb = GCHandle.Alloc(b, GCHandleType.Pinned);
-                    if ((mMasterBootRecord.Partitions[partitionNumber].SystemId == SystemIds.FAT_12) || (mMasterBootRecord.Partitions[partitionNumber].SystemId == SystemIds.FAT_16))
-                    {
-                        de = Marshal.PtrToStructure(pb.AddrOfPinnedObject(), typeof(FAT12.DirectoryEntry));
-                    }
-                    else if (mMasterBootRecord.Partitions[partitionNumber].SystemId == SystemIds.FAT_BIGDOS)
-                    {
-                        de = Marshal.PtrToStructure(pb.AddrOfPinnedObject(), typeof(FAT32.DirectoryEntry));
-                    }
-                    pb.Free();
+                    //if ((mMasterBootRecord.Partitions[partitionNumber].SystemId == SystemIds.FAT_12) || (mMasterBootRecord.Partitions[partitionNumber].SystemId == SystemIds.FAT_16))
+                    //{
+                    //    de = Marshal.PtrToStructure(pb.AddrOfPinnedObject(), typeof(FAT12.DirectoryEntry));
+                    //}
+                    //else if (mMasterBootRecord.Partitions[partitionNumber].SystemId == SystemIds.FAT_BIGDOS)
+                    //{
+                    //    de = Marshal.PtrToStructure(pb.AddrOfPinnedObject(), typeof(FAT32.DirectoryEntry));
+                    //}
+                    //pb.Free();
 
-                    if (de.StartingClusterValue > 0)
-                    {
-                        dirEntryCount++;
-                        Array.Resize(ref des, dirEntryCount + 1);
-                        des[dirEntryCount] = de;
-                    }
+                    //if (de.StartingClusterValue > 0)
+                    //{
+                    //    dirEntryCount++;
+                    //    Array.Resize(ref des, dirEntryCount + 1);
+                    //    des[dirEntryCount] = de;
+                    //}
 
                     if (clusterIndex != -1)
                     {
@@ -347,14 +347,17 @@ namespace x8086SharpEmu
 
         private long ClusterIndexToSector(int partitionNumber, int clusterIndex)
         {
-            dynamic bs = mBootSectors[partitionNumber];
-            long rootDirectoryRegionStart = (long)(FATRegionStart[partitionNumber] + bs.BIOSParameterBlock.NumberOfFATCopies * bs.BIOSParameterBlock.SectorsPerFAT * bs.BIOSParameterBlock.BytesPerSector);
-            long dataRegionStart = rootDirectoryRegionStart + bs.BIOSParameterBlock.MaxRootEntries * 32;
-            return dataRegionStart + (clusterIndex - 2) * bs.BIOSParameterBlock.SectorsPerCluster * bs.BIOSParameterBlock.BytesPerSector;
+            return 0;
+            //dynamic bs = mBootSectors[partitionNumber];
+            //long rootDirectoryRegionStart = (long)(FATRegionStart[partitionNumber] + bs.BIOSParameterBlock.NumberOfFATCopies * bs.BIOSParameterBlock.SectorsPerFAT * bs.BIOSParameterBlock.BytesPerSector);
+            //long dataRegionStart = rootDirectoryRegionStart + bs.BIOSParameterBlock.MaxRootEntries * 32;
+            //return dataRegionStart + (clusterIndex - 2) * bs.BIOSParameterBlock.SectorsPerCluster * bs.BIOSParameterBlock.BytesPerSector;
         }
 
         public byte[] ReadFile(int partitionNumber, dynamic de)
         {
+            return null;
+            /*
             uint bytesInCluster = (uint)(((FAT12.BootSector)mBootSectors[partitionNumber]).BIOSParameterBlock.SectorsPerCluster * ((FAT12.BootSector)mBootSectors[partitionNumber]).BIOSParameterBlock.BytesPerSector);
             uint clustersInFile = (uint)(Math.Ceiling(System.Convert.ToDecimal(de.FileSize / bytesInCluster)));
             byte[] b = new byte[clustersInFile * bytesInCluster];
@@ -380,6 +383,7 @@ namespace x8086SharpEmu
 
             Array.Resize(ref b, de.FileSize);
             return b;
+            */
         }
 
         public MBR MasterBootRecord

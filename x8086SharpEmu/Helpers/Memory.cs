@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Xml.Linq;
 using System.Collections;
-using System.Windows.Forms;
+
 using System.Runtime.InteropServices;
 
 using x8086SharpEmu;
@@ -15,8 +15,8 @@ namespace x8086SharpEmu
 
     public partial class X8086
     {
-        public const uint MemSize = 0x10_0000U; // 1MB
-        public const uint ROMStart = 0xC_0000U;
+        public const uint MemSize = 1048576u;//0x10_0000U; // 1MB
+        public const uint ROMStart = 786432u;//0xC_0000U;
 
         public readonly byte[] Memory = new byte[MemSize];
 
@@ -495,7 +495,7 @@ namespace x8086SharpEmu
 
         public static ushort AbsoluteToSegment(uint address)
         {
-            return (ushort)((address >> 4) & 0xF_FF00);
+            return (ushort)((address >> 4) & 1048320L);
         }
 
         public static ushort AbsoluteToOffset(uint address)
@@ -519,7 +519,7 @@ namespace x8086SharpEmu
                 }
             }
 
-            return Memory[address & 0xF_FFFF]; // "Call 5" Legacy Interface: http://www.os2museum.com/wp/?p=734
+            return Memory[address & 1048575L]; // "Call 5" Legacy Interface: http://www.os2museum.com/wp/?p=734
         }
         public void set_RAM(uint address, bool ignoreHooks, byte value)
         {
@@ -534,7 +534,7 @@ namespace x8086SharpEmu
                 }
             }
 
-            Memory[address & 0xF_FFFF] = value;
+            Memory[address & 1048575L] = value;
 
             //If mDebugMode Then RaiseEvent MemoryAccess(Me, New MemoryAccessEventArgs(address, MemoryAccessEventArgs.AccessModes.Write))
         }

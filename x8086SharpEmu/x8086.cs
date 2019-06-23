@@ -5,10 +5,10 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Xml.Linq;
 using System.Collections;
-using System.Windows.Forms;
 using System.Threading;
 
 using x8086SharpEmu;
+using UnityEngine;
 
 // Map Of Instructions: http://www.mlsite.net/8086/ and http://www.sandpile.org/x86/opc_1.htm
 // http://en.wikibooks.org/wiki/X86_Assembly/Machine_Language_Conversion
@@ -339,7 +339,7 @@ namespace x8086SharpEmu
             // FPU support is also disabled in C# Version
             if (FPU != null)
             {
-                equipmentByte = (byte)(equipmentByte | +0b10); //equipmentByte = equipmentByte Or &B10
+                equipmentByte = (byte)(equipmentByte & 0x1FFCF); //equipmentByte = equipmentByte Or &B10
             }
 
             if (PPI != null)
@@ -350,8 +350,10 @@ namespace x8086SharpEmu
 
         private void LoadBIOS()
         {
+            string unityPath = UnityEngine.Application.dataPath + "/CCC/8086Assets/";
+
             // BIOS
-            LoadBIN("roms\\pcxtbios.rom", (ushort)(0xFE00), (ushort)(0x0));
+            LoadBIN(unityPath + "roms/pcxtbios.rom", (ushort)(0xFE00), (ushort)(0x0));
             //LoadBIN("..\..\Other Emulators & Resources\xtbios2\EPROMS\2764\XTBIOS.ROM", &HFE00, &H0)
             //LoadBIN("..\..\Other Emulators & Resources\xtbios25\EPROMS\2764\PCXTBIOS.ROM", &HFE00, &H0)
             //LoadBIN("..\..\Other Emulators & Resources\xtbios30\eproms\2764\pcxtbios.ROM", &HFE00, &H0)
@@ -363,7 +365,7 @@ namespace x8086SharpEmu
             //LoadBIN("..\..\Other Emulators & Resources\PCE - PC Emulator\bin\rom\ibm-pc-1982.rom", &HFE00, &H0)
 
             // BASIC C1.10
-            LoadBIN("roms\\basicc11.bin", (ushort)(0xF600), (ushort)(0x0));
+            LoadBIN(unityPath + "roms\\basicc11.bin", (ushort)(0xF600), (ushort)(0x0));
             //LoadBIN("..\..\Other Emulators & Resources\xtbios30\eproms\2764\basicf6.rom", &HF600, &H0)
             //LoadBIN("..\..\Other Emulators & Resources\xtbios30\eproms\2764\basicf8.rom", &HF800, &H0)
             //LoadBIN("..\..\Other Emulators & Resources\xtbios30\eproms\2764\basicfa.rom", &HFA00, &H0)
@@ -410,10 +412,11 @@ namespace x8086SharpEmu
 
         public void SoftReset()
         {
+            
             // Just as Bill would've have wanted it... ;)
-            PPI.PutKeyData((System.Int32)Keys.ControlKey, false);
-            PPI.PutKeyData((System.Int32)Keys.Menu, false);
-            PPI.PutKeyData((System.Int32)Keys.Delete, false);
+            PPI.PutKeyData((int)KeyCode.LeftControl, false);
+            PPI.PutKeyData((int)KeyCode.Menu, false);
+            PPI.PutKeyData((int)KeyCode.Delete, false);
         }
 
         public void HardReset()
@@ -1169,15 +1172,15 @@ namespace x8086SharpEmu
                     uint tmp2 = (uint)(Param(index: ParamIndex.First, size: DataSize.Word));
                     if ((tmp1 & 0x8000) == 0x8000)
                     {
-                        tmp1 = tmp1 | 0xFFFF_0000;
+                        tmp1 = (uint)(tmp1 | -65536);
                     }
                     if ((tmp2 & 0x8000) == 0x8000)
                     {
-                        tmp2 = tmp2 | 0xFFFF_0000;
+                        tmp2 = (uint)(tmp2 | -65536);
                     }
                     uint tmp3 = tmp1 * tmp2;
                     mRegisters.set_Val(addrMode.Register1, (ushort)(tmp3 & 0xFFFF));
-                    if ((tmp3 & 0xFFFF_0000) != 0)
+                    if ((tmp3 & -65536) != 0L)
                     {
                         mFlags.CF = (byte)1;
                         mFlags.OF = (byte)1;
@@ -1217,15 +1220,15 @@ namespace x8086SharpEmu
                     uint tmp2 = (uint)(To16bitsWithSign(Param(index: ParamIndex.First, size: DataSize.Byte)));
                     if ((tmp1 & 0x8000) == 0x8000)
                     {
-                        tmp1 = tmp1 | 0xFFFF_0000;
+                        tmp1 = (uint)(tmp1 | -65536);
                     }
                     if ((tmp2 & 0x8000) == 0x8000)
                     {
-                        tmp2 = tmp2 | 0xFFFF_0000;
+                        tmp2 = (uint)(tmp2 | -65536);
                     }
                     uint tmp3 = tmp1 * tmp2;
                     mRegisters.set_Val(addrMode.Register1, (ushort)(tmp3 & 0xFFFF));
-                    if ((tmp3 & 0xFFFF_0000) != 0)
+                    if ((tmp3 & -65536) != 0L)
                     {
                         mFlags.CF = (byte)1;
                         mFlags.OF = (byte)1;
@@ -2359,8 +2362,8 @@ namespace x8086SharpEmu
                 maskFF_FFFF = (uint)(0xFFFF);
                 mask8_16 = (uint)16;
                 mask9_17 = (uint)17;
-                mask100_10000 = (uint)(0x1_0000);
-                maskFF00_FFFF0000 = (uint)(0xFFFF_0000);
+                mask100_10000 = 65536u;
+                maskFF00_FFFF0000 = 4294901760u;
             }
 
             if (addrMode.IsDirect)
@@ -2637,7 +2640,8 @@ namespace x8086SharpEmu
                 mRegisters.AX = (ushort)(tmpUVal);
 
                 SetSZPFlags(tmpUVal, addrMode.Size);
-                if ((tmpUVal & (addrMode.Size == DataSize.Byte ? 0xFF00 : 0xFFFF_0000)) != 0)
+                //if ((tmpUVal & (addrMode.Size == DataSize.Byte ? 0xFF00 : -65536)) != 0)
+                if ((tmpUVal & ((addrMode.Size == DataSize.Byte) ? 65280 : (-65536))) != 0L)
                 {
                     mFlags.CF = (byte)1;
                     mFlags.OF = (byte)1;
@@ -2658,8 +2662,10 @@ namespace x8086SharpEmu
                         uint m1 = (uint)(To16bitsWithSign((ushort)(mRegisters.AL)));
                         uint m2 = (uint)(To16bitsWithSign(mRegisters.get_Val(addrMode.Register2)));
 
-                        m1 = (uint)(((m1 & 0x80) != 0) ? m1 | 0xFFFF_FF00 : m1);
-                        m2 = (uint)(((m2 & 0x80) != 0) ? m2 | 0xFFFF_FF00 : m2);
+                        //m1 = (uint)(((m1 & 0x80) != 0) ? m1 | 0xFFFF_FF00 : m1);
+                        //m2 = (uint)(((m2 & 0x80) != 0) ? m2 | 0xFFFF_FF00 : m2);
+                        m1 = (uint)((((long)m1 & 128L) != 0L) ? (m1 | -256) : m1);
+                        m2 = (uint)((((long)m2 & 128L) != 0L) ? (m2 | -256) : m2);
 
                         tmpUVal = m1 * m2;
                         mRegisters.AX = (ushort)(tmpUVal);
@@ -2670,8 +2676,10 @@ namespace x8086SharpEmu
                         uint m1 = To32bitsWithSign(mRegisters.AX);
                         uint m2 = To32bitsWithSign(mRegisters.get_Val(addrMode.Register2));
 
-                        m1 = (uint)(((m1 & 0x8000) != 0) ? m1 | 0xFFFF_0000 : m1);
-                        m2 = (uint)(((m2 & 0x8000) != 0) ? m2 | 0xFFFF_0000 : m2);
+                        //m1 = (uint)(((m1 & 0x8000) != 0) ? m1 | -65536 : m1);
+                        //m2 = (uint)(((m2 & 0x8000) != 0) ? m2 | -65536 : m2);
+                        m1 = (uint)((((long)m1 & 32768L) != 0L) ? (m1 | -65536) : m1);
+                        m2 = (uint)((((long)m2 & 32768L) != 0L) ? (m2 | -65536) : m2);
 
                         tmpUVal = m1 * m2;
                         mRegisters.AX = (ushort)(tmpUVal);
@@ -2686,8 +2694,10 @@ namespace x8086SharpEmu
                         uint m1 = (uint)(To16bitsWithSign((ushort)(mRegisters.AL)));
                         uint m2 = (uint)(To16bitsWithSign(addrMode.IndMem));
 
-                        m1 = (uint)(((m1 & 0x80) != 0) ? m1 | 0xFFFF_FF00 : m1);
-                        m2 = (uint)(((m2 & 0x80) != 0) ? m2 | 0xFFFF_FF00 : m2);
+                        //m1 = (uint)(((m1 & 0x80) != 0) ? m1 | 0xFFFF_FF00 : m1);
+                        //m2 = (uint)(((m2 & 0x80) != 0) ? m2 | 0xFFFF_FF00 : m2);
+                        m1 = (uint)((((long)m1 & 128L) != 0L) ? (m1 | -256) : m1);
+                        m2 = (uint)((((long)m2 & 128L) != 0L) ? (m2 | -256) : m2);
 
                         tmpUVal = m1 * m2;
                         mRegisters.AX = (ushort)(tmpUVal);
@@ -2698,8 +2708,10 @@ namespace x8086SharpEmu
                         uint m1 = To32bitsWithSign(mRegisters.AX);
                         uint m2 = To32bitsWithSign(addrMode.IndMem);
 
-                        m1 = (uint)(((m1 & 0x8000) != 0) ? m1 | 0xFFFF_0000 : m1);
-                        m2 = (uint)(((m2 & 0x8000) != 0) ? m2 | 0xFFFF_0000 : m2);
+                        //m1 = (uint)(((m1 & 0x8000) != 0) ? m1 | -65536 : m1);
+                        //m2 = (uint)(((m2 & 0x8000) != 0) ? m2 | -65536 : m2);
+                        m1 = (uint)((((long)m1 & 32768L) != 0L) ? (m1 | -65536) : m1);
+                        m2 = (uint)((((long)m2 & 32768L) != 0L) ? (m2 | -65536) : m2);
 
                         tmpUVal = m1 * m2;
                         mRegisters.AX = (ushort)(tmpUVal);
@@ -2809,8 +2821,10 @@ namespace x8086SharpEmu
                         num = (uint)((mRegisters.DX << 16) | mRegisters.AX);
                         div = To32bitsWithSign(mRegisters.get_Val(addrMode.Register2));
 
-                        signN = ((long)num & 0x8000_0000) != 0;
-                        signD = ((long)div & 0x8000_0000) != 0;
+                        //signN = ((long)num & 0x8000_0000) != 0;
+                        //signD = ((long)div & 0x8000_0000) != 0;
+                        signN = ((num & int.MinValue) != 0);
+                        signD = ((div & int.MinValue) != 0);
                         num = (uint)(signN ? (((long)(~num) + 1) & -1) : num);
                         div = (uint)(signD ? (((long)(~div) + 1) & -1) : div);
 

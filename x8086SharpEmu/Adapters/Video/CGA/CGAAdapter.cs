@@ -5,11 +5,12 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Xml.Linq;
 using System.Collections;
-using System.Windows.Forms;
 using System.Threading;
 using System.Threading.Tasks;
 
 using x8086SharpEmu;
+using Assets.CCC.x8086Sharp.UnityHelpers;
+using System.Windows.Forms;
 
 namespace x8086SharpEmu
 {
@@ -167,6 +168,7 @@ namespace x8086SharpEmu
 
         public CGAAdapter(X8086 cpu, bool useInternalTimer = true, bool enableWebUI = false) : base(cpu)
         {
+
             CGABasePalette = new Color[] {
                 Color.FromArgb(0x0, 0x0, 0x0),
                 Color.FromArgb(0x0, 0x0, 0xAA),
@@ -184,7 +186,8 @@ namespace x8086SharpEmu
                 Color.FromArgb(0xFF, 0x55, 0xFF),
                 Color.FromArgb(0xFF, 0xFF, 0x55),
                 Color.FromArgb(0xFF, 0xFF, 0xFF)};
-            vidModeChangeFlag = (int)(+0b1000);
+            //vidModeChangeFlag = (int)(+0b1000);
+            vidModeChangeFlag = 8;
 
             this.useInternalTimer = useInternalTimer;
 
@@ -676,8 +679,8 @@ namespace x8086SharpEmu
                 }
             }
 
-            mCursorStart = (int)(CRT6845DataRegister[0xA] & +0b11111);
-            mCursorEnd = (int)(CRT6845DataRegister[0xB] & +0b11111);
+            mCursorStart = (int)(CRT6845DataRegister[0xA] & 0x1F);
+            mCursorEnd = (int)(CRT6845DataRegister[0xB] & 0x1F);
 
             mBlinkCharOn = CGAModeControlRegister[(int)CGAModeControlRegisters.blink_enabled];
         }
@@ -772,7 +775,7 @@ namespace x8086SharpEmu
             cancelAllThreads = true;
             //wui?.Close();
 
-            Application.DoEvents();
+            //Application.DoEvents();
         }
     }
 }

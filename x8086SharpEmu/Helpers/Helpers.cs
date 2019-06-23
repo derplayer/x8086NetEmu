@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Xml.Linq;
 using System.Collections;
-using System.Windows.Forms;
+
 
 using x8086SharpEmu;
 
@@ -305,7 +305,7 @@ namespace x8086SharpEmu
 
         private uint To32bitsWithSign(ushort v)
         {
-            //return (uint)(((v & 0x8000) != 0) ? 0xFFFF_0000 | v : v);
+            //return (uint)(((v & 0x8000) != 0) ? -65536 | v : v);
             return (uint)(((v & 0x8000) != 0) ? (-65536 | v) : v);
         }
 
@@ -513,7 +513,7 @@ namespace x8086SharpEmu
             }
             else
             {
-                mFlags.CF = (byte)(((result & 0xFFFF_0000) != 0) ? 1 : 0);
+                mFlags.CF = (byte)(((result & -65536) != 0) ? 1 : 0);
                 mFlags.OF = (byte)(((((long)result ^ v1) & ((isSubstraction ? v1 : result) ^ v2) & 0x8000) != 0) ? 1 : 0);
             }
 
@@ -735,6 +735,7 @@ namespace x8086SharpEmu
 
         public static string FixPath(string fileName)
         {
+            return fileName;
 #if Win32 || Win32_dbg
             return fileName;
 #else
@@ -804,5 +805,6 @@ namespace x8086SharpEmu
                     get_RAM16(mRegisters.SS, (ushort)i, (byte)0, true).ToString("X4"), i == mRegisters.SP ? "<<" : "");
             }
         }
+
     }
 }

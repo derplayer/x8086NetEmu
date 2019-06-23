@@ -5,10 +5,12 @@ using System.Drawing;
 using System.Diagnostics;
 using System.Xml.Linq;
 using System.Collections;
-using System.Windows.Forms;
+
 using System.Threading;
 
 using x8086SharpEmu;
+using Assets.CCC.x8086Sharp.UnityHelpers;
+using System.Windows.Forms;
 
 namespace x8086SharpEmu
 {
@@ -163,7 +165,7 @@ namespace x8086SharpEmu
             {
                 if (i2a.Bitmap != null)
                 {
-                    i2a.Bitmap.Dispose();
+                    //i2a.Bitmap.Dispose();
                 }
                 i2a.Bitmap = (Bitmap)new DirectBitmap(GraphicsResolution.Width, GraphicsResolution.Height);
                 i2a.CanvasSize = new Size(Console.WindowWidth, Console.WindowHeight);
