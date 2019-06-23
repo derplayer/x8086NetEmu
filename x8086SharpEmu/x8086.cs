@@ -1,13 +1,7 @@
-using System.Collections.Generic;
 using System;
-using System.Linq;
-using System.Drawing;
-using System.Diagnostics;
-using System.Xml.Linq;
-using System.Collections;
-using System.Windows.Forms;
+using System.Collections.Generic;
 using System.Threading;
-
+using System.Windows.Forms;
 using x8086SharpEmu;
 
 // Map Of Instructions: http://www.mlsite.net/8086/ and http://www.sandpile.org/x86/opc_1.htm
@@ -87,7 +81,7 @@ namespace x8086SharpEmu
         public const long MHz = KHz * KHz;
         public const long GHz = MHz * KHz;
         public static long BASECLOCK = (long)(4.77273 * MHz); // http://dosmandrivel.blogspot.com/2009/03/ibm-pc-design-antics.html
-        private long mCyclesPerSecond = (long)(4.77273 * MHz);
+        private long mCyclesPerSecond = BASECLOCK;
         private long clkCyc = 0;
 
         private bool mDoReSchedule;
@@ -260,6 +254,7 @@ namespace x8086SharpEmu
             mPorts.Add(RTC);
 
             SetupSystem();
+            InitOpcodeTable();
 
             Array.Clear(Memory, 0, Memory.Length);
 
@@ -456,8 +451,7 @@ namespace x8086SharpEmu
 
             if (mDebugMode)
             {
-                if (InstructionDecodedEvent != null)
-                    InstructionDecodedEvent();
+                InstructionDecodedEvent();
             }
 
             mRegisters.CS = cs;
@@ -514,10 +508,10 @@ namespace x8086SharpEmu
                 } while (mIsExecuting);
 
 #if Win32_dbg
-				if (PIT?.Speaker != null)
-				{
-					PIT.Speaker.Enabled = false;
-				}
+                if (PIT?.Speaker != null)
+                {
+                    PIT.Speaker.Enabled = false;
+                }
 #endif
             }
         }
@@ -578,13 +572,12 @@ namespace x8086SharpEmu
                 maxRunTime = Scheduler.BASECLOCK;
             }
             long maxRunCycl = (maxRunTime * mCyclesPerSecond - leftCycleFrags + Scheduler.BASECLOCK - 1) / Scheduler.BASECLOCK;
-            InitOpcodeTable();
 
             if (mDebugMode)
             {
                 while (clkCyc < maxRunCycl && !mDoReSchedule && mDebugMode)
                 {
-                    debugWaiter.WaitOne();
+                    //debugWaiter.WaitOne();
 
                     lock (decoderSyncObj)
                     {
@@ -593,7 +586,7 @@ namespace x8086SharpEmu
 #if DEBUG
                         Execute_DEBUG();
 #else
-						opCodes[opCode].Invoke();
+                        opCodes[opCode].Invoke();
 #endif
                         PostExecute();
                         mIsExecuting = false;
@@ -612,7 +605,7 @@ namespace x8086SharpEmu
 #if DEBUG
                     Execute_DEBUG();
 #else
-					opCodes[opCode].Invoke();
+                    opCodes[opCode].Invoke();
 #endif
                     PostExecute();
                 }
@@ -630,7 +623,7 @@ namespace x8086SharpEmu
                 // but it even allows it to pass it successfully!!!
                 if (ignoreINTs)
                 {
-                    HandleInterrupt((byte)1, false);
+                    HandleInterrupt(1, false);
                 }
             }
             else if (ignoreINTs)
@@ -642,11 +635,11 @@ namespace x8086SharpEmu
                 HandlePendingInterrupt();
             }
 
-            opCodeSize = (byte)1;
+            opCodeSize = 1;
             newPrefix = false;
             instrucionsCounter++;
 
-            opCode = get_RAM8(mRegisters.CS, mRegisters.IP, (byte)0, false);
+            opCode = get_RAM8(mRegisters.CS, mRegisters.IP, 0, false);
         }
 
         private void Execute_DEBUG()

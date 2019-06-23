@@ -124,7 +124,8 @@ namespace x8086SharpEmu
         protected int mEndGraphicsVideoAddress;
         protected MainModes mMainMode;
 
-        protected Size mTextResolution = new Size(40, 25);
+        protected int mTextResolutionX = 40;
+        protected int mTextResolutionY = 25;
         protected Size mVideoResolution = new Size(0, 0);
         protected Size mCellSize;
 
@@ -190,14 +191,6 @@ namespace x8086SharpEmu
             }
         }
 
-        public Size TextResolution
-        {
-            get
-            {
-                return mTextResolution;
-            }
-        }
-
         public Size GraphicsResolution
         {
             get
@@ -240,7 +233,7 @@ namespace x8086SharpEmu
 
         public int ColRowToAddress(int col, int row)
         {
-            return StartTextVideoAddress + row * TextResolution.Width * 2 + (col * 2);
+            return StartTextVideoAddress + row * mTextResolutionX * 2 + (col * 2);
         }
     }
 

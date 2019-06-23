@@ -476,49 +476,57 @@ namespace x8086SharpEmu
 
                 if (value == ((uint)VideoModes.Mode0_Text_BW_40x25))
                 {
-                    mTextResolution = new Size(40, 25);
+                    mTextResolutionX = 40;
+                    mTextResolutionY = 25;
                     mVideoResolution = new Size(0, 0);
                     mMainMode = MainModes.Text;
                 }
                 else if (value == ((uint)VideoModes.Mode1_Text_Color_40x25))
                 {
-                    mTextResolution = new Size(40, 25);
+                    mTextResolutionX = 40;
+                    mTextResolutionY = 25;
                     mVideoResolution = new Size(0, 0);
                     mMainMode = MainModes.Text;
                 }
                 else if (value == ((uint)VideoModes.Mode2_Text_BW_80x25))
                 {
-                    mTextResolution = new Size(80, 25);
+                    mTextResolutionX = 80;
+                    mTextResolutionY = 25;
                     mVideoResolution = new Size(0, 0);
                     mMainMode = MainModes.Text;
                 }
                 else if (value == ((uint)VideoModes.Mode3_Text_Color_80x25))
                 {
-                    mTextResolution = new Size(80, 25);
+                    mTextResolutionX = 80;
+                    mTextResolutionY = 25;
                     mVideoResolution = new Size(0, 0);
                     mMainMode = MainModes.Text;
                 }
                 else if (value == ((uint)VideoModes.Mode4_Graphic_Color_320x200))
                 {
-                    mTextResolution = new Size(40, 25);
+                    mTextResolutionX = 40;
+                    mTextResolutionY = 25;
                     mVideoResolution = new Size(320, 200);
                     mMainMode = MainModes.Graphics;
                 }
                 else if (value == ((uint)VideoModes.Mode5_Graphic_BW_320x200))
                 {
-                    mTextResolution = new Size(40, 25);
+                    mTextResolutionX = 40;
+                    mTextResolutionY = 25;
                     mVideoResolution = new Size(320, 200);
                     mMainMode = MainModes.Graphics;
                 }
                 else if (value == ((uint)VideoModes.Mode6_Graphic_Color_640x200))
                 {
-                    mTextResolution = new Size(80, 25);
+                    mTextResolutionX = 80;
+                    mTextResolutionY = 25;
                     mVideoResolution = new Size(640, 200);
                     mMainMode = MainModes.Graphics;
                 }
                 else if (value == ((uint)VideoModes.Mode6_Graphic_Color_640x200_Alt))
                 {
-                    mTextResolution = new Size(80, 25);
+                    mTextResolutionX = 80;
+                    mTextResolutionY = 25;
                     mVideoResolution = new Size(640, 200);
                     mMainMode = MainModes.Graphics;
                 }
@@ -526,7 +534,8 @@ namespace x8086SharpEmu
                 {
                     mStartTextVideoAddress = 0xB0000;
                     mStartGraphicsVideoAddress = 0xB0000;
-                    mTextResolution = new Size(80, 25);
+                    mTextResolutionX = 80;
+                    mTextResolutionY = 25;
                     mVideoResolution = new Size(720, 400);
                     mMainMode = MainModes.Text;
                 }
@@ -671,8 +680,8 @@ namespace x8086SharpEmu
                 }
                 else
                 {
-                    mCursorCol = p % mTextResolution.Width;
-                    mCursorRow = p / mTextResolution.Width;
+                    mCursorCol = p % mTextResolutionX;
+                    mCursorRow = p / mTextResolutionX;
                 }
             }
 

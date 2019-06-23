@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Threading;
 
 using x8086SharpEmu;
+using System.Text;
 
 namespace x8086SharpEmu
 {
@@ -63,43 +64,37 @@ namespace x8086SharpEmu
         public const double toDegrees = 180 / Math.PI;
 
         public static object SyncObject = new object();
+        public static StringBuilder stringBuilder = new StringBuilder("", 65536);
 
         public static void WriteFast(string text, ConsoleColor foreColor, ConsoleColor backColor, int col, int row)
         {
+
+            stringBuilder.Clear();
             lock (SyncObject)
             {
-                if (col < 0 || col >= Console.WindowWidth ||
-                        row < 0 || row >= Console.WindowHeight)
+                if (col < 0 || col >= Console.WindowWidth || row < 0 || row >= Console.WindowHeight)
                 {
                     return;
                 }
 
                 if (ConsoleCrayon.XtermColors)
                 {
-                    Console.Write(ESC + (row + 1).ToString() + ";" + (col + 1).ToString() + "H" +
-                        GetAnsiColorControlCode(foreColor, true) +
-                        GetAnsiColorControlCode(backColor, false) +
-                        text);
+                    stringBuilder.Append(ESC);
+                    stringBuilder.Append(row + 1);
+                    stringBuilder.Append(";");
+                    stringBuilder.Append(col + 1);
+                    stringBuilder.Append("H");
+                    stringBuilder.Append(GetAnsiColorControlCode(foreColor, true));
+                    stringBuilder.Append(GetAnsiColorControlCode(backColor, false));
+                    stringBuilder.Append(text);
+                    Console.Write(stringBuilder.ToString());
                 }
                 else
                 {
-                    if (Console.CursorLeft != col)
-                    {
-                        Console.CursorLeft = col;
-                    }
-                    if (Console.CursorTop != row)
-                    {
-                        Console.CursorTop = row;
-                    }
-
-                    if (foreColor != Console.ForegroundColor)
-                    {
-                        Console.ForegroundColor = foreColor;
-                    }
-                    if (backColor != Console.BackgroundColor)
-                    {
-                        Console.BackgroundColor = backColor;
-                    }
+                    Console.CursorLeft = col;
+                    Console.CursorTop = row;
+                    Console.ForegroundColor = foreColor;
+                    Console.BackgroundColor = backColor;
 
                     int index = col + row * Console.WindowWidth;
                     int size = Console.WindowWidth * Console.WindowHeight;
@@ -107,7 +102,6 @@ namespace x8086SharpEmu
                     {
                         text = text.Substring(0, size - index - 1);
                     }
-
                     Console.Write(text);
                 }
             }
@@ -435,15 +429,66 @@ namespace x8086SharpEmu
 
         private static string ESC = (char)27 + "[";
         private static string ColorReset = ESC + "0m";
-        private static string GetAnsiColorControlCode(ConsoleColor color, bool isForeground)
+
+        private static string[] AnsiForegroundColorControlCodes = new string[16]
         {
+            "\u001B[30m",
+            "\u001B[34m",
+            "\u001B[32m",
+            "\u001B[36m",
+            "\u001B[31m",
+            "\u001B[35m",
+            "\u001B[33m",
+            "\u001B[37m",
+            "\u001B[90m",
+            "\u001B[94m",
+            "\u001B[92m",
+            "\u001B[96m",
+            "\u001B[91m",
+            "\u001B[95m",
+            "\u001B[93m",
+            "\u001B[97m",
+        };
+
+        private static string[] AnsiBackgroundColorControlCodes = new string[16]
+        {
+            "\u001B[40m",
+            "\u001B[44m",
+            "\u001B[42m",
+            "\u001B[46m",
+            "\u001B[41m",
+            "\u001B[45m",
+            "\u001B[43m",
+            "\u001B[47m",
+            "\u001B[100m",
+            "\u001B[104m",
+            "\u001B[102m",
+            "\u001B[106m",
+            "\u001B[101m",
+            "\u001B[105m",
+            "\u001B[103m",
+            "\u001B[107m",
+        };
+
+        public static string GetAnsiColorControlCode(ConsoleColor color, bool isForeground)
+        {
+
             // lighter fg colours are 90 -> 97 rather than 30 -> 37
             // lighter bg colours are 100 -> 107 rather than 40 -> 47
 
-            bool light = false;
-            int code = (int)(TranslateColor(color, ref light) + (isForeground ? 30 : 40) + (light ? 60 : 0));
+            if (isForeground)
+            {
+                return AnsiForegroundColorControlCodes[(int)color];
+            }
+            else
+            {
+                return AnsiBackgroundColorControlCodes[(int)color];
+            }
 
-            return ESC + code.ToString() + "m";
+            /*bool light = false;
+            int code = (TranslateColor(color, ref light) + (isForeground ? 30 : 40) + (light ? 60 : 0));
+
+            return ESC + code.ToString() + "m";*/
         }
         #endregion
 

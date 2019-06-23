@@ -125,7 +125,7 @@ namespace x8086SharpEmu
 #if DEBUG
             addrMode.Decode(opCode, get_RAM8(mRegisters.CS, (ushort)(mRegisters.IP + 1), (byte)0, false));
 #else
-            addrMode = decoderCache[(ushort)(opCode << 8) | get_RAM8(mRegisters.CS, (ushort)(mRegisters.IP + 1), (byte)0, ignoreHooks: false)];
+            addrMode = decoderCache[(ushort)(opCode << 8) | get_RAM8(mRegisters.CS, (ushort)(mRegisters.IP + 1), 0, false)];
 #endif
 
             if (forceSize != DataSize.UseAddressingMode)
@@ -152,90 +152,90 @@ namespace x8086SharpEmu
 
             // http://umcs.maine.edu/~cmeadow/courses/cos335/Asm07-MachineLanguage.pdf
             // http://maven.smith.edu/~thiebaut/ArtOfAssembly/CH04/CH04-2.html#HEADING2-35
-            if (addrMode.Modifier == ((byte)0)) // 00
+            if (addrMode.Modifier == 0) // 00
             {
                 addrMode.IsDirect = false;
-                if (addrMode.Rm == ((byte)0))
+                if (addrMode.Rm == 0)
                 {
                     addrMode.IndAdr = (ushort)(mRegisters.BX + mRegisters.SI);
                     clkCyc += 7; // 000 [BX+SI]
                 }
-                else if (addrMode.Rm == ((byte)1))
+                else if (addrMode.Rm == 1)
                 {
                     addrMode.IndAdr = (ushort)(mRegisters.BX + mRegisters.DI);
                     clkCyc += 8; // 001 [BX+DI]
                 }
-                else if (addrMode.Rm == ((byte)2))
+                else if (addrMode.Rm == 2)
                 {
                     addrMode.IndAdr = (ushort)(mRegisters.BP + mRegisters.SI);
                     clkCyc += 8; // 010 [BP+SI]
                 }
-                else if (addrMode.Rm == ((byte)3))
+                else if (addrMode.Rm == 3)
                 {
                     addrMode.IndAdr = (ushort)(mRegisters.BP + mRegisters.DI);
                     clkCyc += 7; // 011 [BP+DI]
                 }
-                else if (addrMode.Rm == ((byte)4))
+                else if (addrMode.Rm == 4)
                 {
                     addrMode.IndAdr = mRegisters.SI;
                     clkCyc += 5; // 100 [SI]
                 }
-                else if (addrMode.Rm == ((byte)5))
+                else if (addrMode.Rm == 5)
                 {
                     addrMode.IndAdr = mRegisters.DI;
                     clkCyc += 5; // 101 [DI]
                 }
-                else if (addrMode.Rm == ((byte)6))
+                else if (addrMode.Rm == 6)
                 {
                     addrMode.IndAdr = (ushort)(To32bitsWithSign(Param(ParamIndex.First, (ushort)2, DataSize.Word)));
                     clkCyc += 9; // 110 Direct Addressing
                 }
-                else if (addrMode.Rm == ((byte)7))
+                else if (addrMode.Rm == 7)
                 {
                     addrMode.IndAdr = mRegisters.BX;
                     clkCyc += 5; // 111 [BX]
                 }
                 addrMode.IndMem = get_RAMn();
             } // 01 - 8bit
-            else if (addrMode.Modifier == ((byte)1))
+            else if (addrMode.Modifier == 1)
             {
                 addrMode.IsDirect = false;
-                if (addrMode.Rm == ((byte)0))
+                if (addrMode.Rm == 0)
                 {
                     addrMode.IndAdr = (ushort)(mRegisters.BX + mRegisters.SI);
                     clkCyc += 7; // 000 [BX+SI]
                 }
-                else if (addrMode.Rm == ((byte)1))
+                else if (addrMode.Rm == 1)
                 {
                     addrMode.IndAdr = (ushort)(mRegisters.BX + mRegisters.DI);
                     clkCyc += 8; // 001 [BX+DI]
                 }
-                else if (addrMode.Rm == ((byte)2))
+                else if (addrMode.Rm == 2)
                 {
                     addrMode.IndAdr = (ushort)(mRegisters.BP + mRegisters.SI);
                     clkCyc += 8; // 010 [BP+SI]
                 }
-                else if (addrMode.Rm == ((byte)3))
+                else if (addrMode.Rm == 3)
                 {
                     addrMode.IndAdr = (ushort)(mRegisters.BP + mRegisters.DI);
                     clkCyc += 7; // 011 [BP+DI]
                 }
-                else if (addrMode.Rm == ((byte)5))
+                else if (addrMode.Rm == 5)
                 {
                     addrMode.IndAdr = mRegisters.DI;
                     clkCyc += 5; // 101 [DI]
                 }
-                else if (addrMode.Rm == ((byte)4))
+                else if (addrMode.Rm == 4)
                 {
                     addrMode.IndAdr = mRegisters.SI;
                     clkCyc += 5; // 100 [SI]
                 }
-                else if (addrMode.Rm == ((byte)6))
+                else if (addrMode.Rm == 6)
                 {
                     addrMode.IndAdr = mRegisters.BP;
                     clkCyc += 5; // 110 [BP]
                 }
-                else if (addrMode.Rm == ((byte)7))
+                else if (addrMode.Rm == 7)
                 {
                     addrMode.IndAdr = mRegisters.BX;
                     clkCyc += 5; // 111 [BX]
@@ -243,45 +243,45 @@ namespace x8086SharpEmu
                 addrMode.IndAdr += To16bitsWithSign(Param(ParamIndex.First, (ushort)2, DataSize.Byte));
                 addrMode.IndMem = get_RAMn();
             } // 10 - 16bit
-            else if (addrMode.Modifier == ((byte)2))
+            else if (addrMode.Modifier == 2)
             {
                 addrMode.IsDirect = false;
-                if (addrMode.Rm == ((byte)0))
+                if (addrMode.Rm == 0)
                 {
                     addrMode.IndAdr = (ushort)(mRegisters.BX + mRegisters.SI);
                     clkCyc += 7; // 000 [BX+SI]
                 }
-                else if (addrMode.Rm == ((byte)1))
+                else if (addrMode.Rm == 1)
                 {
                     addrMode.IndAdr = (ushort)(mRegisters.BX + mRegisters.DI);
                     clkCyc += 8; // 001 [BX+DI]
                 }
-                else if (addrMode.Rm == ((byte)2))
+                else if (addrMode.Rm == 2)
                 {
                     addrMode.IndAdr = (ushort)(mRegisters.BP + mRegisters.SI);
                     clkCyc += 8; // 010 [BP+SI]
                 }
-                else if (addrMode.Rm == ((byte)3))
+                else if (addrMode.Rm == 3)
                 {
                     addrMode.IndAdr = (ushort)(mRegisters.BP + mRegisters.DI);
                     clkCyc += 7; // 011 [BP+DI]
                 }
-                else if (addrMode.Rm == ((byte)4))
+                else if (addrMode.Rm == 4)
                 {
                     addrMode.IndAdr = mRegisters.SI;
                     clkCyc += 5; // 100 [SI]
                 }
-                else if (addrMode.Rm == ((byte)5))
+                else if (addrMode.Rm == 5)
                 {
                     addrMode.IndAdr = mRegisters.DI;
                     clkCyc += 5; // 101 [DI]
                 }
-                else if (addrMode.Rm == ((byte)6))
+                else if (addrMode.Rm == 6)
                 {
                     addrMode.IndAdr = mRegisters.BP;
                     clkCyc += 5; // 110 [BP]
                 }
-                else if (addrMode.Rm == ((byte)7))
+                else if (addrMode.Rm == 7)
                 {
                     addrMode.IndAdr = mRegisters.BX;
                     clkCyc += 5; // 111 [BX]
@@ -290,7 +290,7 @@ namespace x8086SharpEmu
                 addrMode.IndAdr += ((Param(ParamIndex.First, (ushort)2, DataSize.Word)));
                 addrMode.IndMem = get_RAMn();
             } // 11
-            else if (addrMode.Modifier == ((byte)3))
+            else if (addrMode.Modifier == 3)
             {
                 addrMode.IsDirect = true;
             }

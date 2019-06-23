@@ -9,9 +9,39 @@ using System.Windows.Forms;
 using System.Runtime.CompilerServices;
 
 using x8086SharpEmu;
+using System.Reflection.Emit;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace x8086SharpEmu
 {
+    public static class MemUtil
+    {
+        static MemUtil()
+        {
+            var dynamicMethod = new DynamicMethod("Memset", MethodAttributes.Public | MethodAttributes.Static, CallingConventions.Standard,
+                null, new[] { typeof(IntPtr), typeof(byte), typeof(int) }, typeof(MemUtil), true);
+
+            var generator = dynamicMethod.GetILGenerator();
+            generator.Emit(OpCodes.Ldarg_0);
+            generator.Emit(OpCodes.Ldarg_1);
+            generator.Emit(OpCodes.Ldarg_2);
+            generator.Emit(OpCodes.Initblk);
+            generator.Emit(OpCodes.Ret);
+
+            MemsetDelegate = (Action<IntPtr, byte, int>)dynamicMethod.CreateDelegate(typeof(Action<IntPtr, byte, int>));
+        }
+
+        public static void Memset(byte[] array, byte value, int length)
+        {
+            var gcHandle = GCHandle.Alloc(array, GCHandleType.Pinned);
+            MemsetDelegate(gcHandle.AddrOfPinnedObject(), value, length);
+            gcHandle.Free();
+        }
+
+        private static Action<IntPtr, byte, int> MemsetDelegate;
+    }
+
     static class Extensions
     {
         public static byte LowByte(this int value)

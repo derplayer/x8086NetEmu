@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Threading;
 
 using x8086SharpEmu;
+using System.Text;
 
 namespace x8086SharpEmu
 {
@@ -24,7 +25,9 @@ namespace x8086SharpEmu
         private Image2Ascii i2a;
         private bool isRendering;
         private Size ratio = new Size(3, 4);
-        private int frameRate = 27;
+        private int frameRate = 60;
+        private StringBuilder stringBuilder = new StringBuilder("", 0x10000);
+        private char[] consoleBuffer = new char[0x10000];
 
         public CGAConsole(X8086 cpu) : base(cpu)
         {
@@ -45,6 +48,10 @@ namespace x8086SharpEmu
 
             System.Threading.Tasks.Task.Run(() =>
             {
+                int x = 0;
+                int y = 0;
+                int width = 0;
+                int height = 0;
                 do
                 {
                     Thread.Sleep(1000 / frameRate);
@@ -55,9 +62,11 @@ namespace x8086SharpEmu
                         {
                             i2a.ProcessImage(false);
 
-                            for (int y = 0; y <= Console.WindowHeight - 1; y++)
+                            width = Console.WindowWidth;
+                            height = Console.WindowHeight;
+                            for (y = 0; y < height; y++)
                             {
-                                for (int x = 0; x <= Console.WindowWidth - 1; x++)
+                                for (x = 0; x < width; x++)
                                 {
                                     //ConsoleCrayon.WriteFast(i2a.Canvas(x)[y].Character,
                                     //Image2Ascii.ToConsoleColor(i2a.Canvas(x)[y].Color),
@@ -82,7 +91,7 @@ namespace x8086SharpEmu
 
         protected override void AutoSize()
         {
-            int length = TextResolution.Width * TextResolution.Height * 2;
+            int length = mTextResolutionX * mTextResolutionY * 2;
             if (ReferenceEquals(buffer, null) || buffer?.Length != length)
             {
                 buffer = new byte[length];
@@ -92,10 +101,9 @@ namespace x8086SharpEmu
 
         protected override void ResizeRenderControl()
         {
-#if Win32
 			if (MainMode == MainModes.Text)
 			{
-				Console.SetWindowSize(TextResolution.Width, TextResolution.Height);
+				Console.SetWindowSize(mTextResolutionX, mTextResolutionY);
 			}
 			else if (MainMode == MainModes.Graphics)
 			{
@@ -106,7 +114,6 @@ namespace x8086SharpEmu
 			}
 			Console.SetBufferSize(Console.WindowWidth, Console.WindowHeight);
 			Array.Clear(buffer, 0, buffer.Length);
-#endif
         }
 
         protected override void InitVideoMemory(bool clearScreen)
@@ -128,7 +135,7 @@ namespace x8086SharpEmu
                 case PlatformID.WinCE:
                     break;
                 default:
-                    if (mVideoMode != 0xFF && (Console.WindowWidth != mTextResolution.Width || Console.WindowHeight != mTextResolution.Height))
+                    if (mVideoMode != 0xFF && (Console.WindowWidth != mTextResolutionX || Console.WindowHeight != mTextResolutionY))
                     {
                         ConsoleCrayon.ResetColor();
                         Console.Clear();
@@ -145,7 +152,7 @@ namespace x8086SharpEmu
                         {
                             ConsoleCrayon.WriteFast("New resolution: {Console.WindowWidth}x{Console.WindowHeight}", ConsoleColor.White, ConsoleColor.DarkRed, 0, 10);
                             Thread.Sleep(200);
-                            if (Console.WindowWidth == mTextResolution.Width && Console.WindowHeight == mTextResolution.Height)
+                            if (Console.WindowWidth == mTextResolutionX && Console.WindowHeight == mTextResolutionY)
                             {
                                 break;
                             }
@@ -286,7 +293,7 @@ namespace x8086SharpEmu
 
             bool cv = false;
 
-            string text = "";
+            stringBuilder.Clear(); //string text = "";
             byte b1c = CPU.Memory[mStartTextVideoAddress + 1];
             int c = 0;
             int r = 0;
@@ -307,13 +314,13 @@ namespace x8086SharpEmu
 
                 if (b1c != b1)
                 {
-                    ConsoleCrayon.WriteFast(text, (ConsoleColor)b1c.LowNib(), (ConsoleColor)b1c.HighNib(), c, r);
-                    text = "";
+                    ConsoleCrayon.WriteFast(stringBuilder.ToString()/*text*/, (ConsoleColor)b1c.LowNib(), (ConsoleColor)b1c.HighNib(), c, r);
+                    stringBuilder.Clear(); //text = "";
                     b1c = b1;
                     c = col;
                     r = row;
                 }
-                text += chars[b0].ToString();
+                stringBuilder.Append(chars[b0]); //text += chars[b0].ToString();
 
                 if (CursorVisible && row == CursorRow && col == CursorCol)
                 {
@@ -330,11 +337,11 @@ namespace x8086SharpEmu
                 }
 
                 col++;
-                if (col == TextResolution.Width)
+                if (col == mTextResolutionX)
                 {
                     col = 0;
                     row++;
-                    if (row == TextResolution.Height)
+                    if (row == mTextResolutionY)
                     {
                         break;
                     }
@@ -343,9 +350,9 @@ namespace x8086SharpEmu
                 bufIdx += 2;
             }
 
-            if (!string.IsNullOrEmpty(text))
+            if (stringBuilder.Length > 0/*!string.IsNullOrEmpty(text)*/)
             {
-                ConsoleCrayon.WriteFast(text, (ConsoleColor)b1c.LowNib(), (ConsoleColor)b1c.HighNib(), c, r);
+                ConsoleCrayon.WriteFast(stringBuilder.ToString() /*text*/, (ConsoleColor)b1c.LowNib(), (ConsoleColor)b1c.HighNib(), c, r);
             }
 
             if (cv)

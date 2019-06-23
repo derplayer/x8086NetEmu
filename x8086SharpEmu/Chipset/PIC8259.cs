@@ -1,14 +1,3 @@
-using System.Collections.Generic;
-using System;
-using System.Linq;
-using System.Drawing;
-using System.Diagnostics;
-using System.Xml.Linq;
-using System.Collections;
-using System.Windows.Forms;
-
-using x8086SharpEmu;
-
 namespace x8086SharpEmu
 {
     public class PIC8259 : IOPortHandler
@@ -90,15 +79,15 @@ namespace x8086SharpEmu
 
         public override byte GetPendingInterrupt()
         {
-            if ((int)state != (int)States.Ready)
+            if (state != States.Ready)
             {
-                return (byte)(0xFF);
+                return 0xFF;
             }
 
             // Determine set of pending interrupt requests
             //byte reqMask = rIRR & (!rIMR);
-            byte reqMask = (byte)(rIRR & (byte)(~rIMR));
-            reqMask = (byte)((!specialNest) ? (reqMask & (byte)(~rISR)) : (reqMask & ((byte)(~rISR) | slaveInput)));
+            byte reqMask = (byte)(rIRR & ~rIMR);
+            reqMask = (byte)((!specialNest) ? (reqMask & ~rISR) : (reqMask & (~rISR | slaveInput)));
             //if (specialNest)
             //{
             //	reqMask = reqMask & ((!rISR) | slaveInput);
@@ -111,17 +100,17 @@ namespace x8086SharpEmu
             // Select non-masked request with highest priority
             if (reqMask == 0)
             {
-                return (byte)(0xFF);
+                return 0xFF;
             }
 
-            int irq = (int)((lowPrio + 1) & 7);
+            int irq = ((lowPrio + 1) & 7);
             while ((reqMask & (1 << irq)) == 0)
             {
                 if (!specialMask && ((rISR & (1 << irq)) != 0))
                 {
-                    return (byte)(0xFF); // ISR bit blocks all lower-priority requests
+                    return 0xFF; // ISR bit blocks all lower-priority requests
                 }
-                irq = (int)((irq + 1) & 7);
+                irq = ((irq + 1) & 7);
             }
 
             byte irqBit = (byte)(1 << irq);

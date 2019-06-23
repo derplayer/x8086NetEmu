@@ -1,14 +1,5 @@
-using System.Collections.Generic;
 using System;
-using System.Linq;
-using System.Drawing;
-using System.Diagnostics;
-using System.Xml.Linq;
-using System.Collections;
-using System.Windows.Forms;
 using System.Runtime.InteropServices;
-
-using x8086SharpEmu;
 
 namespace x8086SharpEmu
 {
@@ -18,11 +9,12 @@ namespace x8086SharpEmu
         public const uint MemSize = 0x10_0000U; // 1MB
         public const uint ROMStart = 0xC_0000U;
 
-        public readonly byte[] Memory = new byte[MemSize];
+        public byte[] Memory = new byte[MemSize];
 
         private uint address;
         private const ushort shl2 = 1 << 2;
         private const ushort shl3 = 1 << 3;
+        private int iteratorIndex;
 
         public class MemoryAccessEventArgs : EventArgs
         {
@@ -135,30 +127,30 @@ namespace x8086SharpEmu
                     case RegistersTypes.AX:
                         return AX;
                     case RegistersTypes.AH:
-                        return (ushort)(AH);
+                        return AH;
                     case RegistersTypes.AL:
-                        return (ushort)(AL);
+                        return AL;
 
                     case RegistersTypes.BX:
                         return BX;
                     case RegistersTypes.BH:
-                        return (ushort)(BH);
+                        return BH;
                     case RegistersTypes.BL:
-                        return (ushort)(BL);
+                        return BL;
 
                     case RegistersTypes.CX:
                         return CX;
                     case RegistersTypes.CH:
-                        return (ushort)(CH);
+                        return CH;
                     case RegistersTypes.CL:
-                        return (ushort)(CL);
+                        return CL;
 
                     case RegistersTypes.DX:
                         return DX;
                     case RegistersTypes.DH:
-                        return (ushort)(DH);
+                        return DH;
                     case RegistersTypes.DL:
-                        return (ushort)(DL);
+                        return DL;
 
                     case RegistersTypes.CS:
                         return CS;
@@ -508,31 +500,31 @@ namespace x8086SharpEmu
             //If mDebugMode Then RaiseEvent MemoryAccess(Me, New MemoryAccessEventArgs(address, MemoryAccessEventArgs.AccessModes.Read))
             //Return FromPreftch(address)
 
-            if (!ignoreHooks)
+            /*if (!ignoreHooks && memHooks.Count != 0)
             {
-                for (int i = 0; i <= memHooks.Count - 1; i++)
+                for (iteratorIndex = 0; iteratorIndex < memHooks.Count; iteratorIndex++)
                 {
-                    if (memHooks[i].Invoke(address, (ushort)tmpUVal, MemHookMode.Read))
+                    if (memHooks[iteratorIndex].Invoke(address, (ushort)tmpUVal, MemHookMode.Read))
                     {
                         return (byte)(tmpUVal);
                     }
                 }
-            }
+            }*/
 
-            return Memory[address & 0xF_FFFF]; // "Call 5" Legacy Interface: http://www.os2museum.com/wp/?p=734
+            return Memory[address & 0xFFFFF]; // "Call 5" Legacy Interface: http://www.os2museum.com/wp/?p=734
         }
         public void set_RAM(uint address, bool ignoreHooks, byte value)
         {
-            if (!ignoreHooks)
+            /*if (!ignoreHooks)
             {
-                for (int i = 0; i <= memHooks.Count - 1; i++)
+                for (iteratorIndex = 0; iteratorIndex < memHooks.Count; iteratorIndex++)
                 {
-                    if (memHooks[i].Invoke(address, value, MemHookMode.Write))
+                    if (memHooks[iteratorIndex].Invoke(address, value, MemHookMode.Write))
                     {
                         return;
                     }
                 }
-            }
+            }*/
 
             Memory[address & 0xF_FFFF] = value;
 
@@ -541,7 +533,8 @@ namespace x8086SharpEmu
 
         public byte get_RAM8(ushort segment, ushort offset, byte inc = 0, bool ignoreHooks = false)
         {
-            return get_RAM(SegmentOffetToAbsolute(segment, (ushort)(offset + inc)), ignoreHooks);
+            //return get_RAM(SegmentOffetToAbsolute(segment, (ushort)(offset + inc)), ignoreHooks);
+            return Memory[((segment << 4) + offset + inc) & 0xFFFFF];
         }
         public void set_RAM8(ushort segment, ushort offset, byte inc, bool ignoreHooks, byte value)
         {
@@ -550,8 +543,9 @@ namespace x8086SharpEmu
 
         public ushort get_RAM16(ushort segment, ushort offset, byte inc = 0, bool ignoreHooks = false)
         {
-            address = SegmentOffetToAbsolute(segment, (ushort)(offset + inc));
-            return (ushort)(((ushort)(get_RAM(address + 1, ignoreHooks) << 8)) | (int)(get_RAM(address, ignoreHooks)));
+            //return (ushort)(((ushort)(get_RAM(address + 1, ignoreHooks) << 8)) | (int)(get_RAM(address, ignoreHooks)));
+            int address = ((segment << 4) + offset + inc) & 0xFFFFF;
+            return (ushort)((Memory[address + 1] << 8) & 0xFF00 | Memory[address]);
         }
         public void set_RAM16(ushort segment, ushort offset, byte inc, bool ignoreHooks, ushort value)
         {
@@ -562,19 +556,19 @@ namespace x8086SharpEmu
 
         public ushort get_RAMn(bool ignoreHooks = false)
         {
-            return (ushort)(addrMode.Size == DataSize.Byte ? (
-                get_RAM8((ushort)(mRegisters.ActiveSegmentValue), addrMode.IndAdr, (byte)0, ignoreHooks)) : (
-                get_RAM16((ushort)(mRegisters.ActiveSegmentValue), addrMode.IndAdr, (byte)0, ignoreHooks)));
+            return (addrMode.Size == DataSize.Byte ? (
+                get_RAM8((ushort)(mRegisters.ActiveSegmentValue), addrMode.IndAdr, 0, ignoreHooks)) : (
+                get_RAM16((ushort)(mRegisters.ActiveSegmentValue), addrMode.IndAdr, 0, ignoreHooks)));
         }
         public void set_RAMn(bool ignoreHooks, ushort value)
         {
             if (addrMode.Size == DataSize.Byte)
             {
-                set_RAM8((ushort)(mRegisters.ActiveSegmentValue), addrMode.IndAdr, (byte)0, ignoreHooks, (byte)value);
+                set_RAM8((ushort)(mRegisters.ActiveSegmentValue), addrMode.IndAdr, 0, ignoreHooks, (byte)value);
             }
             else
             {
-                set_RAM16((ushort)(mRegisters.ActiveSegmentValue), addrMode.IndAdr, (byte)0, ignoreHooks, value);
+                set_RAM16((ushort)(mRegisters.ActiveSegmentValue), addrMode.IndAdr, 0, ignoreHooks, value);
             }
         }
     }

@@ -50,40 +50,42 @@ namespace x8086SharpEmu
                     X8086.Notify("Invalid Drive Number: Drive {0:000} Not Ready", NotificationReasons.Info, mRegisters.DL);
                     ret = 0xAA; // fixed disk drive not ready
                 }
-
-                offset = dskImg.LBA((uint)(mRegisters.CH), (uint)(mRegisters.DH), (uint)(mRegisters.CL));
-                bufSize = mRegisters.AL * dskImg.SectorSize;
-
-                if (offset < 0 || (int)(offset + bufSize) > (int)dskImg.FileLength)
+                else
                 {
-                    X8086.Notify("Read Sectors: Drive {0:000} Seek Fail", NotificationReasons.Warn, mRegisters.DL);
-                    ret = 0x40; // seek failed
-                }
+                    offset = dskImg.LBA((uint)(mRegisters.CH), (uint)(mRegisters.DH), (uint)(mRegisters.CL));
+                    bufSize = mRegisters.AL * dskImg.SectorSize;
 
-                X8086.Notify("Drive {0:000} Read  H{1:00} T{2:000} S{3:000} x {4:000} {5:X6} -> {6:X4}:{7:X4}", NotificationReasons.Info,
-                    mRegisters.DL,
-                    mRegisters.DH,
-                    mRegisters.CH,
-                    mRegisters.CL,
-                    mRegisters.AL,
-                    offset,
-                    mRegisters.ES,
-                    mRegisters.BX);
+                    if (offset < 0 || (int)(offset + bufSize) > (int)dskImg.FileLength)
+                    {
+                        X8086.Notify("Read Sectors: Drive {0:000} Seek Fail", NotificationReasons.Warn, mRegisters.DL);
+                        ret = 0x40; // seek failed
+                    }
 
-                byte[] buf = new byte[bufSize];
-                ret = dskImg.Read((ulong)offset, buf);
-                if (ret == DiskImage.EIO)
-                {
-                    X8086.Notify("Read Sectors: Drive {0:000} CRC Error", NotificationReasons.Warn, mRegisters.DL);
-                    ret = 0x10; // CRC error
+                    X8086.Notify("Drive {0:000} Read  H{1:00} T{2:000} S{3:000} x {4:000} {5:X6} -> {6:X4}:{7:X4}", NotificationReasons.Info,
+                        mRegisters.DL,
+                        mRegisters.DH,
+                        mRegisters.CH,
+                        mRegisters.CL,
+                        mRegisters.AL,
+                        offset,
+                        mRegisters.ES,
+                        mRegisters.BX);
+
+                    byte[] buf = new byte[bufSize];
+                    ret = dskImg.Read((ulong)offset, buf);
+                    if (ret == DiskImage.EIO)
+                    {
+                        X8086.Notify("Read Sectors: Drive {0:000} CRC Error", NotificationReasons.Warn, mRegisters.DL);
+                        ret = 0x10; // CRC error
+                    }
+                    else if (ret == DiskImage.EOF)
+                    {
+                        X8086.Notify("Read Sectors: Drive {0:000} Sector Not Found", NotificationReasons.Warn, mRegisters.DL);
+                        ret = 0x4; // sector not found
+                    }
+                    CopyToMemory(buf, X8086.SegmentOffetToAbsolute(mRegisters.ES, mRegisters.BX));
+                    AL = bufSize / dskImg.SectorSize;
                 }
-                else if (ret == DiskImage.EOF)
-                {
-                    X8086.Notify("Read Sectors: Drive {0:000} Sector Not Found", NotificationReasons.Warn, mRegisters.DL);
-                    ret = 0x4; // sector not found
-                }
-                CopyToMemory(buf, X8086.SegmentOffetToAbsolute(mRegisters.ES, mRegisters.BX));
-                AL = bufSize / dskImg.SectorSize;
             } // Write sectors
             else if (mRegisters.AH == ((byte)(0x3)))
             {
@@ -92,46 +94,48 @@ namespace x8086SharpEmu
                     X8086.Notify("Invalid Drive Number: Drive {0:000} Not Ready", NotificationReasons.Info, mRegisters.DL);
                     ret = 0xAA; // fixed disk drive not ready
                 }
-
-                if (dskImg.IsReadOnly)
+                else
                 {
-                    X8086.Notify("Write Sectors: Drive {0:000} Failed / Read Only", NotificationReasons.Warn, mRegisters.DL);
-                    ret = 0x3; // write protected
-                }
+                    if (dskImg.IsReadOnly)
+                    {
+                        X8086.Notify("Write Sectors: Drive {0:000} Failed / Read Only", NotificationReasons.Warn, mRegisters.DL);
+                        ret = 0x3; // write protected
+                    }
 
-                offset = dskImg.LBA((uint)(mRegisters.CH), (uint)(mRegisters.DH), (uint)(mRegisters.CL));
-                bufSize = mRegisters.AL * dskImg.SectorSize;
+                    offset = dskImg.LBA((uint)(mRegisters.CH), (uint)(mRegisters.DH), (uint)(mRegisters.CL));
+                    bufSize = mRegisters.AL * dskImg.SectorSize;
 
-                if (offset < 0 || (int)(offset + bufSize) > (int)dskImg.FileLength)
-                {
-                    X8086.Notify("Write Sectors: Drive {0:000} Seek Failed", NotificationReasons.Warn, mRegisters.DL);
-                    ret = 0x40; // seek failed
-                }
+                    if (offset < 0 || (int)(offset + bufSize) > (int)dskImg.FileLength)
+                    {
+                        X8086.Notify("Write Sectors: Drive {0:000} Seek Failed", NotificationReasons.Warn, mRegisters.DL);
+                        ret = 0x40; // seek failed
+                    }
 
-                X8086.Notify("Drive {0:000} Write H{1:00} T{2:000} S{3:000} x {4:000} {5:X6} <- {6:X4}:{7:X4}", NotificationReasons.Info,
-                    mRegisters.DL,
-                    mRegisters.DH,
-                    mRegisters.CH,
-                    mRegisters.CL,
-                    mRegisters.AL,
-                    offset,
-                    mRegisters.ES,
-                    mRegisters.BX);
+                    X8086.Notify("Drive {0:000} Write H{1:00} T{2:000} S{3:000} x {4:000} {5:X6} <- {6:X4}:{7:X4}", NotificationReasons.Info,
+                        mRegisters.DL,
+                        mRegisters.DH,
+                        mRegisters.CH,
+                        mRegisters.CL,
+                        mRegisters.AL,
+                        offset,
+                        mRegisters.ES,
+                        mRegisters.BX);
 
-                byte[] buf = new byte[bufSize];
-                CopyFromMemory(buf, X8086.SegmentOffetToAbsolute(mRegisters.ES, mRegisters.BX));
-                ret = dskImg.Write((ulong)offset, buf);
-                if (ret == DiskImage.EIO)
-                {
-                    X8086.Notify("Write Sectors: Drive {0:000} CRC Error", NotificationReasons.Warn, mRegisters.DL);
-                    ret = 0x10; // CRC error
+                    byte[] buf = new byte[bufSize];
+                    CopyFromMemory(buf, X8086.SegmentOffetToAbsolute(mRegisters.ES, mRegisters.BX));
+                    ret = dskImg.Write((ulong)offset, buf);
+                    if (ret == DiskImage.EIO)
+                    {
+                        X8086.Notify("Write Sectors: Drive {0:000} CRC Error", NotificationReasons.Warn, mRegisters.DL);
+                        ret = 0x10; // CRC error
+                    }
+                    else if (ret == DiskImage.EOF)
+                    {
+                        X8086.Notify("Write Sectors: Drive {0:000} Sector Not Found", NotificationReasons.Warn, mRegisters.DL);
+                        ret = 0x4; // sector not found
+                    }
+                    AL = bufSize / dskImg.SectorSize;
                 }
-                else if (ret == DiskImage.EOF)
-                {
-                    X8086.Notify("Write Sectors: Drive {0:000} Sector Not Found", NotificationReasons.Warn, mRegisters.DL);
-                    ret = 0x4; // sector not found
-                }
-                AL = bufSize / dskImg.SectorSize;
             } // Verify Sectors
             else if (mRegisters.AH == ((byte)(0x4)))
             {
@@ -140,28 +144,30 @@ namespace x8086SharpEmu
                     X8086.Notify("Invalid Drive Number: Drive {0:000} Not Ready", NotificationReasons.Info, mRegisters.DL);
                     ret = 0xAA; // fixed disk drive not ready
                 }
-
-                offset = dskImg.LBA((uint)(mRegisters.CH), (uint)(mRegisters.DH), (uint)(mRegisters.CL));
-                bufSize = mRegisters.AL * dskImg.SectorSize;
-
-                if (offset < 0 || (int)(offset + bufSize) > (int)dskImg.FileLength)
+                else
                 {
-                    X8086.Notify("Verify Sector: Drive {0} Seek Failed", NotificationReasons.Warn, mRegisters.DL);
-                    ret = 0x40; // seek failed
+                    offset = dskImg.LBA((uint)(mRegisters.CH), (uint)(mRegisters.DH), (uint)(mRegisters.CL));
+                    bufSize = mRegisters.AL * dskImg.SectorSize;
+
+                    if (offset < 0 || (int)(offset + bufSize) > (int)dskImg.FileLength)
+                    {
+                        X8086.Notify("Verify Sector: Drive {0} Seek Failed", NotificationReasons.Warn, mRegisters.DL);
+                        ret = 0x40; // seek failed
+                    }
+
+                    X8086.Notify("Drive {0:000} Verify Sectors H{1:00} T{2:000} S{3:000} ? {4:000} {5:X6} ? {6:X4}:{7:X4}", NotificationReasons.Info,
+                        mRegisters.DL,
+                        mRegisters.DH,
+                        mRegisters.CH,
+                        mRegisters.CL,
+                        mRegisters.AL,
+                        offset,
+                        mRegisters.ES,
+                        mRegisters.BX);
+
+                    AL = bufSize / dskImg.SectorSize;
+                    ret = 0;
                 }
-
-                X8086.Notify("Drive {0:000} Verify Sectors H{1:00} T{2:000} S{3:000} ? {4:000} {5:X6} ? {6:X4}:{7:X4}", NotificationReasons.Info,
-                    mRegisters.DL,
-                    mRegisters.DH,
-                    mRegisters.CH,
-                    mRegisters.CL,
-                    mRegisters.AL,
-                    offset,
-                    mRegisters.ES,
-                    mRegisters.BX);
-
-                AL = bufSize / dskImg.SectorSize;
-                ret = 0;
             } // Format Track
             else if (mRegisters.AH == ((byte)(0x5)))
             {
@@ -170,26 +176,28 @@ namespace x8086SharpEmu
                     X8086.Notify("Invalid Drive Number: Drive {0:000} Not Ready", NotificationReasons.Info, mRegisters.DL);
                     ret = 0xAA; // fixed disk drive not ready
                 }
-
-                offset = dskImg.LBA((uint)(mRegisters.CH), (uint)(mRegisters.DH), (uint)(mRegisters.CL));
-                bufSize = mRegisters.AL * dskImg.SectorSize;
-
-                if (offset < 0 || (int)(offset + bufSize) > (int)dskImg.FileLength)
+                else
                 {
-                    X8086.Notify("Format Track: Drive {0:000} Seek Failed", NotificationReasons.Warn, mRegisters.DL);
-                    ret = 0x40; // seek failed
-                }
+                    offset = dskImg.LBA((uint)(mRegisters.CH), (uint)(mRegisters.DH), (uint)(mRegisters.CL));
+                    bufSize = mRegisters.AL * dskImg.SectorSize;
 
-                X8086.Notify("Drive {0:000} Format Track H{1:00} T{2:000} S{3:000} ? {4:000} {5:X6} = {6:X4}:{7:X4}", NotificationReasons.Info,
-                    mRegisters.DL,
-                    mRegisters.DH,
-                    mRegisters.CH,
-                    mRegisters.CL,
-                    mRegisters.AL,
-                    offset,
-                    mRegisters.ES,
-                    mRegisters.BX);
-                ret = 0;
+                    if (offset < 0 || (int)(offset + bufSize) > (int)dskImg.FileLength)
+                    {
+                        X8086.Notify("Format Track: Drive {0:000} Seek Failed", NotificationReasons.Warn, mRegisters.DL);
+                        ret = 0x40; // seek failed
+                    }
+
+                    X8086.Notify("Drive {0:000} Format Track H{1:00} T{2:000} S{3:000} ? {4:000} {5:X6} = {6:X4}:{7:X4}", NotificationReasons.Info,
+                        mRegisters.DL,
+                        mRegisters.DH,
+                        mRegisters.CH,
+                        mRegisters.CL,
+                        mRegisters.AL,
+                        offset,
+                        mRegisters.ES,
+                        mRegisters.BX);
+                    ret = 0;
+                }
             } // Format Track - Set Bad Sector Flag
             else if (mRegisters.AH == ((byte)(0x6)))
             {
@@ -198,14 +206,16 @@ namespace x8086SharpEmu
                     X8086.Notify("Invalid Drive Number: Drive {0} Not Ready", NotificationReasons.Info, mRegisters.DL);
                     ret = 0xAA; // fixed disk drive not ready
                 }
-
-                X8086.Notify("Drive {0:000} Format Track (SBSF) H{1:00} T{2:000} S{3:000} ? {4:000}", NotificationReasons.Info,
+                else
+                {
+                    X8086.Notify("Drive {0:000} Format Track (SBSF) H{1:00} T{2:000} S{3:000} ? {4:000}", NotificationReasons.Info,
                     mRegisters.DL,
                     mRegisters.DH,
                     mRegisters.CH,
                     mRegisters.CL,
                     mRegisters.AL);
-                ret = 0;
+                    ret = 0;
+                }
             } // Format Drive Starting at Track
             else if (mRegisters.AH == ((byte)(0x7)))
             {
@@ -214,14 +224,16 @@ namespace x8086SharpEmu
                     X8086.Notify("Invalid Drive Number: Drive {0:000} Not Ready", NotificationReasons.Info, mRegisters.DL);
                     ret = 0xAA; // fixed disk drive not ready
                 }
-
-                X8086.Notify("Drive {0:000} Format Drive H{1:00} T{2:000} S{3:000}", NotificationReasons.Info,
+                else
+                {
+                    X8086.Notify("Drive {0:000} Format Drive H{1:00} T{2:000} S{3:000}", NotificationReasons.Info,
                     mRegisters.DL,
                     mRegisters.DH,
                     mRegisters.CH,
                     mRegisters.CL,
                     mRegisters.AL);
-                ret = 0;
+                    ret = 0;
+                }
             } // Get Drive Parameters
             else if (mRegisters.AH == ((byte)(0x8)))
             {
@@ -278,46 +290,48 @@ namespace x8086SharpEmu
                     X8086.Notify("Invalid Drive Number: Drive {0:000} Not Ready", NotificationReasons.Info, mRegisters.DL);
                     ret = 0xAA; // fixed disk drive not ready
                 }
-
-                offset = dskImg.LBA((uint)(mRegisters.CH), (uint)(mRegisters.DH), (uint)(mRegisters.CL));
-                bufSize = mRegisters.AL * dskImg.SectorSize;
-
-                if (offset < 0 || (int)(offset + bufSize) > (int)dskImg.FileLength)
+                else
                 {
-                    X8086.Notify("Read Sectors Long: Drive {0:000} Seek Fail", NotificationReasons.Warn, mRegisters.DL);
-                    ret = 0x40; // seek failed
-                }
+                    offset = dskImg.LBA((uint)(mRegisters.CH), (uint)(mRegisters.DH), (uint)(mRegisters.CL));
+                    bufSize = mRegisters.AL * dskImg.SectorSize;
 
-                X8086.Notify("Drive {0:000} Read Long H{1:00} T{2:000} S{3:000} x {4:000} {5:X6} -> {6:X4}:{7:X4}", NotificationReasons.Info,
-                    mRegisters.DL,
-                    mRegisters.DH,
-                    mRegisters.CH,
-                    mRegisters.CL,
-                    mRegisters.AL,
-                    offset,
-                    mRegisters.ES,
-                    mRegisters.BX);
+                    if (offset < 0 || (int)(offset + bufSize) > (int)dskImg.FileLength)
+                    {
+                        X8086.Notify("Read Sectors Long: Drive {0:000} Seek Fail", NotificationReasons.Warn, mRegisters.DL);
+                        ret = 0x40; // seek failed
+                    }
 
-                byte[] buf = new byte[bufSize];
-                ret = dskImg.Read((ulong)offset, buf);
-                if (ret == DiskImage.EIO)
-                {
-                    X8086.Notify("Read Sectors Long: Drive {0:000} CRC Error", NotificationReasons.Warn, mRegisters.DL);
-                    ret = 0x10; // CRC error
+                    X8086.Notify("Drive {0:000} Read Long H{1:00} T{2:000} S{3:000} x {4:000} {5:X6} -> {6:X4}:{7:X4}", NotificationReasons.Info,
+                        mRegisters.DL,
+                        mRegisters.DH,
+                        mRegisters.CH,
+                        mRegisters.CL,
+                        mRegisters.AL,
+                        offset,
+                        mRegisters.ES,
+                        mRegisters.BX);
+
+                    byte[] buf = new byte[bufSize];
+                    ret = dskImg.Read((ulong)offset, buf);
+                    if (ret == DiskImage.EIO)
+                    {
+                        X8086.Notify("Read Sectors Long: Drive {0:000} CRC Error", NotificationReasons.Warn, mRegisters.DL);
+                        ret = 0x10; // CRC error
+                    }
+                    else if (ret == DiskImage.EOF)
+                    {
+                        X8086.Notify("Read Sectors Long: Drive {0:000} Sector Not Found", NotificationReasons.Warn, mRegisters.DL);
+                        ret = 0x4; // sector not found
+                    }
+                    byte[] ecc = BitConverter.GetBytes(buf.Sum(b => b));
+                    Array.Resize(ref buf, buf.Length + 4 + 1);
+                    buf[buf.Length - 4] = ecc[1];
+                    buf[buf.Length - 3] = ecc[0];
+                    buf[buf.Length - 2] = ecc[3];
+                    buf[buf.Length - 1] = ecc[2];
+                    CopyToMemory(buf, X8086.SegmentOffetToAbsolute(mRegisters.ES, mRegisters.BX));
+                    AL = bufSize / dskImg.SectorSize;
                 }
-                else if (ret == DiskImage.EOF)
-                {
-                    X8086.Notify("Read Sectors Long: Drive {0:000} Sector Not Found", NotificationReasons.Warn, mRegisters.DL);
-                    ret = 0x4; // sector not found
-                }
-                byte[] ecc = BitConverter.GetBytes(buf.Sum(b => b));
-                Array.Resize(ref buf, buf.Length + 4 + 1);
-                buf[buf.Length - 4] = ecc[1];
-                buf[buf.Length - 3] = ecc[0];
-                buf[buf.Length - 2] = ecc[3];
-                buf[buf.Length - 1] = ecc[2];
-                CopyToMemory(buf, X8086.SegmentOffetToAbsolute(mRegisters.ES, mRegisters.BX));
-                AL = bufSize / dskImg.SectorSize;
             } // Seek to Cylinder
             else if (mRegisters.AH == ((byte)(0xC)))
             {
@@ -346,18 +360,20 @@ namespace x8086SharpEmu
                     X8086.Notify("Invalid Drive Number: Drive {0:000} Not Ready", NotificationReasons.Info, mRegisters.DL);
                     ret = 0xAA; // fixed disk drive not ready
                 }
-
-                if (mRegisters.DL < 0x80)
-                {
-                    ret = 0x64;
-                }
                 else
                 {
-                    mRegisters.CX = (ushort)(dskImg.Sectors / 256);
-                    mRegisters.DX = (ushort)(dskImg.Sectors & 0xFF);
-                    ret = 0x12C;
+                    if (mRegisters.DL < 0x80)
+                    {
+                        ret = 0x64;
+                    }
+                    else
+                    {
+                        mRegisters.CX = (ushort)(dskImg.Sectors / 256);
+                        mRegisters.DX = (ushort)(dskImg.Sectors & 0xFF);
+                        ret = 0x12C;
+                    }
+                    X8086.Notify("Drive {0:000} Read DASD Type", NotificationReasons.Info, mRegisters.DL);
                 }
-                X8086.Notify("Drive {0:000} Read DASD Type", NotificationReasons.Info, mRegisters.DL);
             } // Controller RAM Diagnostic
             else if (mRegisters.AH == ((byte)(0x12)))
             {
@@ -392,43 +408,45 @@ namespace x8086SharpEmu
                     X8086.Notify("Invalid Drive Number: Drive {0:000} Not Ready", NotificationReasons.Info, mRegisters.DL);
                     ret = 0xAA; // fixed disk drive not ready
                 }
-
-                uint dap = X8086.SegmentOffetToAbsolute(mRegisters.DS, mRegisters.SI);
-                bufSize = (int)(get_RAM(dap + 3) << 8 | get_RAM(dap + 2));
-                int seg = (int)(get_RAM(dap + 7) << 8 | get_RAM(dap + 6));
-                int Off = (int)(get_RAM(dap + 5) << 8 | get_RAM(dap + 4));
-                offset = (long)(get_RAM(dap + 0xF) << 56 | get_RAM(dap + 0xE) << 48 |
-                    get_RAM(dap + 0xD) << 40 | get_RAM(dap + 0xC) << 32 |
-                    get_RAM(dap + 0xB) << 24 | get_RAM(dap + 0xA) << 16 |
-                    get_RAM(dap + 0x9) << 8 | get_RAM(dap + 0x8));
-
-                if (offset < 0 || (int)(offset + bufSize) > (int)dskImg.FileLength)
+                else
                 {
-                    X8086.Notify("Read Sectors: Drive {0:000} Seek Fail", NotificationReasons.Warn, mRegisters.DL);
-                    ret = 0x40; // seek failed
-                }
+                    uint dap = X8086.SegmentOffetToAbsolute(mRegisters.DS, mRegisters.SI);
+                    bufSize = (int)(get_RAM(dap + 3) << 8 | get_RAM(dap + 2));
+                    int seg = (int)(get_RAM(dap + 7) << 8 | get_RAM(dap + 6));
+                    int Off = (int)(get_RAM(dap + 5) << 8 | get_RAM(dap + 4));
+                    offset = (long)(get_RAM(dap + 0xF) << 56 | get_RAM(dap + 0xE) << 48 |
+                        get_RAM(dap + 0xD) << 40 | get_RAM(dap + 0xC) << 32 |
+                        get_RAM(dap + 0xB) << 24 | get_RAM(dap + 0xA) << 16 |
+                        get_RAM(dap + 0x9) << 8 | get_RAM(dap + 0x8));
 
-                X8086.Notify("Drive {0:000} Read {4:000} {5:X6} -> {6:X4}:{7:X4}", NotificationReasons.Info,
-                    mRegisters.DL,
-                    bufSize,
-                    offset,
-                    seg,
-                    Off);
+                    if (offset < 0 || (int)(offset + bufSize) > (int)dskImg.FileLength)
+                    {
+                        X8086.Notify("Read Sectors: Drive {0:000} Seek Fail", NotificationReasons.Warn, mRegisters.DL);
+                        ret = 0x40; // seek failed
+                    }
 
-                byte[] buf = new byte[bufSize];
-                ret = dskImg.Read((ulong)offset, buf);
-                if (ret == DiskImage.EIO)
-                {
-                    X8086.Notify("Read Sectors: Drive {0:000} CRC Error", NotificationReasons.Warn, mRegisters.DL);
-                    ret = 0x10; // CRC error
+                    X8086.Notify("Drive {0:000} Read {4:000} {5:X6} -> {6:X4}:{7:X4}", NotificationReasons.Info,
+                        mRegisters.DL,
+                        bufSize,
+                        offset,
+                        seg,
+                        Off);
+
+                    byte[] buf = new byte[bufSize];
+                    ret = dskImg.Read((ulong)offset, buf);
+                    if (ret == DiskImage.EIO)
+                    {
+                        X8086.Notify("Read Sectors: Drive {0:000} CRC Error", NotificationReasons.Warn, mRegisters.DL);
+                        ret = 0x10; // CRC error
+                    }
+                    else if (ret == DiskImage.EOF)
+                    {
+                        X8086.Notify("Read Sectors: Drive {0:000} Sector Not Found", NotificationReasons.Warn, mRegisters.DL);
+                        ret = 0x4; // sector not found
+                    }
+                    CopyToMemory(buf, X8086.SegmentOffetToAbsolute((ushort)seg, (ushort)(Off)));
+                    AL = bufSize / dskImg.SectorSize;
                 }
-                else if (ret == DiskImage.EOF)
-                {
-                    X8086.Notify("Read Sectors: Drive {0:000} Sector Not Found", NotificationReasons.Warn, mRegisters.DL);
-                    ret = 0x4; // sector not found
-                }
-                CopyToMemory(buf, X8086.SegmentOffetToAbsolute((ushort)seg, (ushort)(Off)));
-                AL = bufSize / dskImg.SectorSize;
             } // Extended Sectors Write
             else if (mRegisters.AH == ((byte)(0x43)))
             {
@@ -437,43 +455,45 @@ namespace x8086SharpEmu
                     X8086.Notify("Invalid Drive Number: Drive {0:000} Not Ready", NotificationReasons.Info, mRegisters.DL);
                     ret = 0xAA; // fixed disk drive not ready
                 }
-
-                uint dap = X8086.SegmentOffetToAbsolute(mRegisters.DS, mRegisters.SI);
-                bufSize = (int)(get_RAM(dap + 3) << 8 | get_RAM(dap + 2));
-                int seg = (int)(get_RAM(dap + 7) << 8 | get_RAM(dap + 6));
-                int Off = (int)(get_RAM(dap + 5) << 8 | get_RAM(dap + 4));
-                offset = (long)(get_RAM(dap + 0xF) << 56 | get_RAM(dap + 0xE) << 48 |
-                    get_RAM(dap + 0xD) << 40 | get_RAM(dap + 0xC) << 32 |
-                    get_RAM(dap + 0xB) << 24 | get_RAM(dap + 0xA) << 16 |
-                    get_RAM(dap + 0x9) << 8 | get_RAM(dap + 0x8));
-
-                if (offset < 0 || (int)(offset + bufSize) > (int)dskImg.FileLength)
+                else
                 {
-                    X8086.Notify("Write Sectors: Drive {0:000} Seek Fail", NotificationReasons.Warn, mRegisters.DL);
-                    ret = 0x40; // seek failed
-                }
+                    uint dap = X8086.SegmentOffetToAbsolute(mRegisters.DS, mRegisters.SI);
+                    bufSize = (int)(get_RAM(dap + 3) << 8 | get_RAM(dap + 2));
+                    int seg = (int)(get_RAM(dap + 7) << 8 | get_RAM(dap + 6));
+                    int Off = (int)(get_RAM(dap + 5) << 8 | get_RAM(dap + 4));
+                    offset = (long)(get_RAM(dap + 0xF) << 56 | get_RAM(dap + 0xE) << 48 |
+                        get_RAM(dap + 0xD) << 40 | get_RAM(dap + 0xC) << 32 |
+                        get_RAM(dap + 0xB) << 24 | get_RAM(dap + 0xA) << 16 |
+                        get_RAM(dap + 0x9) << 8 | get_RAM(dap + 0x8));
 
-                X8086.Notify("Drive {0:000} Write {4:000} {5:X6} <- {6:X4}:{7:X4}", NotificationReasons.Info,
-                    mRegisters.DL,
-                    bufSize,
-                    offset,
-                    seg,
-                    Off);
+                    if (offset < 0 || (int)(offset + bufSize) > (int)dskImg.FileLength)
+                    {
+                        X8086.Notify("Write Sectors: Drive {0:000} Seek Fail", NotificationReasons.Warn, mRegisters.DL);
+                        ret = 0x40; // seek failed
+                    }
 
-                byte[] buf = new byte[bufSize];
-                CopyFromMemory(buf, X8086.SegmentOffetToAbsolute((ushort)seg, (ushort)(Off)));
-                ret = dskImg.Write((ulong)offset, buf);
-                if (ret == DiskImage.EIO)
-                {
-                    X8086.Notify("Write Sectors: Drive {0:000} CRC Error", NotificationReasons.Warn, mRegisters.DL);
-                    ret = 0x10; // CRC error
+                    X8086.Notify("Drive {0:000} Write {4:000} {5:X6} <- {6:X4}:{7:X4}", NotificationReasons.Info,
+                        mRegisters.DL,
+                        bufSize,
+                        offset,
+                        seg,
+                        Off);
+
+                    byte[] buf = new byte[bufSize];
+                    CopyFromMemory(buf, X8086.SegmentOffetToAbsolute((ushort)seg, (ushort)(Off)));
+                    ret = dskImg.Write((ulong)offset, buf);
+                    if (ret == DiskImage.EIO)
+                    {
+                        X8086.Notify("Write Sectors: Drive {0:000} CRC Error", NotificationReasons.Warn, mRegisters.DL);
+                        ret = 0x10; // CRC error
+                    }
+                    else if (ret == DiskImage.EOF)
+                    {
+                        X8086.Notify("Write Sectors: Drive {0:000} Sector Not Found", NotificationReasons.Warn, mRegisters.DL);
+                        ret = 0x4; // sector not found
+                    }
+                    AL = bufSize / dskImg.SectorSize;
                 }
-                else if (ret == DiskImage.EOF)
-                {
-                    X8086.Notify("Write Sectors: Drive {0:000} Sector Not Found", NotificationReasons.Warn, mRegisters.DL);
-                    ret = 0x4; // sector not found
-                }
-                AL = bufSize / dskImg.SectorSize;
             } // Extended get Drive Parameters
             else if (mRegisters.AH == ((byte)(0x48)))
             {
@@ -482,17 +502,19 @@ namespace x8086SharpEmu
                     X8086.Notify("Invalid Drive Number: Drive {0:000} Not Ready", NotificationReasons.Info, mRegisters.DL);
                     ret = 0xAA; // fixed disk drive not ready
                 }
-
-                if (dskImg.Tracks <= 0)
-                {
-                    X8086.Notify("Get Drive Parameters: Drive {0:000} Unknown Geometry", NotificationReasons.Warn, mRegisters.DL);
-                    ret = 0xAA;
-                }
                 else
                 {
-                    throw (new NotImplementedException("Extended get Drive Parameters is not Implemented"));
-                    X8086.Notify("Drive {0:000} Get Parameters", NotificationReasons.Info, mRegisters.DL);
-                    ret = 0;
+                    if (dskImg.Tracks <= 0)
+                    {
+                        X8086.Notify("Get Drive Parameters: Drive {0:000} Unknown Geometry", NotificationReasons.Warn, mRegisters.DL);
+                        ret = 0xAA;
+                    }
+                    else
+                    {
+                        throw (new NotImplementedException("Extended get Drive Parameters is not Implemented"));
+                        X8086.Notify("Drive {0:000} Get Parameters", NotificationReasons.Info, mRegisters.DL);
+                        ret = 0;
+                    }
                 }
             }
             else

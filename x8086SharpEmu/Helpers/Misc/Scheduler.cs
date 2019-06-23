@@ -121,8 +121,8 @@ namespace x8086SharpEmu
             pq = new PriorityQueue();
             pendingInput = new ArrayList();
 
-            syncQuantum = (long)BASECLOCK / 20;
-            syncSimTimePerWallMs = (long)BASECLOCK / 1000;
+            syncQuantum = BASECLOCK / 20;
+            syncSimTimePerWallMs = BASECLOCK / 1000;
         }
 
         public long CurrentTime
